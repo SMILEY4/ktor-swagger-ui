@@ -1,4 +1,4 @@
-package de.lruegner.ktorswaggerui
+package io.github.smiley4.ktorswaggerui
 
 class SwaggerUIPluginConfig {
 
@@ -20,7 +20,7 @@ class SwaggerUIPluginConfig {
     private var swaggerUIConfig = SwaggerUIConfig()
 
     fun swagger(block: SwaggerUIConfig.() -> Unit) {
-        SwaggerUIConfig().apply(block)
+        swaggerUIConfig = SwaggerUIConfig().apply(block)
     }
 
     fun getSwaggerUI() = swaggerUIConfig
@@ -32,7 +32,7 @@ class SwaggerUIPluginConfig {
     private var info = OpenApiInfoConfig()
 
     fun info(block: OpenApiInfoConfig.() -> Unit) {
-        OpenApiInfoConfig().apply(block)
+        info = OpenApiInfoConfig().apply(block)
     }
 
     fun getInfo() = info
@@ -121,7 +121,9 @@ class OpenApiInfoConfig {
      */
     private var contact: OpenApiContactConfig? = null
 
-    fun contact(block: OpenApiContactConfig.() -> Unit) = OpenApiContactConfig().apply(block)
+    fun contact(block: OpenApiContactConfig.() -> Unit) {
+        contact =  OpenApiContactConfig().apply(block)
+    }
 
     fun getContact() = contact
 
@@ -131,7 +133,9 @@ class OpenApiInfoConfig {
      */
     private var license: OpenApiLicenseConfig? = null
 
-    fun license(block: OpenApiLicenseConfig.() -> Unit) = OpenApiLicenseConfig().apply(block)
+    fun license(block: OpenApiLicenseConfig.() -> Unit) {
+        license = OpenApiLicenseConfig().apply(block)
+    }
 
     fun getLicense() = license
 
@@ -258,7 +262,7 @@ class OpenApiSecuritySchemeConfig {
     /**
      * The name of the HTTP Authorization scheme to be used
      */
-    var scheme: Scheme = Scheme.BASIC
+    var scheme: Scheme? = null
 
 
     /**

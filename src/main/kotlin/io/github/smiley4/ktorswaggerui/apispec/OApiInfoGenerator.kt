@@ -1,6 +1,6 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.OpenApiInfoConfig
+import io.github.smiley4.ktorswaggerui.OpenApiInfoConfig
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
@@ -8,7 +8,7 @@ import io.swagger.v3.oas.models.info.License
 /**
  * Generator for the OpenAPI Info-Object
  */
-class OApiInfoGenerator() {
+class OApiInfoGenerator {
 
     /**
      * Generate the OpenAPI Info-Object from the given config

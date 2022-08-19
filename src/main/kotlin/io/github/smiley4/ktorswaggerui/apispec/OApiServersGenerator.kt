@@ -1,12 +1,12 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.OpenApiServerConfig
+import io.github.smiley4.ktorswaggerui.OpenApiServerConfig
 import io.swagger.v3.oas.models.servers.Server
 
 /**
  * Generator for the OpenAPI Server-Objects
  */
-class OApiServersGenerator() {
+class OApiServersGenerator {
 
     /**
      * Generate the OpenAPI Server-Objects from the given configs

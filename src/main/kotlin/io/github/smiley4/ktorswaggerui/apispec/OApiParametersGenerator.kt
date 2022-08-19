@@ -1,7 +1,7 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.documentation.RouteParameter
-import de.lruegner.ktorswaggerui.routing.SchemaRef
+import io.github.smiley4.ktorswaggerui.documentation.RouteParameter
+import io.github.smiley4.ktorswaggerui.routing.SchemaRef
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
 
@@ -37,7 +37,7 @@ class OApiParametersGenerator {
                                     is RouteParameter.ObjectSchema -> {
                                         type = "object"
                                         additionalProperties = Schema<String>().apply {
-                                            `$ref` = SchemaRef.ofClass(paramSchema.type.type)
+                                            `$ref` = SchemaRef.refOfClass(paramSchema.type.type)
                                         }
                                     }
                                     is RouteParameter.PrimitiveSchema -> {
@@ -55,7 +55,7 @@ class OApiParametersGenerator {
                         is RouteParameter.ObjectSchema -> {
                             type = "object"
                             additionalProperties = Schema<String>().apply {
-                                `$ref` = SchemaRef.ofClass(paramSchema.type)
+                                `$ref` = SchemaRef.refOfClass(paramSchema.type)
                             }
                         }
                         is RouteParameter.PrimitiveSchema -> {

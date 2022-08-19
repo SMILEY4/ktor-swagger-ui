@@ -1,6 +1,6 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.OpenApiTagConfig
+import io.github.smiley4.ktorswaggerui.OpenApiTagConfig
 import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.tags.Tag
 

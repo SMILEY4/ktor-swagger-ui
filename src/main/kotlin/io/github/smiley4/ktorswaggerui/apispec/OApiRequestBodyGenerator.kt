@@ -1,6 +1,6 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.documentation.RouteBody
+import io.github.smiley4.ktorswaggerui.documentation.RouteBody
 import io.swagger.v3.oas.models.parameters.RequestBody
 
 /**

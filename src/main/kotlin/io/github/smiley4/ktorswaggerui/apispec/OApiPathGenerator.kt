@@ -1,6 +1,6 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.documentation.RouteResponse
+import io.github.smiley4.ktorswaggerui.documentation.RouteResponse
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.swagger.v3.oas.models.Operation
@@ -27,13 +27,13 @@ class OApiPathGenerator {
                     requestBody = OApiRequestBodyGenerator().generate(it)
                 }
                 responses = ApiResponses().apply {
+                    OApiResponsesGenerator().generate(config.documentation.getResponses()).forEach {
+                        addApiResponse(it.first, it.second)
+                    }
                     if (shouldAddUnauthorized(config, autoUnauthorizedResponses)) {
                         OApiResponsesGenerator().generate(listOf(defaultUnauthorizedResponse())).forEach {
                             addApiResponse(it.first, it.second)
                         }
-                    }
-                    OApiResponsesGenerator().generate(config.documentation.getResponses()).forEach {
-                        addApiResponse(it.first, it.second)
                     }
                 }
                 if (config.protected && defaultSecurityScheme != null) {
@@ -56,11 +56,19 @@ class OApiPathGenerator {
         }
     }
 
+
+    /**
+     * Whether a response for "Unauthorized" should be added automatically. Must be enabled and not already defined.
+     */
     private fun shouldAddUnauthorized(config: RouteMeta, autoUnauthorizedResponses: Boolean) =
         autoUnauthorizedResponses
                 && config.protected
                 && config.documentation.getResponses().count { it.statusCode == HttpStatusCode.Unauthorized } == 0
 
+
+    /**
+     * The default/automatically added response for "Unauthorized"
+     */
     private fun defaultUnauthorizedResponse() = RouteResponse(HttpStatusCode.Unauthorized).apply {
         description = "Authentication failed"
     }

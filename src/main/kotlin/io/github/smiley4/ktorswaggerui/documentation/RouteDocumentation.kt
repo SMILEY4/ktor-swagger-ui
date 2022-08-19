@@ -1,4 +1,4 @@
-package de.lruegner.ktorswaggerui.documentation
+package io.github.smiley4.ktorswaggerui.documentation
 
 import io.ktor.http.HttpStatusCode
 
@@ -20,8 +20,6 @@ class RouteDocumentation {
      * A verbose explanation of the operation behavior.
      */
     var description: String? = null
-
-    // TODO: auth
 
     /**
      * A list of parameters that are applicable for this operation
@@ -214,7 +212,17 @@ class RouteResponse(val statusCode: HttpStatusCode) {
     /**
      * The optional response body
      */
-    var body: RouteBody? = null
+    private var body: RouteBody? = null
+
+    fun typedBody(schema: Class<*>, block: RouteTypedBody.() -> Unit) {
+        body = RouteTypedBody(schema).apply(block)
+    }
+
+    fun textBody(block: RoutePlainTextBody.() -> Unit) {
+        body = RoutePlainTextBody().apply(block)
+    }
+
+    fun getBody() = body
 
 }
 

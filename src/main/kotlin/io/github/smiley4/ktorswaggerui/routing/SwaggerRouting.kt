@@ -1,10 +1,11 @@
-package de.lruegner.ktorswaggerui.routing
+package io.github.smiley4.ktorswaggerui.routing
 
 import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
+import io.github.smiley4.ktorswaggerui.routing.SchemaRef.refToClassName
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.OutgoingContent
@@ -17,6 +18,7 @@ import io.ktor.server.response.respondRedirect
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import mu.KotlinLogging
 import java.net.URL
 
 /**
@@ -29,10 +31,14 @@ class SwaggerRouting(
     private val jsonSpecProvider: () -> String
 ) {
 
+    private val logger = KotlinLogging.logger {}
+
+
     /**
      * registers the required routes
      */
     fun setup(app: Application) {
+        logger.info("Registering routes for swagger-ui: $swaggerUrl (forwardRoot=$forwardRoot)")
         app.routing {
             if (forwardRoot) {
                 get("/") {
@@ -51,7 +57,7 @@ class SwaggerRouting(
             }
             get("$swaggerUrl/schemas/{schemaname}") {
                 val schemaName = call.parameters["schemaname"]!!
-                val className = schemaName.replace("__", ".")
+                val className = refToClassName(schemaName)
                 val clazz = Class.forName(className)
                 call.respondText(ContentType.Application.Json, HttpStatusCode.OK) { generateJsonSchema(clazz) }
             }
@@ -100,12 +106,10 @@ class SwaggerRouting(
 
 
     private fun <T> generateJsonSchema(type: Class<T>): String {
-        val module = JacksonModule()
-        val configBuilder = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON).with(module)
-        val config = configBuilder.build()
-        val generator = SchemaGenerator(config)
-        val jsonSchema = generator.generateSchema(type)
-        return jsonSchema.toString()
+        val config = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
+            .with(JacksonModule())
+            .build()
+        return SchemaGenerator(config).generateSchema(type).toString()
     }
 
 }

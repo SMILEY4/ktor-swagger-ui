@@ -1,4 +1,4 @@
-package de.lruegner.ktorswaggerui.documentation
+package io.github.smiley4.ktorswaggerui.documentation
 
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.routing.Route

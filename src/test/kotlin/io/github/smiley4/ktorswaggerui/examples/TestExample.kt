@@ -1,7 +1,7 @@
 package de.lruegner.ktorswaggerui.examples
 
-import de.lruegner.ktorswaggerui.SwaggerUI
-import de.lruegner.ktorswaggerui.documentation.get
+import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.documentation.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -12,7 +12,6 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.uri
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
-import io.swagger.v3.oas.models.security.SecurityScheme
 import org.slf4j.event.Level
 
 fun main() {

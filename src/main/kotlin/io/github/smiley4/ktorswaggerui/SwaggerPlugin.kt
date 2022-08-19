@@ -1,7 +1,7 @@
-package de.lruegner.ktorswaggerui
+package io.github.smiley4.ktorswaggerui
 
-import de.lruegner.ktorswaggerui.apispec.ApiSpec
-import de.lruegner.ktorswaggerui.routing.SwaggerRouting
+import io.github.smiley4.ktorswaggerui.apispec.ApiSpec
+import io.github.smiley4.ktorswaggerui.routing.SwaggerRouting
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.MonitoringEvent

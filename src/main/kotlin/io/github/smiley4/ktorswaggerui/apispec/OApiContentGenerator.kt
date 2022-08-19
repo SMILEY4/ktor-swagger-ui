@@ -1,9 +1,9 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.documentation.RouteBody
-import de.lruegner.ktorswaggerui.documentation.RoutePlainTextBody
-import de.lruegner.ktorswaggerui.documentation.RouteTypedBody
-import de.lruegner.ktorswaggerui.routing.SchemaRef
+import io.github.smiley4.ktorswaggerui.documentation.RouteBody
+import io.github.smiley4.ktorswaggerui.documentation.RoutePlainTextBody
+import io.github.smiley4.ktorswaggerui.documentation.RouteTypedBody
+import io.github.smiley4.ktorswaggerui.routing.SchemaRef
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
@@ -22,7 +22,7 @@ class OApiContentGenerator {
                 is RouteTypedBody -> {
                     addMediaType("application/json", MediaType().apply {
                         schema = Schema<String>().apply {
-                            `$ref` = SchemaRef.ofClass(config.schema)
+                            `$ref` = SchemaRef.refOfClass(config.schema)
                         }
                     })
                 }

@@ -1,8 +1,8 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.SwaggerUIPluginConfig
-import de.lruegner.ktorswaggerui.documentation.DocumentedRouteSelector
-import de.lruegner.ktorswaggerui.documentation.RouteDocumentation
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.documentation.DocumentedRouteSelector
+import io.github.smiley4.ktorswaggerui.documentation.RouteDocumentation
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
 import io.ktor.server.application.plugin

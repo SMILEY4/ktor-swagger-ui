@@ -1,12 +1,12 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.OpenApiSecuritySchemeConfig
+import io.github.smiley4.ktorswaggerui.OpenApiSecuritySchemeConfig
 import io.swagger.v3.oas.models.security.SecurityScheme
 
 /**
  * Generator for OpenAPI SecurityScheme-Objects
  */
-class OApiSecuritySchemesGenerator() {
+class OApiSecuritySchemesGenerator {
 
     /**
      * Generate the OpenAPI SecurityScheme-Objects from the given configs
@@ -40,6 +40,7 @@ class OApiSecuritySchemesGenerator() {
                         OpenApiSecuritySchemeConfig.Scheme.SCRAM_SHA_1 -> "SCRAM-SHA-1"
                         OpenApiSecuritySchemeConfig.Scheme.SCRAM_SHA_256 -> "SCRAM-SHA-256"
                         OpenApiSecuritySchemeConfig.Scheme.VAPID -> "vapid"
+                        else -> null
                     }
                 })
             }

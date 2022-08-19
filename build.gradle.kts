@@ -5,7 +5,7 @@ plugins {
     `maven-publish`
 }
 
-group = "de.lruegner"
+group = "io.github.smiley4"
 version = "0.1"
 
 repositories {
@@ -20,10 +20,10 @@ dependencies {
     implementation("io.swagger.parser.v3:swagger-parser:2.1.1")
     implementation("com.github.victools:jsonschema-generator:4.25.0")
     implementation("com.github.victools:jsonschema-module-jackson:4.25.0")
+    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
 
     testImplementation("io.ktor:ktor-server-netty-jvm:2.0.1")
     testImplementation("ch.qos.logback:logback-classic:1.2.11")
-    testImplementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
     testImplementation("io.ktor:ktor-server-call-logging:2.0.1")
 }
 

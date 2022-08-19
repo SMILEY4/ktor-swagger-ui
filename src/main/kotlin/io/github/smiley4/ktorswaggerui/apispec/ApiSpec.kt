@@ -1,10 +1,6 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.SwaggerUIPluginConfig
-import de.lruegner.ktorswaggerui.apispec.ParameterDocumentation.Companion.ParamType.PATH
-import de.lruegner.ktorswaggerui.apispec.ParameterDocumentation.Companion.ParamType.QUERY
-import de.lruegner.ktorswaggerui.apispec.ParameterDocumentation.Companion.ParameterDataType
-import io.ktor.http.HttpMethod
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.swagger.v3.core.util.Json

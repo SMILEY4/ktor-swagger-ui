@@ -1,7 +1,6 @@
-package de.lruegner.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.apispec
 
-import de.lruegner.ktorswaggerui.documentation.RouteResponse
-import io.ktor.http.HttpStatusCode
+import io.github.smiley4.ktorswaggerui.documentation.RouteResponse
 import io.swagger.v3.oas.models.responses.ApiResponse
 
 /**
@@ -16,8 +15,8 @@ class OApiResponsesGenerator {
         return configs.map { responseCfg ->
             responseCfg.statusCode.toString() to ApiResponse().apply {
                 description = responseCfg.description
-                responseCfg.body?.let {
-                    content = OApiContentGenerator().generate(responseCfg.body!!)
+                responseCfg.getBody()?.let {
+                    content = OApiContentGenerator().generate(responseCfg.getBody()!!)
                 }
             }
         }
