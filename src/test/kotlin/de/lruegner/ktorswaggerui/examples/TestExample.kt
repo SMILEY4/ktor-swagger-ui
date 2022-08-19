@@ -12,6 +12,7 @@ import io.ktor.server.request.httpMethod
 import io.ktor.server.request.uri
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
+import io.swagger.v3.oas.models.security.SecurityScheme
 import org.slf4j.event.Level
 
 fun main() {
@@ -27,7 +28,29 @@ fun main() {
             }
         }
 
-        install(SwaggerUI)
+        install(SwaggerUI) {
+            swagger {
+                swaggerUrl = "swagger-ui"
+                forwardRoot = true
+            }
+            info {
+                title = "Sample API"
+                version = "latest"
+                description = "Sample API for testing and demonstration purposes."
+                contact {
+                    name = "Example Name"
+                    url = "https://www.example.com"
+                }
+            }
+            server {
+                url = "localhost:8080"
+                description = "Development Server"
+            }
+            server {
+                url = "127.0.0.1:8080"
+                description = "Same Development Server"
+            }
+        }
 
         routing {
             get("hello", {

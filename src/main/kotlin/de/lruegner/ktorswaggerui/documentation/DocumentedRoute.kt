@@ -1,6 +1,5 @@
 package de.lruegner.ktorswaggerui.documentation
 
-import de.lruegner.ktorswaggerui.RouteDocumentation
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector

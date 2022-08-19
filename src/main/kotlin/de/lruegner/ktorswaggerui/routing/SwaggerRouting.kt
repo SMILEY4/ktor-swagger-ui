@@ -19,6 +19,9 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import java.net.URL
 
+/**
+ * Registers and handles routes required for the swagger-ui
+ */
 class SwaggerRouting(
     private val swaggerWebjarVersion: String,
     private val swaggerUrl: String,
@@ -26,6 +29,9 @@ class SwaggerRouting(
     private val jsonSpecProvider: () -> String
 ) {
 
+    /**
+     * registers the required routes
+     */
     fun setup(app: Application) {
         app.routing {
             if (forwardRoot) {
@@ -37,28 +43,24 @@ class SwaggerRouting(
                 call.respondRedirect("$swaggerUrl/index.html")
             }
             get("$swaggerUrl/{filename}") {
-                when (val filename = call.parameters["filename"]) {
+                when (val filename = call.parameters["filename"]!!) {
                     "swagger-initializer.js" -> serveSwaggerInitializer(call)
-                    "apiSpec.json" -> serveSpecJson(call)
-                    null -> call.respond(HttpStatusCode.BadRequest, "no filename provided")
+                    "apiSpec.json" -> serveApiSpecJson(call)
                     else -> serveStaticResource(filename, call)
                 }
             }
             get("$swaggerUrl/schemas/{schemaname}") {
                 val schemaName = call.parameters["schemaname"]!!
                 val className = schemaName.replace("__", ".")
-                println("generating json-schema for class: $className")
                 val clazz = Class.forName(className)
-                call.respondText(ContentType.Application.Json, HttpStatusCode.OK) {
-                    generateJsonSchema(clazz)
-                }
+                call.respondText(ContentType.Application.Json, HttpStatusCode.OK) { generateJsonSchema(clazz) }
             }
         }
     }
 
 
     private suspend fun serveSwaggerInitializer(call: ApplicationCall) {
-		val apiSpecUrl = "/" + (if (swaggerUrl.startsWith("/")) swaggerUrl.substring(1) else swaggerUrl) + "/apiSpec.json"
+        val apiSpecUrl = "/" + (if (swaggerUrl.startsWith("/")) swaggerUrl.substring(1) else swaggerUrl) + "/apiSpec.json"
         val content = """
 			window.onload = function() {
 			  //<editor-fold desc="Changeable Configuration Block">
@@ -81,9 +83,11 @@ class SwaggerRouting(
         call.respondText(ContentType.Application.JavaScript, HttpStatusCode.OK) { content }
     }
 
-    private suspend fun serveSpecJson(call: ApplicationCall) {
+
+    private suspend fun serveApiSpecJson(call: ApplicationCall) {
         call.respondText(ContentType.Application.Json, HttpStatusCode.OK) { jsonSpecProvider() }
     }
+
 
     private suspend fun serveStaticResource(filename: String, call: ApplicationCall) {
         val resource = this::class.java.getResource("/META-INF/resources/webjars/swagger-ui/$swaggerWebjarVersion/$filename")
@@ -93,6 +97,7 @@ class SwaggerRouting(
             call.respond(ResourceContent(resource))
         }
     }
+
 
     private fun <T> generateJsonSchema(type: Class<T>): String {
         val module = JacksonModule()
@@ -104,16 +109,6 @@ class SwaggerRouting(
     }
 
 }
-
-
-private val contentTypes = mapOf(
-    "html" to ContentType.Text.Html,
-    "css" to ContentType.Text.CSS,
-    "js" to ContentType.Application.JavaScript,
-    "json" to ContentType.Application.Json.withCharset(Charsets.UTF_8),
-    "png" to ContentType.Image.PNG
-)
-
 
 private class ResourceContent(val resource: URL) : OutgoingContent.ByteArrayContent() {
     private val bytes by lazy { resource.readBytes() }
@@ -128,5 +123,15 @@ private class ResourceContent(val resource: URL) : OutgoingContent.ByteArrayCont
     }
 
     override fun bytes(): ByteArray = bytes
+
     override fun toString() = "ResourceContent \"$resource\""
 }
+
+
+private val contentTypes = mapOf(
+    "html" to ContentType.Text.Html,
+    "css" to ContentType.Text.CSS,
+    "js" to ContentType.Application.JavaScript,
+    "json" to ContentType.Application.Json.withCharset(Charsets.UTF_8),
+    "png" to ContentType.Image.PNG
+)
