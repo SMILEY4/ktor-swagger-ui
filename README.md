@@ -1,6 +1,29 @@
 # Ktor Swagger-UI
 
+[![Release](https://jitpack.io/v/SMILEY4/ktor-swagger-ui.svg)]
+(https://jitpack.io/#SMILEY4/ktor-swagger-ui)
+
 This library provides Ktor plugin to document routes and enable Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing ktor application without requiring direct changes to the code. Routes can then be gradually enhanced with documentation.
+
+## Installation
+
+Step 1. Add the JitPack repository
+
+```kotlin
+   repositories {
+        ...
+        maven { url "https://jitpack.io" }
+   }
+```
+
+Step 2. Add the dependency
+
+```kotlin
+dependencies {
+    implementation 'io.github.smiley4:ktor-swagger-ui:<VERSION>'
+}
+```
+
 
 ## Example
 
