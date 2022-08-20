@@ -30,56 +30,70 @@ class RouteDocumentation {
 
 
     /**
+     * Information about the request
+     */
+    private val request = RequestDocumentation()
+
+    fun request(block: RequestDocumentation.() -> Unit) {
+        request.apply(block)
+    }
+
+    fun getRequest() = request
+
+
+    /**
+     * Possible responses as they are returned from executing this operation.
+     */
+    private val responses = ResponseDocumentation()
+
+    fun response(block: ResponseDocumentation.() -> Unit) {
+        responses.apply(block)
+    }
+
+    fun getResponses() = responses
+
+}
+
+
+class RequestDocumentation {
+
+    /**
      * A list of parameters that are applicable for this operation
      */
-    private val parameters = mutableListOf<RouteParameter>()
+    private val parameters = mutableListOf<RequestParameterDocumentation>()
 
-    fun pathParameter(name: String, schema: Class<*>, block: RouteParameter.() -> Unit) {
-        parameters.add(RouteParameter(name, schema, RouteParameter.Location.PATH).apply(block))
+    fun pathParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
+        parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.PATH).apply(block))
     }
 
-    fun queryParameter(name: String, schema: Class<*>, block: RouteParameter.() -> Unit) {
-        parameters.add(RouteParameter(name, schema, RouteParameter.Location.QUERY).apply(block))
+    fun queryParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
+        parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.QUERY).apply(block))
     }
 
-    fun headerParameter(name: String, schema: Class<*>, block: RouteParameter.() -> Unit) {
-        parameters.add(RouteParameter(name, schema, RouteParameter.Location.HEADER).apply(block))
+    fun headerParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
+        parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.HEADER).apply(block))
     }
 
-    fun getParameters(): List<RouteParameter> = parameters
+    fun getParameters(): List<RequestParameterDocumentation> = parameters
 
 
     /**
      * The request body applicable for this operation
      */
-    private var requestBody: RouteBody? = null
+    private var body: BodyDocumentation? = null
 
-    fun requestBody(schema: Class<*>, block: RouteBody.() -> Unit) {
-        requestBody = RouteBody(schema).apply(block)
+    fun body(schema: Class<*>, block: BodyDocumentation.() -> Unit) {
+        body = BodyDocumentation(schema).apply(block)
     }
 
-    fun requestBody(schema: Class<*>) = requestBody(schema) {}
+    fun body(schema: Class<*>) = body(schema) {}
 
-    fun getRequestBody() = requestBody
-
-
-    /**
-     * The list of possible responses as they are returned from executing this operation.
-     */
-    private val responses = mutableMapOf<HttpStatusCode, RouteResponse>()
-
-    fun response(responseCode: HttpStatusCode, block: RouteResponse.() -> Unit) {
-        responses[responseCode] = RouteResponse(responseCode).apply(block)
-    }
-
-    fun response(responseCode: HttpStatusCode, description: String) = response(responseCode) { this.description = description }
-
-    fun getResponses() = responses.values.toList()
+    fun getBody() = body
 
 }
 
 
-class RouteParameter(
+class RequestParameterDocumentation(
     /**
      * The name (case-sensitive) of the parameter
      */
@@ -146,10 +160,51 @@ class RouteParameter(
 }
 
 
+class ResponseDocumentation {
+
+    private val responses = mutableMapOf<HttpStatusCode, SingleResponseDocumentation>()
+
+    infix fun HttpStatusCode.to(block: SingleResponseDocumentation.() -> Unit) {
+        responses[this] = SingleResponseDocumentation(this).apply(block)
+    }
+
+    fun getResponses() = responses.values.toList()
+
+}
+
+
+/**
+ * A container for the expected responses of an operation. The container maps a HTTP response code to the expected response.
+ * A response code can only have one response object.
+ */
+class SingleResponseDocumentation(val statusCode: HttpStatusCode) {
+
+    /**
+     * A short description of the response
+     */
+    var description: String? = null
+
+
+    /**
+     * The optional response body
+     */
+    private var body: BodyDocumentation? = null
+
+    fun body(schema: Class<*>, block: BodyDocumentation.() -> Unit) {
+        body = BodyDocumentation(schema).apply(block)
+    }
+
+    fun body(schema: Class<*>) = body(schema) {}
+
+    fun getBody() = body
+
+}
+
+
 /**
  * Describes a single request/response body.
  */
-class RouteBody(
+class BodyDocumentation(
     /**
      * The schema defining the type used for the parameter.
      * Examples:
@@ -172,34 +227,6 @@ class RouteBody(
      * Determines if the request body is required in the request
      */
     var required: Boolean? = null
-
-}
-
-
-/**
- * A container for the expected responses of an operation. The container maps a HTTP response code to the expected response.
- * A response code can only have one response object.
- */
-class RouteResponse(val statusCode: HttpStatusCode) {
-
-    /**
-     * A short description of the response
-     */
-    var description: String? = null
-
-
-    /**
-     * The optional response body
-     */
-    private var body: RouteBody? = null
-
-    fun body(schema: Class<*>, block: RouteBody.() -> Unit) {
-        body = RouteBody(schema).apply(block)
-    }
-
-    fun body(schema: Class<*>) = body(schema) {}
-
-    fun getBody() = body
 
 }
 

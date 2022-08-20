@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
-import io.github.smiley4.ktorswaggerui.documentation.RouteResponse
+import io.github.smiley4.ktorswaggerui.documentation.SingleResponseDocumentation
 import io.swagger.v3.oas.models.responses.ApiResponse
 
 /**
@@ -11,7 +11,7 @@ class OApiResponsesGenerator {
     /**
      * Generate the Respones from the given configs
      */
-    fun generate(configs: List<RouteResponse>): List<Pair<String, ApiResponse>> {
+    fun generate(configs: List<SingleResponseDocumentation>): List<Pair<String, ApiResponse>> {
         return configs.map { responseCfg ->
             responseCfg.statusCode.toString() to ApiResponse().apply {
                 description = responseCfg.description

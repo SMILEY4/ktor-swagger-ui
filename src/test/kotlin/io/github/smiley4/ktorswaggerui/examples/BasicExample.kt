@@ -16,7 +16,6 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
-import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import java.util.Random
 
@@ -51,28 +50,38 @@ fun main() {
             get("hello", {
                 tags = listOf("test")
                 description = "Hello World Endpoint"
-                response(HttpStatusCode.OK) {
-                    description = "Successful Request"
-                    body(String::class.java) { description = "the response" }
+                response {
+                    HttpStatusCode.OK to {
+                        description = "Successful Request"
+                        body(String::class.java) { description = "the response" }
+                    }
+                    HttpStatusCode.InternalServerError to {
+                        description = "Something unexpected happened"
+                    }
                 }
-                response(HttpStatusCode.InternalServerError, "Something unexpected happened")
             }) {
                 call.respondText("Hello World!")
             }
             post("math/{operation}", {
                 tags = listOf("test")
                 description = "Performs the given operation on the given values and returns the result"
-                pathParameter("operation", String::class.java) {
-                    description = "the math operation to perform. Either 'add' or 'sub'"
+                request {
+                    pathParameter("operation", String::class.java) {
+                        description = "the math operation to perform. Either 'add' or 'sub'"
+                    }
+                    body(MathRequest::class.java)
                 }
-                requestBody(MathRequest::class.java)
-                response(HttpStatusCode.OK) {
-                    description = "The operation was successful"
-                    body(MathResult::class.java) {
-                        description = "The result of the operation"
+                response {
+                    HttpStatusCode.OK to {
+                        description = "The operation was successful"
+                        body(MathResult::class.java) {
+                            description = "The result of the operation"
+                        }
+                    }
+                    HttpStatusCode.BadRequest to {
+                        description = "An invalid operation was provided"
                     }
                 }
-                response(HttpStatusCode.BadRequest, "An invalid operation was provided")
             }) {
                 val operation = call.parameters["operation"]!!
                 call.receive<MathRequest>().let { request ->
@@ -84,12 +93,20 @@ fun main() {
                 }
             }
             post("random/results", {
-                response(HttpStatusCode.OK) { body(Array<MathResult>::class.java) }
+                response {
+                    HttpStatusCode.OK to {
+                        body(Array<MathResult>::class.java)
+                    }
+                }
             }) {
                 call.respond(HttpStatusCode.OK, (0..5).map { MathResult(Random().nextInt()) })
             }
             post("random/numbers", {
-                response(HttpStatusCode.OK) { body(IntArray::class.java) }
+                response {
+                    HttpStatusCode.OK to {
+                        body(IntArray::class.java)
+                    }
+                }
             }) {
                 call.respond(HttpStatusCode.OK, (0..5).map { Random().nextInt() })
             }

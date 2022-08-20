@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
-import io.github.smiley4.ktorswaggerui.documentation.RouteResponse
+import io.github.smiley4.ktorswaggerui.documentation.SingleResponseDocumentation
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.swagger.v3.oas.models.Operation
@@ -28,12 +28,12 @@ class OApiPathGenerator {
                     .filterNotNull()
                 summary = config.documentation.summary
                 description = config.documentation.description
-                parameters = OApiParametersGenerator().generate(config.documentation.getParameters())
-                config.documentation.getRequestBody()?.let {
+                parameters = OApiParametersGenerator().generate(config.documentation.getRequest().getParameters())
+                config.documentation.getRequest().getBody()?.let {
                     requestBody = OApiRequestBodyGenerator().generate(it)
                 }
                 responses = ApiResponses().apply {
-                    OApiResponsesGenerator().generate(config.documentation.getResponses()).forEach {
+                    OApiResponsesGenerator().generate(config.documentation.getResponses().getResponses()).forEach {
                         addApiResponse(it.first, it.second)
                     }
                     if (shouldAddUnauthorized(config, autoUnauthorizedResponses)) {
@@ -71,13 +71,13 @@ class OApiPathGenerator {
     private fun shouldAddUnauthorized(config: RouteMeta, autoUnauthorizedResponses: Boolean) =
         autoUnauthorizedResponses
                 && config.protected
-                && config.documentation.getResponses().count { it.statusCode == HttpStatusCode.Unauthorized } == 0
+                && config.documentation.getResponses().getResponses().count { it.statusCode == HttpStatusCode.Unauthorized } == 0
 
 
     /**
      * The default/automatically added response for "Unauthorized"
      */
-    private fun defaultUnauthorizedResponse() = RouteResponse(HttpStatusCode.Unauthorized).apply {
+    private fun defaultUnauthorizedResponse() = SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply {
         description = "Authentication failed"
     }
 

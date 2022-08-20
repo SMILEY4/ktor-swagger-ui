@@ -2,7 +2,6 @@ package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.AuthScheme
 import io.github.smiley4.ktorswaggerui.AuthType
-import io.github.smiley4.ktorswaggerui.OpenApiSecuritySchemeConfig
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.documentation.get
 import io.ktor.http.HttpStatusCode
@@ -55,9 +54,11 @@ fun main() {
             authenticate {
                 get("hello", {
                     description = "Protected 'Hello World'-Endpoint"
-                    response(HttpStatusCode.OK) {
-                        description = "Successful Request"
-                        body(String::class.java) { description = "the response" }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "Successful Request"
+                            body(String::class.java) { description = "the response" }
+                        }
                     }
                 }) {
                     call.respondText("Hello World!")

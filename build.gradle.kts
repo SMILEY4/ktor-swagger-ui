@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.smiley4"
-version = "0.2"
+version = "0.2.0"
 
 repositories {
     mavenCentral()
