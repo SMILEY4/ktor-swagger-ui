@@ -11,11 +11,10 @@ import io.ktor.server.webjars.Webjars
 
 val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::SwaggerUIPluginConfig) {
 
-    if (application.pluginOrNull(Webjars) == null) {
-        application.install(Webjars)
-    }
-
     on(MonitoringEvent(ApplicationStarted)) { application ->
+        if (application.pluginOrNull(Webjars) == null) {
+            application.install(Webjars)
+        }
         ApiSpec.build(application, pluginConfig)
     }
 
