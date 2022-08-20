@@ -20,7 +20,7 @@ import mu.KotlinLogging
  */
 class OApiPathsGenerator {
 
-    val logger = KotlinLogging.logger {}
+    private val logger = KotlinLogging.logger {}
 
 
     /**
@@ -30,7 +30,14 @@ class OApiPathsGenerator {
         return Paths().apply {
             collectRoutes(application, config.getSwaggerUI().swaggerUrl, config.getSwaggerUI().forwardRoot)
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
-                .map { OApiPathGenerator().generate(it, config.automaticUnauthorizedResponses, config.defaultSecurityScheme) }
+                .map {
+                    OApiPathGenerator().generate(
+                        it,
+                        config.automaticUnauthorizedResponses,
+                        config.defaultSecuritySchemeName,
+                        config.automaticTagGenerator
+                    )
+                }
                 .forEach { addPathItem(it.first, it.second) }
         }
     }

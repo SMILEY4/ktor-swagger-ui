@@ -21,21 +21,29 @@ class RouteDocumentation {
      */
     var description: String? = null
 
+
+    /**
+     * A declaration of which security mechanism can be used for this operation.
+     * If not specified, defaultSecuritySchemeName (global plugin config) will be used
+     */
+    var securitySchemeName: String? = null
+
+
     /**
      * A list of parameters that are applicable for this operation
      */
     private val parameters = mutableListOf<RouteParameter>()
 
-    fun pathParameter(block: RouteParameter.() -> Unit) {
-        parameters.add(RouteParameter(RouteParameter.Location.PATH).apply(block))
+    fun pathParameter(name: String, schema: Class<*>, block: RouteParameter.() -> Unit) {
+        parameters.add(RouteParameter(name, schema, RouteParameter.Location.PATH).apply(block))
     }
 
-    fun queryParameter(block: RouteParameter.() -> Unit) {
-        parameters.add(RouteParameter(RouteParameter.Location.QUERY).apply(block))
+    fun queryParameter(name: String, schema: Class<*>, block: RouteParameter.() -> Unit) {
+        parameters.add(RouteParameter(name, schema, RouteParameter.Location.QUERY).apply(block))
     }
 
-    fun headerParameter(block: RouteParameter.() -> Unit) {
-        parameters.add(RouteParameter(RouteParameter.Location.HEADER).apply(block))
+    fun headerParameter(name: String, schema: Class<*>, block: RouteParameter.() -> Unit) {
+        parameters.add(RouteParameter(name, schema, RouteParameter.Location.HEADER).apply(block))
     }
 
     fun getParameters(): List<RouteParameter> = parameters
@@ -46,13 +54,11 @@ class RouteDocumentation {
      */
     private var requestBody: RouteBody? = null
 
-    fun typedRequestBody(schema: Class<*>, block: RouteTypedBody.() -> Unit) {
-        requestBody = RouteTypedBody(schema).apply(block)
+    fun requestBody(schema: Class<*>, block: RouteBody.() -> Unit) {
+        requestBody = RouteBody(schema).apply(block)
     }
 
-    fun textRequestBody(block: RoutePlainTextBody.() -> Unit) {
-        requestBody = RoutePlainTextBody().apply(block)
-    }
+    fun requestBody(schema: Class<*>) = requestBody(schema) {}
 
     fun getRequestBody() = requestBody
 
@@ -66,39 +72,37 @@ class RouteDocumentation {
         responses[responseCode] = RouteResponse(responseCode).apply(block)
     }
 
+    fun response(responseCode: HttpStatusCode, description: String) = response(responseCode) { this.description = description }
+
     fun getResponses() = responses.values.toList()
 
 }
 
 
-class RouteParameter(val location: Location) {
+class RouteParameter(
+    /**
+     * The name (case-sensitive) of the parameter
+     */
+    val name: String,
+    /**
+     * The schema defining the type used for the parameter.
+     * Examples:
+     * - Int::class.java
+     * - UByte::class.java
+     * - BooleanArray::class.java
+     * - Array<String>::class.java
+     * - Array<MyClass>::class.java
+     */
+    val schema: Class<*>,
+    /**
+     * Location of the parameter
+     */
+    val location: Location
+) {
 
     enum class Location {
         QUERY, HEADER, PATH
     }
-
-    enum class Type {
-        STRING,
-        INTEGER,
-        NUMBER,
-        BOOLEAN,
-    }
-
-    sealed class AbstractSchema
-
-    sealed class TypedSchema : AbstractSchema()
-
-    class PrimitiveSchema(val type: Type) : TypedSchema()
-
-    class ObjectSchema(val type: Class<*>) : TypedSchema()
-
-    class ArraySchema(val type: TypedSchema) : AbstractSchema()
-
-
-    /**
-     * The name of the parameter. Parameter names are case-sensitive
-     */
-    var name: String? = null
 
 
     /**
@@ -139,37 +143,24 @@ class RouteParameter(val location: Location) {
      */
     var allowReserved: Boolean? = null
 
-
-    /**
-     * The schema defining the type used for the parameter.
-     */
-    private var schema: AbstractSchema? = null
-
-    fun schema(type: Type) {
-        schema = PrimitiveSchema(type)
-    }
-
-    fun schema(type: Class<*>) {
-        schema = ObjectSchema(type)
-    }
-
-    fun schemaArray(type: Type) {
-        schema = ArraySchema(PrimitiveSchema(type))
-    }
-
-    fun schemaArray(type: Class<*>) {
-        schema = ArraySchema(ObjectSchema(type))
-    }
-
-    fun getSchema() = schema
-
 }
 
 
 /**
  * Describes a single request/response body.
  */
-sealed class RouteBody {
+class RouteBody(
+    /**
+     * The schema defining the type used for the parameter.
+     * Examples:
+     * - Int::class.java
+     * - UByte::class.java
+     * - BooleanArray::class.java
+     * - Array<String>::class.java
+     * - Array<MyClass>::class.java
+     */
+    val schema: Class<*>,
+) {
 
     /**
      * A brief description of the request body
@@ -183,18 +174,6 @@ sealed class RouteBody {
     var required: Boolean? = null
 
 }
-
-
-/**
- * Describes a single request/response body defined by a java/kotlin class as json
- */
-class RouteTypedBody(val schema: Class<*>) : RouteBody()
-
-
-/**
- * Describes a single request/response body defined as plain text
- */
-class RoutePlainTextBody : RouteBody()
 
 
 /**
@@ -214,13 +193,11 @@ class RouteResponse(val statusCode: HttpStatusCode) {
      */
     private var body: RouteBody? = null
 
-    fun typedBody(schema: Class<*>, block: RouteTypedBody.() -> Unit) {
-        body = RouteTypedBody(schema).apply(block)
+    fun body(schema: Class<*>, block: RouteBody.() -> Unit) {
+        body = RouteBody(schema).apply(block)
     }
 
-    fun textBody(block: RoutePlainTextBody.() -> Unit) {
-        body = RoutePlainTextBody().apply(block)
-    }
+    fun body(schema: Class<*>) = body(schema) {}
 
     fun getBody() = body
 

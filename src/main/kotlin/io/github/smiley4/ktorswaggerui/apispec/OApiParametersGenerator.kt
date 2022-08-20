@@ -4,6 +4,7 @@ import io.github.smiley4.ktorswaggerui.documentation.RouteParameter
 import io.github.smiley4.ktorswaggerui.routing.SchemaRef
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.parameters.Parameter
+import java.math.BigDecimal
 
 /**
  * Generator for OpenAPI Parameters
@@ -22,53 +23,13 @@ class OApiParametersGenerator {
                     RouteParameter.Location.PATH -> "path"
                 }
                 name = paramCfg.name
+                schema = OApiSchemaGenerator().generate(paramCfg.schema)
                 description = paramCfg.description
                 required = paramCfg.required
                 deprecated = paramCfg.deprecated
                 allowEmptyValue = paramCfg.allowEmptyValue
                 example = paramCfg.explode
                 allowReserved = paramCfg.allowReserved
-                schema = Schema<String>().apply {
-                    when (val paramSchema = paramCfg.getSchema()) {
-                        is RouteParameter.ArraySchema -> {
-                            type = "array"
-                            items = Schema<String>().apply {
-                                when (paramSchema.type) {
-                                    is RouteParameter.ObjectSchema -> {
-                                        type = "object"
-                                        additionalProperties = Schema<String>().apply {
-                                            `$ref` = SchemaRef.refOfClass(paramSchema.type.type)
-                                        }
-                                    }
-                                    is RouteParameter.PrimitiveSchema -> {
-                                        type = when (paramSchema.type.type) {
-                                            RouteParameter.Type.STRING -> "string"
-                                            RouteParameter.Type.INTEGER -> "integer"
-                                            RouteParameter.Type.NUMBER -> "number"
-                                            RouteParameter.Type.BOOLEAN -> "boolean"
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                        is RouteParameter.ObjectSchema -> {
-                            type = "object"
-                            additionalProperties = Schema<String>().apply {
-                                `$ref` = SchemaRef.refOfClass(paramSchema.type)
-                            }
-                        }
-                        is RouteParameter.PrimitiveSchema -> {
-                            type = when (paramSchema.type) {
-                                RouteParameter.Type.STRING -> "string"
-                                RouteParameter.Type.INTEGER -> "integer"
-                                RouteParameter.Type.NUMBER -> "number"
-                                RouteParameter.Type.BOOLEAN -> "boolean"
-                            }
-                        }
-                        else -> {}
-                    }
-                }
             }
         }
     }

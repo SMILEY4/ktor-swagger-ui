@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
+import io.github.smiley4.ktorswaggerui.AuthScheme
+import io.github.smiley4.ktorswaggerui.AuthType
+import io.github.smiley4.ktorswaggerui.KeyLocation
 import io.github.smiley4.ktorswaggerui.OpenApiSecuritySchemeConfig
 import io.swagger.v3.oas.models.security.SecurityScheme
 
@@ -16,30 +19,30 @@ class OApiSecuritySchemesGenerator {
             configs.forEach {
                 put(it.name, SecurityScheme().apply {
                     type = when (it.type) {
-                        OpenApiSecuritySchemeConfig.Type.API_KEY -> SecurityScheme.Type.APIKEY
-                        OpenApiSecuritySchemeConfig.Type.HTTP -> SecurityScheme.Type.HTTP
-                        OpenApiSecuritySchemeConfig.Type.OAUTH2 -> SecurityScheme.Type.OAUTH2
-                        OpenApiSecuritySchemeConfig.Type.OPENID_CONNECT -> SecurityScheme.Type.OPENIDCONNECT
-                        OpenApiSecuritySchemeConfig.Type.MUTUAL_TLS -> SecurityScheme.Type.MUTUALTLS
+                        AuthType.API_KEY -> SecurityScheme.Type.APIKEY
+                        AuthType.HTTP -> SecurityScheme.Type.HTTP
+                        AuthType.OAUTH2 -> SecurityScheme.Type.OAUTH2
+                        AuthType.OPENID_CONNECT -> SecurityScheme.Type.OPENIDCONNECT
+                        AuthType.MUTUAL_TLS -> SecurityScheme.Type.MUTUALTLS
                         null -> null
                     }
                     name = it.name
                     `in` = when (it.location) {
-                        OpenApiSecuritySchemeConfig.KeyLocation.QUERY -> SecurityScheme.In.QUERY
-                        OpenApiSecuritySchemeConfig.KeyLocation.HEADER -> SecurityScheme.In.HEADER
-                        OpenApiSecuritySchemeConfig.KeyLocation.COOKIE -> SecurityScheme.In.COOKIE
+                        KeyLocation.QUERY -> SecurityScheme.In.QUERY
+                        KeyLocation.HEADER -> SecurityScheme.In.HEADER
+                        KeyLocation.COOKIE -> SecurityScheme.In.COOKIE
                         null -> null
                     }
                     scheme = when(it.scheme) {
-                        OpenApiSecuritySchemeConfig.Scheme.BASIC -> "Basic"
-                        OpenApiSecuritySchemeConfig.Scheme.BEARER -> "Bearer"
-                        OpenApiSecuritySchemeConfig.Scheme.DIGEST -> "Digest"
-                        OpenApiSecuritySchemeConfig.Scheme.HOBA -> "HOBA"
-                        OpenApiSecuritySchemeConfig.Scheme.MUTUAL -> "Mutual"
-                        OpenApiSecuritySchemeConfig.Scheme.OAUTH -> "OAuth"
-                        OpenApiSecuritySchemeConfig.Scheme.SCRAM_SHA_1 -> "SCRAM-SHA-1"
-                        OpenApiSecuritySchemeConfig.Scheme.SCRAM_SHA_256 -> "SCRAM-SHA-256"
-                        OpenApiSecuritySchemeConfig.Scheme.VAPID -> "vapid"
+                        AuthScheme.BASIC -> "Basic"
+                        AuthScheme.BEARER -> "Bearer"
+                        AuthScheme.DIGEST -> "Digest"
+                        AuthScheme.HOBA -> "HOBA"
+                        AuthScheme.MUTUAL -> "Mutual"
+                        AuthScheme.OAUTH -> "OAuth"
+                        AuthScheme.SCRAM_SHA_1 -> "SCRAM-SHA-1"
+                        AuthScheme.SCRAM_SHA_256 -> "SCRAM-SHA-256"
+                        AuthScheme.VAPID -> "vapid"
                         else -> null
                     }
                 })

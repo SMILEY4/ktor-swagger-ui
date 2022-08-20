@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.documentation.RouteParameter
 import io.github.smiley4.ktorswaggerui.documentation.get
 import io.github.smiley4.ktorswaggerui.documentation.post
 import io.ktor.http.HttpStatusCode
@@ -17,7 +16,9 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import java.util.Random
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost") {
@@ -35,6 +36,7 @@ fun main() {
                 url = "http://localhost:8080"
                 description = "Development Server"
             }
+            automaticTagGenerator = { url -> url.firstOrNull() }
         }
         install(ContentNegotiation) {
             jackson {
@@ -47,34 +49,30 @@ fun main() {
         }
         routing {
             get("hello", {
+                tags = listOf("test")
                 description = "Hello World Endpoint"
                 response(HttpStatusCode.OK) {
                     description = "Successful Request"
-                    textBody { description = "the response" }
+                    body(String::class.java) { description = "the response" }
                 }
-                response(HttpStatusCode.InternalServerError) {
-                    description = "Something unexpected happened"
-                }
+                response(HttpStatusCode.InternalServerError, "Something unexpected happened")
             }) {
                 call.respondText("Hello World!")
             }
             post("math/{operation}", {
+                tags = listOf("test")
                 description = "Performs the given operation on the given values and returns the result"
-                pathParameter {
-                    name = "operation"
+                pathParameter("operation", String::class.java) {
                     description = "the math operation to perform. Either 'add' or 'sub'"
-                    schema(RouteParameter.Type.STRING)
                 }
-                typedRequestBody(MathRequest::class.java) {}
+                requestBody(MathRequest::class.java)
                 response(HttpStatusCode.OK) {
                     description = "The operation was successful"
-                    typedBody(MathResult::class.java) {
+                    body(MathResult::class.java) {
                         description = "The result of the operation"
                     }
                 }
-                response(HttpStatusCode.BadRequest) {
-                    description = "An invalid operation was provided"
-                }
+                response(HttpStatusCode.BadRequest, "An invalid operation was provided")
             }) {
                 val operation = call.parameters["operation"]!!
                 call.receive<MathRequest>().let { request ->
@@ -85,6 +83,17 @@ fun main() {
                     }
                 }
             }
+            post("random/results", {
+                response(HttpStatusCode.OK) { body(Array<MathResult>::class.java) }
+            }) {
+                call.respond(HttpStatusCode.OK, (0..5).map { MathResult(Random().nextInt()) })
+            }
+            post("random/numbers", {
+                response(HttpStatusCode.OK) { body(IntArray::class.java) }
+            }) {
+                call.respond(HttpStatusCode.OK, (0..5).map { Random().nextInt() })
+            }
+
         }
     }.start(wait = true)
 }

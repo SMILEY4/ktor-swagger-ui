@@ -12,7 +12,14 @@ class SwaggerUIPluginConfig {
     /**
      * The name of the security scheme to use for the protected paths
      */
-    var defaultSecurityScheme: String? = null
+    var defaultSecuritySchemeName: String? = null
+
+
+    /**
+     * function to generate a tag from the given url for a path. Result will be added to the tags defined for each path
+     */
+    var automaticTagGenerator: ((url: List<String>) -> String?)? = null
+
 
     /**
      * Swagger-UI configuration
@@ -55,8 +62,8 @@ class SwaggerUIPluginConfig {
      */
     private val securitySchemes = mutableListOf<OpenApiSecuritySchemeConfig>()
 
-    fun securityScheme(block: OpenApiSecuritySchemeConfig.() -> Unit) {
-        securitySchemes.add(OpenApiSecuritySchemeConfig().apply(block))
+    fun securityScheme(name: String, block: OpenApiSecuritySchemeConfig.() -> Unit) {
+        securitySchemes.add(OpenApiSecuritySchemeConfig(name).apply(block))
     }
 
     fun getSecuritySchemes(): List<OpenApiSecuritySchemeConfig> = securitySchemes
@@ -122,7 +129,7 @@ class OpenApiInfoConfig {
     private var contact: OpenApiContactConfig? = null
 
     fun contact(block: OpenApiContactConfig.() -> Unit) {
-        contact =  OpenApiContactConfig().apply(block)
+        contact = OpenApiContactConfig().apply(block)
     }
 
     fun getContact() = contact
@@ -221,36 +228,35 @@ class OpenApiExternalDocumentationConfig {
 }
 
 
+enum class AuthType {
+    API_KEY, HTTP, OAUTH2, OPENID_CONNECT, MUTUAL_TLS
+}
+
+enum class KeyLocation {
+    QUERY, HEADER, COOKIE
+}
+
+enum class AuthScheme {
+    //  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
+    BASIC, BEARER, DIGEST, HOBA, MUTUAL, OAUTH, SCRAM_SHA_1, SCRAM_SHA_256, VAPID
+}
+
+
 /**
  * Defines a security scheme that can be used by the operations. Supported schemes are HTTP authentication, an API key (either as a header,
  * a cookie parameter or as a query parameter), OAuth2's common flows (implicit, password, client credentials and authorization code)
  */
-class OpenApiSecuritySchemeConfig {
-
-    enum class Type {
-        API_KEY, HTTP, OAUTH2, OPENID_CONNECT, MUTUAL_TLS
-    }
-
-    enum class KeyLocation {
-        QUERY, HEADER, COOKIE
-    }
-
-    enum class Scheme {
-        //  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
-        BASIC, BEARER, DIGEST, HOBA, MUTUAL, OAUTH, SCRAM_SHA_1, SCRAM_SHA_256, VAPID
-    }
-
+class OpenApiSecuritySchemeConfig(
+    /**
+     * The name of the header, query or cookie parameter to be used
+     */
+    val name: String
+) {
 
     /**
      * The type of the security scheme
      */
-    var type: Type? = null
-
-
-    /**
-     * The name of the header, query or cookie parameter to be used
-     */
-    var name: String = ""
+    var type: AuthType? = null
 
 
     /**
@@ -262,7 +268,7 @@ class OpenApiSecuritySchemeConfig {
     /**
      * The name of the HTTP Authorization scheme to be used
      */
-    var scheme: Scheme? = null
+    var scheme: AuthScheme? = null
 
 
     /**

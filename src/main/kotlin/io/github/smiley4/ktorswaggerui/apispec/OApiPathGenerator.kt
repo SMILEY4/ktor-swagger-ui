@@ -16,10 +16,16 @@ class OApiPathGenerator {
     /**
      * Generate the OpenAPI Path-Item from the given config
      */
-    fun generate(config: RouteMeta, autoUnauthorizedResponses: Boolean, defaultSecurityScheme: String?): Pair<String, PathItem> {
+    fun generate(
+        config: RouteMeta,
+        autoUnauthorizedResponses: Boolean,
+        defaultSecurityScheme: String?,
+        tagGenerator: ((url: List<String>) -> String?)?
+    ): Pair<String, PathItem> {
         return config.path to PathItem().apply {
             val operation = Operation().apply {
-                tags = config.documentation.tags
+                tags = (config.documentation.tags + tagGenerator?.let { it(config.path.split("/").filter { it.isNotEmpty() }) })
+                    .filterNotNull()
                 summary = config.documentation.summary
                 description = config.documentation.description
                 parameters = OApiParametersGenerator().generate(config.documentation.getParameters())
@@ -36,12 +42,14 @@ class OApiPathGenerator {
                         }
                     }
                 }
-                if (config.protected && defaultSecurityScheme != null) {
-                    security = mutableListOf(
-                        SecurityRequirement().apply {
-                            addList(defaultSecurityScheme, emptyList())
-                        }
-                    )
+                if (config.protected) {
+                    (config.documentation.securitySchemeName ?: defaultSecurityScheme)?.let { schemeName ->
+                        security = mutableListOf(
+                            SecurityRequirement().apply {
+                                addList(schemeName, emptyList())
+                            }
+                        )
+                    }
                 }
             }
             when (config.method) {
