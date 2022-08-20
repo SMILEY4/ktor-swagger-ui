@@ -37,10 +37,21 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            artifactId = "ktor-swagger-ui"
             from(components["java"])
+            pom {
+                name.set("Ktor Swagger-UI")
+                description.set("Ktor plugin to document routes and enable Swagger UI ")
+                url.set("https://github.com/SMILEY4/ktor-swagger-ui")
+            }
         }
     }
 }
