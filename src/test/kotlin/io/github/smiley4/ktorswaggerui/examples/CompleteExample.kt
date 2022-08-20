@@ -53,7 +53,7 @@ fun main() {
                 response {
                     HttpStatusCode.OK to {
                         description = "Successful Request"
-                        body(String::class.java) { description = "the response" }
+                        body(String::class) { description = "the response" }
                     }
                     HttpStatusCode.InternalServerError to {
                         description = "Something unexpected happened"
@@ -66,15 +66,15 @@ fun main() {
                 tags = listOf("test")
                 description = "Performs the given operation on the given values and returns the result"
                 request {
-                    pathParameter("operation", String::class.java) {
+                    pathParameter("operation", String::class) {
                         description = "the math operation to perform. Either 'add' or 'sub'"
                     }
-                    body(MathRequest::class.java)
+                    body(MathRequest::class)
                 }
                 response {
                     HttpStatusCode.OK to {
                         description = "The operation was successful"
-                        body(MathResult::class.java) {
+                        body(MathResult::class) {
                             description = "The result of the operation"
                         }
                     }
@@ -95,7 +95,7 @@ fun main() {
             post("random/results", {
                 response {
                     HttpStatusCode.OK to {
-                        body(Array<MathResult>::class.java)
+                        body(Array<MathResult>::class)
                     }
                 }
             }) {
@@ -104,7 +104,7 @@ fun main() {
             post("random/numbers", {
                 response {
                     HttpStatusCode.OK to {
-                        body(IntArray::class.java)
+                        body(IntArray::class)
                     }
                 }
             }) {
@@ -112,11 +112,11 @@ fun main() {
             }
             post("echo/{color}", {
                 request {
-                    pathParameter("color", Color::class.java)
+                    pathParameter("color", Color::class)
                 }
                 response {
                     HttpStatusCode.OK to {
-                        body(String::class.java)
+                        body(String::class)
                     }
                 }
             }) {

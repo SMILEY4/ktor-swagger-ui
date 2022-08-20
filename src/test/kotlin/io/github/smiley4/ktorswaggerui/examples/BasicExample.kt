@@ -34,7 +34,7 @@ fun main() {
                 response {
                     HttpStatusCode.OK to {
                         description = "Successful Request"
-                        body(String::class.java) { description = "the response" }
+                        body(String::class) { description = "the response" }
                     }
                     HttpStatusCode.InternalServerError to {
                         description = "Something unexpected happened"

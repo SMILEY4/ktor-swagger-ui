@@ -20,6 +20,7 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import mu.KotlinLogging
 import java.net.URL
+import kotlin.reflect.KClass
 
 /**
  * Registers and handles routes required for the swagger-ui

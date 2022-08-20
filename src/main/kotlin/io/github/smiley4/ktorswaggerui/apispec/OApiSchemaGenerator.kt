@@ -3,6 +3,7 @@ package io.github.smiley4.ktorswaggerui.apispec
 import io.github.smiley4.ktorswaggerui.routing.SchemaRef
 import io.swagger.v3.oas.models.media.Schema
 import java.math.BigDecimal
+import kotlin.reflect.KClass
 
 /**
  * Generator for an OpenAPI Schema Object
@@ -12,68 +13,68 @@ class OApiSchemaGenerator {
     /**
      * Generate the Content Object from the given config
      */
-    fun generate(schema: Class<*>): Schema<Any> {
+    fun generate(schema: KClass<*>): Schema<Any> {
         return Schema<Any>().apply {
             when (schema) {
-                Byte::class.java -> {
+                Byte::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(Byte.MIN_VALUE.toLong())
                     maximum = BigDecimal.valueOf(Byte.MAX_VALUE.toLong())
                 }
-                Short::class.java -> {
+                Short::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(Short.MIN_VALUE.toLong())
                     maximum = BigDecimal.valueOf(Short.MAX_VALUE.toLong())
                 }
-                Int::class.java -> {
+                Int::class -> {
                     type = "integer"
                     format = "int32"
                 }
-                Long::class.java -> {
+                Long::class -> {
                     type = "integer"
                     format = "int64"
                 }
-                UByte::class.java -> {
+                UByte::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(UByte.MIN_VALUE.toLong())
                     maximum = BigDecimal.valueOf(UByte.MAX_VALUE.toLong())
                 }
-                UShort::class.java -> {
+                UShort::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(UShort.MIN_VALUE.toLong())
                     maximum = BigDecimal.valueOf(UShort.MAX_VALUE.toLong())
                 }
-                UInt::class.java -> {
+                UInt::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(UInt.MIN_VALUE.toLong())
                     maximum = BigDecimal.valueOf(UInt.MAX_VALUE.toLong())
                 }
-                ULong::class.java -> {
+                ULong::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(ULong.MIN_VALUE.toLong())
                     maximum = BigDecimal.valueOf(ULong.MAX_VALUE.toLong())
                 }
-                Float::class.java -> {
+                Float::class -> {
                     type = "number"
                     format = "float"
                 }
-                Double::class.java -> {
+                Double::class -> {
                     type = "number"
                     format = "double"
                 }
-                Boolean::class.java -> {
+                Boolean::class -> {
                     type = "boolean"
                 }
-                Char::class.java -> {
+                Char::class -> {
                     type = "string"
                     minLength = 1
                     maxLength = 1
                 }
-                String::class.java -> {
+                String::class -> {
                     type = "string"
                 }
 
-                Array<Byte>::class.java, ByteArray::class.java -> {
+                Array<Byte>::class, ByteArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
@@ -81,7 +82,7 @@ class OApiSchemaGenerator {
                         maximum = BigDecimal.valueOf(Byte.MAX_VALUE.toLong())
                     }
                 }
-                Array<Short>::class.java, ShortArray::class.java -> {
+                Array<Short>::class, ShortArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
@@ -89,21 +90,21 @@ class OApiSchemaGenerator {
                         maximum = BigDecimal.valueOf(Short.MAX_VALUE.toLong())
                     }
                 }
-                Array<Int>::class.java, IntArray::class.java -> {
+                Array<Int>::class, IntArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
                         format = "int32"
                     }
                 }
-                Array<Long>::class.java, LongArray::class.java -> {
+                Array<Long>::class, LongArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
                         format = "int64"
                     }
                 }
-                Array<UByte>::class.java -> {
+                Array<UByte>::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
@@ -111,7 +112,7 @@ class OApiSchemaGenerator {
                         maximum = BigDecimal.valueOf(UByte.MAX_VALUE.toLong())
                     }
                 }
-                Array<UShort>::class.java -> {
+                Array<UShort>::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
@@ -119,7 +120,7 @@ class OApiSchemaGenerator {
                         maximum = BigDecimal.valueOf(UShort.MAX_VALUE.toLong())
                     }
                 }
-                Array<UInt>::class.java -> {
+                Array<UInt>::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
@@ -127,7 +128,7 @@ class OApiSchemaGenerator {
                         maximum = BigDecimal.valueOf(UInt.MAX_VALUE.toLong())
                     }
                 }
-                Array<ULong>::class.java -> {
+                Array<ULong>::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "integer"
@@ -135,14 +136,14 @@ class OApiSchemaGenerator {
                         maximum = BigDecimal.valueOf(ULong.MAX_VALUE.toLong())
                     }
                 }
-                Array<Float>::class.java, FloatArray::class.java -> {
+                Array<Float>::class, FloatArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "number"
                         format = "float"
                     }
                 }
-                Array<Double>::class.java, DoubleArray::class.java -> {
+                Array<Double>::class, DoubleArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "number"
@@ -150,13 +151,13 @@ class OApiSchemaGenerator {
                     }
                 }
 
-                Array<Boolean>::class.java, BooleanArray::class.java -> {
+                Array<Boolean>::class, BooleanArray::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "boolean"
                     }
                 }
-                Array<Char>::class.java -> {
+                Array<Char>::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "string"
@@ -164,25 +165,25 @@ class OApiSchemaGenerator {
                         maxLength = 1
                     }
                 }
-                Array<String>::class.java -> {
+                Array<String>::class -> {
                     type = "array"
                     items = Schema<String>().apply {
                         type = "string"
                     }
                 }
                 else -> {
-                    if (schema.isArray) {
+                    if (schema.java.isArray) {
                         type = "array"
                         items = Schema<String>().apply {
                             type = "object"
-                            `$ref` = SchemaRef.refOfClass(schema.componentType)
+                            `$ref` = SchemaRef.refOfClass(schema.java.componentType)
                         }
-                    } else if (schema.isEnum) {
+                    } else if (schema.java.isEnum) {
                         type = "string"
-                        enum = schema.enumConstants.map { it.toString() }
+                        enum = schema.java.enumConstants.map { it.toString() }
                     } else {
                         type = "object"
-                        `$ref` = SchemaRef.refOfClass(schema)
+                        `$ref` = SchemaRef.refOfClass(schema.java)
                     }
                 }
             }

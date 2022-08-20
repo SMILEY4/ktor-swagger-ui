@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.documentation
 
 import io.ktor.http.HttpStatusCode
+import kotlin.reflect.KClass
 
 class RouteDocumentation {
 
@@ -62,24 +63,24 @@ class RequestDocumentation {
      */
     private val parameters = mutableListOf<RequestParameterDocumentation>()
 
-    fun pathParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
+    fun pathParameter(name: String, schema: KClass<*>, block: RequestParameterDocumentation.() -> Unit) {
         parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.PATH).apply(block))
     }
 
-    fun pathParameter(name: String, schema: Class<*>) = pathParameter(name, schema) {}
+    fun pathParameter(name: String, schema: KClass<*>) = pathParameter(name, schema) {}
 
-    fun queryParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
+    fun queryParameter(name: String, schema: KClass<*>, block: RequestParameterDocumentation.() -> Unit) {
         parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.QUERY).apply(block))
     }
 
-    fun queryParameter(name: String, schema: Class<*>) = queryParameter(name, schema) {}
+    fun queryParameter(name: String, schema: KClass<*>) = queryParameter(name, schema) {}
 
 
-    fun headerParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
+    fun headerParameter(name: String, schema: KClass<*>, block: RequestParameterDocumentation.() -> Unit) {
         parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.HEADER).apply(block))
     }
 
-    fun headerParameter(name: String, schema: Class<*>) = headerParameter(name, schema) {}
+    fun headerParameter(name: String, schema: KClass<*>) = headerParameter(name, schema) {}
 
 
     fun getParameters(): List<RequestParameterDocumentation> = parameters
@@ -90,11 +91,11 @@ class RequestDocumentation {
      */
     private var body: BodyDocumentation? = null
 
-    fun body(schema: Class<*>, block: BodyDocumentation.() -> Unit) {
+    fun body(schema: KClass<*>, block: BodyDocumentation.() -> Unit) {
         body = BodyDocumentation(schema).apply(block)
     }
 
-    fun body(schema: Class<*>) = body(schema) {}
+    fun body(schema: KClass<*>) = body(schema) {}
 
     fun getBody() = body
 
@@ -109,13 +110,13 @@ class RequestParameterDocumentation(
     /**
      * The schema defining the type used for the parameter.
      * Examples:
-     * - Int::class.java
-     * - UByte::class.java
-     * - BooleanArray::class.java
-     * - Array<String>::class.java
-     * - Array<MyClass>::class.java
+     * - Int::class
+     * - UByte::class
+     * - BooleanArray::class
+     * - Array<String>::class
+     * - Array<MyClass>::class
      */
-    val schema: Class<*>,
+    val schema: KClass<*>,
     /**
      * Location of the parameter
      */
@@ -198,11 +199,11 @@ class SingleResponseDocumentation(val statusCode: HttpStatusCode) {
      */
     private var body: BodyDocumentation? = null
 
-    fun body(schema: Class<*>, block: BodyDocumentation.() -> Unit) {
+    fun body(schema: KClass<*>, block: BodyDocumentation.() -> Unit) {
         body = BodyDocumentation(schema).apply(block)
     }
 
-    fun body(schema: Class<*>) = body(schema) {}
+    fun body(schema: KClass<*>) = body(schema) {}
 
     fun getBody() = body
 
@@ -222,7 +223,7 @@ class BodyDocumentation(
      * - Array<String>::class.java
      * - Array<MyClass>::class.java
      */
-    val schema: Class<*>,
+    val schema: KClass<*>,
 ) {
 
     /**
