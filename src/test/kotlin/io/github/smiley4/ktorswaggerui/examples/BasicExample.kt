@@ -110,7 +110,18 @@ fun main() {
             }) {
                 call.respond(HttpStatusCode.OK, (0..5).map { Random().nextInt() })
             }
-
+            post("echo/{color}", {
+                request {
+                    pathParameter("color", Color::class.java)
+                }
+                response {
+                    HttpStatusCode.OK to {
+                        body(String::class.java)
+                    }
+                }
+            }) {
+                call.respond(HttpStatusCode.OK, Color.valueOf(call.parameters["color"]!!).toString())
+            }
         }
     }.start(wait = true)
 }
@@ -123,3 +134,7 @@ data class MathRequest(
 data class MathResult(
     val value: Int
 )
+
+enum class Color {
+    RED, GREEN, BLUE
+}

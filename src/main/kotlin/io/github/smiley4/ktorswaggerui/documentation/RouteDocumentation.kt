@@ -66,13 +66,21 @@ class RequestDocumentation {
         parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.PATH).apply(block))
     }
 
+    fun pathParameter(name: String, schema: Class<*>) = pathParameter(name, schema) {}
+
     fun queryParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
         parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.QUERY).apply(block))
     }
 
+    fun queryParameter(name: String, schema: Class<*>) = queryParameter(name, schema) {}
+
+
     fun headerParameter(name: String, schema: Class<*>, block: RequestParameterDocumentation.() -> Unit) {
         parameters.add(RequestParameterDocumentation(name, schema, RequestParameterDocumentation.Location.HEADER).apply(block))
     }
+
+    fun headerParameter(name: String, schema: Class<*>) = headerParameter(name, schema) {}
+
 
     fun getParameters(): List<RequestParameterDocumentation> = parameters
 

@@ -177,6 +177,9 @@ class OApiSchemaGenerator {
                             type = "object"
                             `$ref` = SchemaRef.refOfClass(schema.componentType)
                         }
+                    } else if (schema.isEnum) {
+                        type = "string"
+                        enum = schema.enumConstants.map { it.toString() }
                     } else {
                         type = "object"
                         `$ref` = SchemaRef.refOfClass(schema)
