@@ -23,6 +23,8 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
 
     testImplementation("io.ktor:ktor-server-netty-jvm:2.0.1")
+    testImplementation("io.ktor:ktor-server-content-negotiation:2.0.1")
+    testImplementation("io.ktor:ktor-serialization-jackson:2.0.1")
     testImplementation("ch.qos.logback:logback-classic:1.2.11")
     testImplementation("io.ktor:ktor-server-call-logging:2.0.1")
 }

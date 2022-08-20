@@ -13,11 +13,15 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.TrailingSlashRouteSelector
 import io.swagger.v3.oas.models.Paths
+import mu.KotlinLogging
 
 /**
  * Generator for the OpenAPI Paths
  */
 class OApiPathsGenerator {
+
+    val logger = KotlinLogging.logger {}
+
 
     /**
      * Generate the OpenAPI Paths from the given config and application
@@ -25,6 +29,7 @@ class OApiPathsGenerator {
     fun generate(config: SwaggerUIPluginConfig, application: Application): Paths {
         return Paths().apply {
             collectRoutes(application, config.getSwaggerUI().swaggerUrl, config.getSwaggerUI().forwardRoot)
+                .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
                 .map { OApiPathGenerator().generate(it, config.automaticUnauthorizedResponses, config.defaultSecurityScheme) }
                 .forEach { addPathItem(it.first, it.second) }
         }
@@ -42,11 +47,19 @@ class OApiPathsGenerator {
                     protected = isProtected(route)
                 )
             }
-            .filter { it.path != swaggerUrl }
-            .filter { it.path != "$swaggerUrl/{filename}" }
-            .filter { it.path != "$swaggerUrl/schemas/{schemaname}" }
+            .filter { removeLeadingSlash(it.path) != removeLeadingSlash(swaggerUrl) }
+            .filter { removeLeadingSlash(it.path) != removeLeadingSlash("$swaggerUrl/{filename}") }
+            .filter { removeLeadingSlash(it.path) != removeLeadingSlash("$swaggerUrl/schemas/{schemaname}") }
             .filter { !forwardRoot || it.path != "/" }
             .toList()
+    }
+
+    private fun removeLeadingSlash(str: String): String {
+        return if (str.startsWith("/")) {
+            str.substring(1)
+        } else {
+            str
+        }
     }
 
     private fun getDocumentation(route: Route): RouteDocumentation {
