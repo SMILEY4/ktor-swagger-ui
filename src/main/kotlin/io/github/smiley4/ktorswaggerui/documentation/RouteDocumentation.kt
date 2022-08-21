@@ -237,5 +237,42 @@ class BodyDocumentation(
      */
     var required: Boolean? = null
 
+
+    /**
+     * Examples for this body
+     */
+    private val examples = mutableMapOf<String, ExampleDocumentation>()
+
+    fun example(name: String, value: Any, block: ExampleDocumentation.() -> Unit) {
+        examples[name] = ExampleDocumentation(value).apply(block)
+    }
+
+    fun example(name: String, value: Any) = example(name, value) {}
+
+    fun getExamples(): Map<String, ExampleDocumentation> = examples
+
 }
 
+
+/**
+ * Documentation for an example object
+ */
+class ExampleDocumentation(
+    /**
+     * The actual example object/value
+     */
+    val value: Any
+) {
+
+    /**
+     * A short description of the example
+     */
+    var summary: String? = null
+
+
+    /**
+     * A long description of the example
+     */
+    var description: String? = null
+
+}

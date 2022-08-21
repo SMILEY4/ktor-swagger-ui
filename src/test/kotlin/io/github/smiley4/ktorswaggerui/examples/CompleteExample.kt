@@ -69,13 +69,28 @@ fun main() {
                     pathParameter("operation", String::class) {
                         description = "the math operation to perform. Either 'add' or 'sub'"
                     }
-                    body(MathRequest::class)
+                    body(MathRequest::class) {
+                        example("First", MathRequest(13, 19)) {
+                            description = "Either an addition of 13 and 19 or a subtraction of 19 from 13"
+                        }
+                        example("Second", MathRequest(20, 7)) {
+                            description = "Either an addition of 20 and 7 or a subtraction of 7 from 20"
+                        }
+                    }
                 }
                 response {
                     HttpStatusCode.OK to {
                         description = "The operation was successful"
                         body(MathResult::class) {
                             description = "The result of the operation"
+                            example("First", MathResult(42)) {
+                                summary = "The first example"
+                                description = "For example the result of an addition of 13 and 29"
+                            }
+                            example("Second", MathResult(-13)) {
+                                summary = "The second example"
+                                description = "For example the result of an subtracting 20 from 7"
+                            }
                         }
                     }
                     HttpStatusCode.BadRequest to {

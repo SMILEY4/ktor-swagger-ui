@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
 import io.github.smiley4.ktorswaggerui.documentation.BodyDocumentation
+import io.github.smiley4.ktorswaggerui.documentation.ExampleDocumentation
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
@@ -17,27 +18,33 @@ class OApiContentGenerator {
         return Content().apply {
             OApiSchemaGenerator().generate(config.schema).let {
                 when (it.type) {
-                    "integer" -> addPlainText(this, it)
-                    "number" -> addPlainText(this, it)
-                    "boolean" -> addPlainText(this, it)
-                    "string" -> addPlainText(this, it)
-                    "object" -> addJson(this, it)
-                    "array" -> addJson(this, it)
-                    else -> addPlainText(this, it)
+                    "integer" -> addPlainText(this, it, config.getExamples())
+                    "number" -> addPlainText(this, it, config.getExamples())
+                    "boolean" -> addPlainText(this, it, config.getExamples())
+                    "string" -> addPlainText(this, it, config.getExamples())
+                    "object" -> addJson(this, it, config.getExamples())
+                    "array" -> addJson(this, it, config.getExamples())
+                    else -> addPlainText(this, it, config.getExamples())
                 }
             }
         }
     }
 
-    private fun addPlainText(content: Content, schemaObj: Schema<*>) {
+    private fun addPlainText(content: Content, schemaObj: Schema<*>, exampleObjects: Map<String, ExampleDocumentation>) {
         content.addMediaType("text/plain", MediaType().apply {
             schema = schemaObj
+            exampleObjects.forEach { (name, obj) ->
+                addExamples(name, OApiExampleGenerator().generate(obj))
+            }
         })
     }
 
-    private fun addJson(content: Content, schemaObj: Schema<*>) {
+    private fun addJson(content: Content, schemaObj: Schema<*>, exampleObjects: Map<String, ExampleDocumentation>) {
         content.addMediaType("application/json", MediaType().apply {
             schema = schemaObj
+            exampleObjects.forEach { (name, obj) ->
+                addExamples(name, OApiExampleGenerator().generate(obj))
+            }
         })
     }
 
