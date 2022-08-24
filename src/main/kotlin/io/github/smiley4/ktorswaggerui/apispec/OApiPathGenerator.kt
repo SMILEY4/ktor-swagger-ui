@@ -18,7 +18,7 @@ class OApiPathGenerator {
      */
     fun generate(
         config: RouteMeta,
-        autoUnauthorizedResponses: Boolean,
+        defaultUnauthorizedResponses: SingleResponseDocumentation?,
         defaultSecurityScheme: String?,
         tagGenerator: ((url: List<String>) -> String?)?
     ): Pair<String, PathItem> {
@@ -36,8 +36,8 @@ class OApiPathGenerator {
                     OApiResponsesGenerator().generate(config.documentation.getResponses().getResponses()).forEach {
                         addApiResponse(it.first, it.second)
                     }
-                    if (shouldAddUnauthorized(config, autoUnauthorizedResponses)) {
-                        OApiResponsesGenerator().generate(listOf(defaultUnauthorizedResponse())).forEach {
+                    if (shouldAddUnauthorized(config, defaultUnauthorizedResponses)) {
+                        OApiResponsesGenerator().generate(listOf(defaultUnauthorizedResponses!!)).forEach {
                             addApiResponse(it.first, it.second)
                         }
                     }
@@ -68,17 +68,9 @@ class OApiPathGenerator {
     /**
      * Whether a response for "Unauthorized" should be added automatically. Must be enabled and not already defined.
      */
-    private fun shouldAddUnauthorized(config: RouteMeta, autoUnauthorizedResponses: Boolean) =
-        autoUnauthorizedResponses
+    private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: SingleResponseDocumentation?) =
+        defaultUnauthorizedResponses != null
                 && config.protected
                 && config.documentation.getResponses().getResponses().count { it.statusCode == HttpStatusCode.Unauthorized } == 0
-
-
-    /**
-     * The default/automatically added response for "Unauthorized"
-     */
-    private fun defaultUnauthorizedResponse() = SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply {
-        description = "Authentication failed"
-    }
 
 }

@@ -34,7 +34,9 @@ fun main() {
             swagger {
                 swaggerUrl = "swagger-ui"
                 forwardRoot = true
-                automaticUnauthorizedResponses = true
+                defaultUnauthorizedResponse {
+                    description = "Username or password invalid."
+                }
                 defaultSecuritySchemeName = "MySecurityScheme"
             }
             info {

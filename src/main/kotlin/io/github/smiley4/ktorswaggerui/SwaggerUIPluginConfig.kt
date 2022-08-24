@@ -1,13 +1,21 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.smiley4.ktorswaggerui.documentation.SingleResponseDocumentation
+import io.ktor.http.HttpStatusCode
+
 class SwaggerUIPluginConfig {
 
     /**
-     * Whether to automatically add responses for the "Unauthorized"-Response-Code for protected routes.
-     * Generated response can be overwritten with custom responses.
+     * Default response to automatically add to each protected route for the "Unauthorized"-Response-Code.
+     * Generated response can be overwritten with custom response.
      */
-    var automaticUnauthorizedResponses: Boolean = true
+    private var defaultUnauthorizedResponse: SingleResponseDocumentation? = null
 
+    fun defaultUnauthorizedResponse(block: SingleResponseDocumentation.() -> Unit) {
+        defaultUnauthorizedResponse =  SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply(block)
+    }
+
+    fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
 
     /**
      * The name of the security scheme to use for the protected paths

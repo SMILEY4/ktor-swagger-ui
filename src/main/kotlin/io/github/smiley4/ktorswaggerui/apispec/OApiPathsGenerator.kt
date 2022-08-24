@@ -33,7 +33,7 @@ class OApiPathsGenerator {
                 .map {
                     OApiPathGenerator().generate(
                         it,
-                        config.automaticUnauthorizedResponses,
+                        config.getDefaultUnauthorizedResponse(),
                         config.defaultSecuritySchemeName,
                         config.automaticTagGenerator
                     )
