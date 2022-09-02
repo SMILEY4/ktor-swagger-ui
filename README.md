@@ -10,9 +10,9 @@ This library provides a Ktor plugin to document routes, generate an OpenApi Spec
 Step 1. Add the JitPack repository
 
 ```kotlin
-   repositories {
-        maven { url "https://jitpack.io" }
-   }
+repositories {
+    maven { url "https://jitpack.io" }
+}
 ```
 
 Step 2. Add the dependency

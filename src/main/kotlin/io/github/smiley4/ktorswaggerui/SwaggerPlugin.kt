@@ -9,6 +9,11 @@ import io.ktor.server.application.install
 import io.ktor.server.application.pluginOrNull
 import io.ktor.server.webjars.Webjars
 
+/**
+ * This version must match the version of the gradle dependency
+ */
+internal const val SWAGGER_UI_WEBJARS_VERSION = "4.14.0"
+
 val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::SwaggerUIPluginConfig) {
 
     on(MonitoringEvent(ApplicationStarted)) { application ->
@@ -19,7 +24,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
     }
 
     SwaggerRouting(
-        "4.13.2",
+        SWAGGER_UI_WEBJARS_VERSION,
         pluginConfig.getSwaggerUI().swaggerUrl,
         pluginConfig.getSwaggerUI().forwardRoot
     ) { ApiSpec.jsonSpec }.setup(application)

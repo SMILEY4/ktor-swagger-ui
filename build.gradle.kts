@@ -13,21 +13,28 @@ repositories {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm:2.0.1")
-    implementation("io.ktor:ktor-server-webjars:2.0.1")
-    implementation("io.ktor:ktor-server-auth:2.0.1")
-    implementation("org.webjars:swagger-ui:4.13.2")
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.1")
-    implementation("com.github.victools:jsonschema-generator:4.25.0")
-    implementation("com.github.victools:jsonschema-module-jackson:4.25.0")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.21")
+    val ktorVersion = "2.1.0"
+    val swaggerUiVersion = "4.14.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
+    val swaggerParserVersion = "2.1.2"
+    val jsonSchemaGeneratorVersion = "4.26.0"
+    val kotlinLoggingVersion = "2.1.23"
+    val logbackVersion = "1.2.11"
 
-    testImplementation("io.ktor:ktor-server-netty-jvm:2.0.1")
-    testImplementation("io.ktor:ktor-server-content-negotiation:2.0.1")
-    testImplementation("io.ktor:ktor-serialization-jackson:2.0.1")
-    testImplementation("io.ktor:ktor-server-auth:2.0.1")
-    testImplementation("ch.qos.logback:logback-classic:1.2.11")
-    testImplementation("io.ktor:ktor-server-call-logging:2.0.1")
+    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-webjars:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("org.webjars:swagger-ui:$swaggerUiVersion")
+    implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
+    implementation("com.github.victools:jsonschema-generator:$jsonSchemaGeneratorVersion")
+    implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
+    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+
+    testImplementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    testImplementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-auth:$ktorVersion")
+    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
+    testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 }
 
 tasks.test {
