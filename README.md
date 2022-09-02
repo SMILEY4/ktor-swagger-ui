@@ -32,6 +32,14 @@ dependencies {
 A wiki with a short documentation is available [here](https://github.com/SMILEY4/ktor-swagger-ui/wiki)
 
 
+## Features
+
+- minimally invasive (no immediate change to existing code required)
+- provides swagger-ui with no initial configuration required
+- supports most of the [OpenAPI 3.0.3 Specification](https://swagger.io/specification/)
+- Authentication (Basic, JWT, ...)
+- automatic json-schema generation from arbitrary types/classes for bodies and parameters
+- no annotations
 
 ## Example
 
