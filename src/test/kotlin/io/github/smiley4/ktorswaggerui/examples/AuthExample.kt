@@ -16,8 +16,14 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 
+/**
+ * Example to show how to access protected routes via swagger-ui
+ * USERNAME = "user"
+ * PASSWORD = "pass"
+ */
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost") {
+        // Install "Authentication"-Plugin and setup Basic-Auth
         install(Authentication) {
             basic {
                 realm = "Access to the API"
@@ -30,22 +36,17 @@ fun main() {
                 }
             }
         }
+        // Install "Swagger-UI"-Plugin
         install(SwaggerUI) {
             swagger {
-                swaggerUrl = "swagger-ui"
-                forwardRoot = true
+                // default value for "401 Unauthorized"-responses.
                 defaultUnauthorizedResponse {
                     description = "Username or password invalid."
                 }
+                // the name of the security scheme (see below) to use for each route when nothing else is specified
                 defaultSecuritySchemeName = "MySecurityScheme"
             }
-            info {
-                title = "Example API"
-                version = "latest"
-            }
-            server {
-                url = "http://localhost:8080"
-            }
+            // specify a security scheme
             securityScheme("MySecurityScheme") {
                 type = AuthType.HTTP
                 scheme = AuthScheme.BASIC
@@ -54,18 +55,21 @@ fun main() {
 
         routing {
             authenticate {
+                // route is in an "authenticate"-block ->  default security scheme will be used (see plugin-config "defaultSecuritySchemeName")
                 get("hello", {
-                    description = "Protected 'Hello World'-Endpoint"
+                    description = "Protected 'Hello World'-Route"
                     response {
                         HttpStatusCode.OK to {
                             description = "Successful Request"
                             body(String::class) { description = "the response" }
                         }
+                        // response for "401 Unauthorized" is automatically added (see plugin-config "defaultUnauthorizedResponse").
                     }
                 }) {
                     call.respondText("Hello World!")
                 }
             }
         }
+
     }.start(wait = true)
 }

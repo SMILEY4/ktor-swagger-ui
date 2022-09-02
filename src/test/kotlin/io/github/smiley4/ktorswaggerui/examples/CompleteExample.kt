@@ -19,8 +19,12 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 import java.util.Random
 
+/**
+ * Arbitrary example to show (and test) as many features as possible (see "AuthExample" for authentication)
+ */
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost") {
+
         install(SwaggerUI) {
             swagger {
                 swaggerUrl = "swagger-ui"
@@ -37,6 +41,7 @@ fun main() {
             }
             automaticTagGenerator = { url -> url.firstOrNull() }
         }
+
         install(ContentNegotiation) {
             jackson {
                 configure(SerializationFeature.INDENT_OUTPUT, true)
@@ -46,7 +51,9 @@ fun main() {
                 })
             }
         }
+
         routing {
+
             get("hello", {
                 tags = listOf("test")
                 description = "Hello World Endpoint"
@@ -62,6 +69,7 @@ fun main() {
             }) {
                 call.respondText("Hello World!")
             }
+
             post("math/{operation}", {
                 tags = listOf("test")
                 description = "Performs the given operation on the given values and returns the result"
@@ -107,6 +115,7 @@ fun main() {
                     }
                 }
             }
+
             post("random/results", {
                 response {
                     HttpStatusCode.OK to {
@@ -116,6 +125,7 @@ fun main() {
             }) {
                 call.respond(HttpStatusCode.OK, (0..5).map { MathResult(Random().nextInt()) })
             }
+
             post("random/numbers", {
                 response {
                     HttpStatusCode.OK to {
@@ -125,6 +135,7 @@ fun main() {
             }) {
                 call.respond(HttpStatusCode.OK, (0..5).map { Random().nextInt() })
             }
+
             post("echo/{color}", {
                 request {
                     pathParameter("color", Color::class)
@@ -137,7 +148,9 @@ fun main() {
             }) {
                 call.respond(HttpStatusCode.OK, Color.valueOf(call.parameters["color"]!!).toString())
             }
+
         }
+
     }.start(wait = true)
 }
 
