@@ -6,6 +6,20 @@
 This library provides a Ktor plugin to document routes, generate an OpenApi Specification and serve a Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing application without requiring immediate changes to the code. Routes can then be gradually enhanced with documentation.
 
 
+## Features
+
+- minimally invasive (no immediate change to existing code required)
+- provides swagger-ui with no initial configuration required
+- supports most of the [OpenAPI 3.0.3 Specification](https://swagger.io/specification/)
+- Authentication (Basic, JWT, ...)
+- automatic json-schema generation from arbitrary types/classes for bodies and parameters
+- no annotations
+
+
+## Documentation
+
+A wiki with a short documentation is available [here](https://github.com/SMILEY4/ktor-swagger-ui/wiki)
+
 
 ## Installation
 
@@ -25,21 +39,6 @@ dependencies {
 }
 ```
 
-
-
-## Documentation
-
-A wiki with a short documentation is available [here](https://github.com/SMILEY4/ktor-swagger-ui/wiki)
-
-
-## Features
-
-- minimally invasive (no immediate change to existing code required)
-- provides swagger-ui with no initial configuration required
-- supports most of the [OpenAPI 3.0.3 Specification](https://swagger.io/specification/)
-- Authentication (Basic, JWT, ...)
-- automatic json-schema generation from arbitrary types/classes for bodies and parameters
-- no annotations
 
 ## Example
 
