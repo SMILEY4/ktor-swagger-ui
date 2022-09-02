@@ -52,7 +52,7 @@ class SwaggerRouting(
             get("$swaggerUrl/{filename}") {
                 when (val filename = call.parameters["filename"]!!) {
                     "swagger-initializer.js" -> serveSwaggerInitializer(call)
-                    "apiSpec.json" -> serveApiSpecJson(call)
+                    "api.json" -> serveApiSpecJson(call)
                     else -> serveStaticResource(filename, call)
                 }
             }
@@ -67,7 +67,7 @@ class SwaggerRouting(
 
 
     private suspend fun serveSwaggerInitializer(call: ApplicationCall) {
-        val apiSpecUrl = "/" + (if (swaggerUrl.startsWith("/")) swaggerUrl.substring(1) else swaggerUrl) + "/apiSpec.json"
+        val apiSpecUrl = "/" + (if (swaggerUrl.startsWith("/")) swaggerUrl.substring(1) else swaggerUrl) + "/api.json"
         val content = """
 			window.onload = function() {
 			  //<editor-fold desc="Changeable Configuration Block">
@@ -114,6 +114,7 @@ class SwaggerRouting(
     }
 
 }
+
 
 private class ResourceContent(val resource: URL) : OutgoingContent.ByteArrayContent() {
     private val bytes by lazy { resource.readBytes() }

@@ -12,6 +12,7 @@ import io.ktor.server.routing.RootRouteSelector
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.Routing
 import io.ktor.server.routing.TrailingSlashRouteSelector
+import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.Paths
 import mu.KotlinLogging
 
@@ -38,8 +39,23 @@ class OApiPathsGenerator {
                         config.automaticTagGenerator
                     )
                 }
-                .forEach { addPathItem(it.first, it.second) }
+                .forEach { merge(this, it.first, it.second) }
         }
+    }
+
+    private fun merge(paths: Paths, name: String, item: PathItem) {
+        paths[name]
+            ?.let {
+                it.get = if (item.get != null) item.get else it.get
+                it.put = if (item.put != null) item.put else it.put
+                it.post = if (item.post != null) item.post else it.post
+                it.delete = if (item.delete != null) item.delete else it.delete
+                it.options = if (item.options != null) item.options else it.options
+                it.head = if (item.head != null) item.head else it.head
+                it.patch = if (item.patch != null) item.patch else it.patch
+                it.trace = if (item.trace != null) item.trace else it.trace
+            }
+            ?: paths.addPathItem(name, item)
     }
 
     private fun collectRoutes(application: Application, swaggerUrl: String, forwardRoot: Boolean): List<RouteMeta> {
