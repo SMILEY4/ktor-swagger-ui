@@ -5,6 +5,8 @@
 
 This library provides a Ktor plugin to document routes, generate an OpenApi Specification and serve a Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing application without requiring immediate changes to the code. Routes can then be gradually enhanced with documentation.
 
+
+
 ## Installation
 
 Step 1. Add the JitPack repository
@@ -22,6 +24,14 @@ dependencies {
     implementation 'io.github.smiley4:ktor-swagger-ui:<VERSION>'
 }
 ```
+
+
+
+## Documentation
+
+A wiki with a short documentation is available [here](https://github.com/SMILEY4/ktor-swagger-ui/wiki)
+
+
 
 ## Example
 
