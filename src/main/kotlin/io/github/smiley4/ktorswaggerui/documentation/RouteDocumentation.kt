@@ -18,7 +18,7 @@ class RouteDocumentation {
 
 
     /**
-     * A verbose explanation of the operation behavior.
+     * A verbose explanation of the operations' behavior.
      */
     var description: String? = null
 

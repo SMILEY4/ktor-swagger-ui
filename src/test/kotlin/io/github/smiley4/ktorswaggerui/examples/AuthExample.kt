@@ -40,11 +40,11 @@ fun main() {
         install(SwaggerUI) {
             swagger {
                 // default value for "401 Unauthorized"-responses.
-                defaultUnauthorizedResponse {
-                    description = "Username or password invalid."
-                }
                 // the name of the security scheme (see below) to use for each route when nothing else is specified
                 defaultSecuritySchemeName = "MySecurityScheme"
+            }
+            defaultUnauthorizedResponse {
+                description = "Username or password is invalid."
             }
             // specify a security scheme
             securityScheme("MySecurityScheme") {
@@ -57,6 +57,8 @@ fun main() {
             authenticate {
                 // route is in an "authenticate"-block ->  default security scheme will be used (see plugin-config "defaultSecuritySchemeName")
                 get("hello", {
+                    // Set the security scheme to be used by this route (here redundant, since already specified by 'defaultSecuritySchemeName')
+                    securitySchemeName = "MySecurityScheme"
                     description = "Protected 'Hello World'-Route"
                     response {
                         HttpStatusCode.OK to {
