@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.documentation.get
 import io.github.smiley4.ktorswaggerui.documentation.post
-import io.kotest.engine.extensions.SystemPropertyTagExtension.tags
 import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.call
@@ -170,6 +170,7 @@ fun main() {
                             mediaType(ContentType.Image.JPEG)
                             mediaType(ContentType.Image.SVG)
                         }
+                        header(HttpHeaders.ContentLength, Long::class)
                     }
                 }
             }) {

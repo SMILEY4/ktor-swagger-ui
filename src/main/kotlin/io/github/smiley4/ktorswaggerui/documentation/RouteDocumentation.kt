@@ -200,6 +200,24 @@ class SingleResponseDocumentation(val statusCode: HttpStatusCode) {
 
 
     /**
+     * Possible headers returned with this response
+     */
+    private val headers = mutableMapOf<String, HeaderDocumentation>()
+
+    fun header(name: String, block: HeaderDocumentation.() -> Unit) {
+        headers[name] = HeaderDocumentation().apply(block)
+    }
+
+    fun header(name: String, schema: KClass<*>) {
+        headers[name] = HeaderDocumentation().apply {
+            this.schema = schema
+        }
+    }
+
+    fun getHeaders(): Map<String, HeaderDocumentation> = headers
+
+
+    /**
      * The optional response body
      */
     private var body: BodyDocumentation? = null
@@ -215,6 +233,33 @@ class SingleResponseDocumentation(val statusCode: HttpStatusCode) {
     }
 
     fun getBody() = body
+
+}
+
+
+class HeaderDocumentation {
+
+    /**
+     * A description of the header
+     */
+    var description: String? = null
+
+
+    /**
+     * The schema of the header
+     */
+    var schema: KClass<*>? = null
+
+    /**
+     * Determines whether this header is mandatory
+     */
+    var required: Boolean? = null
+
+
+    /**
+     * Specifies that a header is deprecated and SHOULD be transitioned out of usage
+     */
+    var deprecated: Boolean? = null
 
 }
 
