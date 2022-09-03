@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.documentation
 
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import kotlin.reflect.KClass
 
@@ -96,6 +97,10 @@ class RequestDocumentation {
     }
 
     fun body(schema: KClass<*>) = body(schema) {}
+
+    fun body(block: BodyDocumentation.() -> Unit) {
+        body = BodyDocumentation(null).apply(block)
+    }
 
     fun getBody() = body
 
@@ -205,6 +210,10 @@ class SingleResponseDocumentation(val statusCode: HttpStatusCode) {
 
     fun body(schema: KClass<*>) = body(schema) {}
 
+    fun body(block: BodyDocumentation.() -> Unit) {
+        body = BodyDocumentation(null).apply(block)
+    }
+
     fun getBody() = body
 
 }
@@ -223,7 +232,7 @@ class BodyDocumentation(
      * - Array<String>::class.java
      * - Array<MyClass>::class.java
      */
-    val schema: KClass<*>,
+    val schema: KClass<*>?,
 ) {
 
     /**
@@ -250,6 +259,18 @@ class BodyDocumentation(
     fun example(name: String, value: Any) = example(name, value) {}
 
     fun getExamples(): Map<String, ExampleDocumentation> = examples
+
+
+    /**
+     * Allowed Media Types for this body. If none specified, a media type will be chosen automatically based on the provided schema
+     */
+    private val mediaTypes = mutableSetOf<ContentType>()
+
+    fun mediaType(type: ContentType) {
+        mediaTypes.add(type)
+    }
+
+    fun getMediaTypes(): Set<ContentType> = mediaTypes
 
 }
 

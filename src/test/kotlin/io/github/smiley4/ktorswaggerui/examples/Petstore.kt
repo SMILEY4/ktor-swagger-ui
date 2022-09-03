@@ -4,6 +4,7 @@ import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.documentation.delete
 import io.github.smiley4.ktorswaggerui.documentation.get
 import io.github.smiley4.ktorswaggerui.documentation.post
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -46,6 +47,8 @@ fun main() {
                     HttpStatusCode.OK to {
                         description = "pet response"
                         body(Array<Pet>::class) {
+                            mediaType(ContentType.Application.Json)
+                            mediaType(ContentType.Application.Xml)
                             example("example", listOf(
                                 Pet(1, "Chloe", "cat"),
                                 Pet(2, "Oliver", "dog")
@@ -64,6 +67,8 @@ fun main() {
                     body(NewPet::class) {
                         description = "Pet to add to the store"
                         required = true
+                        mediaType(ContentType.Application.Json)
+                        mediaType(ContentType.Application.Xml)
                         example("example", NewPet("Max", "bird"))
                     }
                 }
@@ -71,6 +76,8 @@ fun main() {
                     HttpStatusCode.OK to {
                         description = "pet response"
                         body(Array<Pet>::class) {
+                            mediaType(ContentType.Application.Json)
+                            mediaType(ContentType.Application.Xml)
                             example("example", Pet(3, "Max", "bird"))
                         }
                     }
@@ -91,6 +98,8 @@ fun main() {
                         HttpStatusCode.OK to {
                             description = "pet response"
                             body(Pet::class) {
+                                mediaType(ContentType.Application.Json)
+                                mediaType(ContentType.Application.Xml)
                                 example("example", Pet(4, "Bella", "dog"))
                             }
                         }

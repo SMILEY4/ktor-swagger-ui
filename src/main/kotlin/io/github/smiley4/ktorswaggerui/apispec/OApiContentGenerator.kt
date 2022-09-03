@@ -1,11 +1,11 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
 import io.github.smiley4.ktorswaggerui.documentation.BodyDocumentation
-import io.github.smiley4.ktorswaggerui.documentation.ExampleDocumentation
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
+import io.swagger.v3.oas.models.media.XML
 import kotlin.reflect.KClass
 
 /**
@@ -18,36 +18,54 @@ class OApiContentGenerator {
      */
     fun generate(config: BodyDocumentation, componentCtx: ComponentsContext): Content {
         return Content().apply {
-            OApiSchemaGenerator().generate(config.schema, componentCtx).let {
-                when (it.type) {
-                    "integer" -> addPlainText(this, it, config.getExamples())
-                    "number" -> addPlainText(this, it, config.getExamples())
-                    "boolean" -> addPlainText(this, it, config.getExamples())
-                    "string" -> addPlainText(this, it, config.getExamples())
-                    "object" -> addJson(this, it, config.getExamples())
-                    "array" -> addJson(this, it, config.getExamples())
-                    else -> addPlainText(this, it, config.getExamples())
+            val schemaObj = config.schema
+                ?.let { OApiSchemaGenerator().generate(it, componentCtx) }
+                ?.let { prepareForXml(config.schema, it) }
+
+            config.getMediaTypes().forEach { mediaType ->
+                if (schemaObj == null) {
+                    addMediaType(mediaType.toString(), MediaType())
+                } else {
+                    addMediaType(mediaType.toString(), MediaType().apply {
+                        schema = schemaObj
+                        config.getExamples().forEach { (name, obj) ->
+                            addExamples(name, OApiExampleGenerator().generate(obj))
+                        }
+                    })
                 }
+            }
+            if (config.getMediaTypes().isEmpty() && schemaObj != null) {
+                addMediaType(pickMediaType(schemaObj).toString(), MediaType().apply {
+                    schema = schemaObj
+                    config.getExamples().forEach { (name, obj) ->
+                        addExamples(name, OApiExampleGenerator().generate(obj))
+                    }
+                })
             }
         }
     }
 
-    private fun addPlainText(content: Content, schemaObj: Schema<*>, exampleObjects: Map<String, ExampleDocumentation>) {
-        content.addMediaType("text/plain", MediaType().apply {
-            schema = schemaObj
-            exampleObjects.forEach { (name, obj) ->
-                addExamples(name, OApiExampleGenerator().generate(obj))
-            }
-        })
+    private fun pickMediaType(schema: Schema<*>): ContentType {
+        return when (schema.type) {
+            "integer" -> ContentType.Text.Plain
+            "number" -> ContentType.Text.Plain
+            "boolean" -> ContentType.Text.Plain
+            "string" -> ContentType.Text.Plain
+            "object" -> ContentType.Application.Json
+            "array" -> ContentType.Application.Json
+            else -> ContentType.Text.Plain
+        }
     }
 
-    private fun addJson(content: Content, schemaObj: Schema<*>, exampleObjects: Map<String, ExampleDocumentation>) {
-        content.addMediaType("application/json", MediaType().apply {
-            schema = schemaObj
-            exampleObjects.forEach { (name, obj) ->
-                addExamples(name, OApiExampleGenerator().generate(obj))
+    private fun prepareForXml(type: KClass<*>, schema: Schema<Any>): Schema<Any> {
+        schema.xml = XML().apply {
+            name = if (type.java.isArray) {
+                type.java.componentType.simpleName
+            } else {
+                type.simpleName
             }
-        })
+        }
+        return schema
     }
 
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.documentation.get
 import io.github.smiley4.ktorswaggerui.documentation.post
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
 import io.ktor.server.application.call
@@ -120,7 +121,10 @@ fun main() {
             post("random/results", {
                 response {
                     HttpStatusCode.OK to {
-                        body(Array<MathResult>::class)
+                        body(Array<MathResult>::class) {
+                            mediaType(ContentType.Application.Json)
+                            mediaType(ContentType.Application.Xml)
+                        }
                     }
                 }
             }) {
@@ -148,6 +152,20 @@ fun main() {
                 }
             }) {
                 call.respond(HttpStatusCode.OK, Color.valueOf(call.parameters["color"]!!).toString())
+            }
+
+            post("images", {
+                response {
+                    HttpStatusCode.OK to {
+                        body {
+                            mediaType(ContentType.Image.PNG)
+                            mediaType(ContentType.Image.JPEG)
+                            mediaType(ContentType.Image.SVG)
+                        }
+                    }
+                }
+            }) {
+                call.respond(HttpStatusCode.OK, "...")
             }
 
         }
