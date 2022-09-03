@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.documentation.get
+import io.github.smiley4.ktorswaggerui.documentation.delete
 import io.github.smiley4.ktorswaggerui.documentation.post
+import io.github.smiley4.ktorswaggerui.documentation.route
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
@@ -162,19 +164,42 @@ fun main() {
                 call.respond(HttpStatusCode.OK, Color.valueOf(call.parameters["color"]!!).toString())
             }
 
-            post("images", {
-                response {
-                    HttpStatusCode.OK to {
-                        body {
-                            mediaType(ContentType.Image.PNG)
-                            mediaType(ContentType.Image.JPEG)
-                            mediaType(ContentType.Image.SVG)
-                        }
-                        header(HttpHeaders.ContentLength, Long::class)
-                    }
-                }
+            route("images", {
+                tags = listOf("Image Operations")
+                description = "Access images "
             }) {
-                call.respond(HttpStatusCode.OK, "...")
+
+                post({
+                    response {
+                        HttpStatusCode.OK to {
+                            body {
+                                mediaType(ContentType.Image.PNG)
+                                mediaType(ContentType.Image.JPEG)
+                                mediaType(ContentType.Image.SVG)
+                            }
+                            header(HttpHeaders.ContentLength, Long::class)
+                        }
+                    }
+                }) {
+                    call.respond(HttpStatusCode.NotImplemented, "todo")
+                }
+
+                delete("{id}", {
+                    description = "Delete the image with the given id."
+                    request {
+                        pathParameter("id", String::class) {
+                            description = "The id of the image to delete"
+                        }
+                    }
+                    response {
+                        HttpStatusCode.OK to {
+                            description = "The image was deleted"
+                        }
+                    }
+                }) {
+                    call.respond(HttpStatusCode.NotImplemented, "todo")
+                }
+
             }
 
         }

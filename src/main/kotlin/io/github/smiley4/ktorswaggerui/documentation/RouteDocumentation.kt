@@ -83,7 +83,6 @@ class RequestDocumentation {
 
     fun headerParameter(name: String, schema: KClass<*>) = headerParameter(name, schema) {}
 
-
     fun getParameters(): List<RequestParameterDocumentation> = parameters
 
 
@@ -100,6 +99,10 @@ class RequestDocumentation {
 
     fun body(block: BodyDocumentation.() -> Unit) {
         body = BodyDocumentation(null).apply(block)
+    }
+
+    fun setBody(body: BodyDocumentation?) {
+        this.body = body
     }
 
     fun getBody() = body
@@ -180,6 +183,10 @@ class ResponseDocumentation {
 
     infix fun HttpStatusCode.to(block: SingleResponseDocumentation.() -> Unit) {
         responses[this] = SingleResponseDocumentation(this).apply(block)
+    }
+
+    fun addResponse(response: SingleResponseDocumentation) {
+        responses[response.statusCode] = response
     }
 
     fun getResponses() = responses.values.toList()

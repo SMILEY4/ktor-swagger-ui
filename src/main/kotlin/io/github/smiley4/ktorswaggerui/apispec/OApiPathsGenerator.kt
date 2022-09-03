@@ -67,7 +67,7 @@ class OApiPathsGenerator {
                     route = route,
                     method = getMethod(route),
                     path = getPath(route),
-                    documentation = getDocumentation(route),
+                    documentation = getDocumentation(route, RouteDocumentation()),
                     protected = isProtected(route)
                 )
             }
@@ -90,6 +90,18 @@ class OApiPathsGenerator {
         return when (val selector = route.selector) {
             is DocumentedRouteSelector -> selector.documentation
             else -> route.parent?.let { getDocumentation(it) } ?: RouteDocumentation()
+        }
+    }
+
+    private fun getDocumentation(route: Route, base: RouteDocumentation): RouteDocumentation {
+        var documentation = base
+        if (route.selector is DocumentedRouteSelector) {
+            documentation = merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
+        }
+        return if (route.parent != null) {
+            getDocumentation(route.parent!!, documentation)
+        } else {
+            documentation
         }
     }
 
@@ -122,6 +134,29 @@ class OApiPathsGenerator {
     private fun allRoutes(root: Route): List<Route> {
         return (listOf(root) + root.children.flatMap { allRoutes(it) })
             .filter { it.selector is HttpMethodRouteSelector }
+    }
+
+    private fun merge(a: RouteDocumentation, b: RouteDocumentation): RouteDocumentation {
+        return RouteDocumentation().apply {
+            tags = mutableListOf<String>().also {
+                it.addAll(a.tags)
+                it.addAll(b.tags)
+            }
+            summary = a.summary ?: b.summary
+            description = a.description ?: b.description
+            securitySchemeName = a.securitySchemeName ?: b.securitySchemeName
+            request {
+                (getParameters() as MutableList).also {
+                    it.addAll(a.getRequest().getParameters())
+                    it.addAll(b.getRequest().getParameters())
+                }
+                setBody(a.getRequest().getBody() ?: b.getRequest().getBody())
+            }
+            response {
+                b.getResponses().getResponses().forEach { response -> addResponse(response) }
+                a.getResponses().getResponses().forEach { response -> addResponse(response) }
+            }
+        }
     }
 
 }

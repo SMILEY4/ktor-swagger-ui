@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.documentation
 
+import io.ktor.http.HttpMethod
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector
@@ -12,6 +13,8 @@ import io.ktor.server.routing.options
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
+import io.ktor.server.routing.route
+import io.ktor.server.routing.method
 import io.ktor.util.KtorDsl
 import io.ktor.util.pipeline.PipelineContext
 import io.ktor.util.pipeline.PipelineInterceptor
@@ -28,6 +31,35 @@ fun Route.documentation(
     val documentedRoute = createChild(DocumentedRouteSelector(RouteDocumentation().apply(documentation)))
     documentedRoute.build()
     return documentedRoute
+}
+
+//============================//
+//           ROUTING          //
+//============================//
+
+fun Route.route(
+    path: String,
+    builder: RouteDocumentation.() -> Unit = { },
+    build: Route.() -> Unit
+): Route {
+    return documentation(builder) { route(path, build) }
+}
+
+fun Route.route(
+    path: String,
+    method: HttpMethod,
+    builder: RouteDocumentation.() -> Unit = { },
+    build: Route.() -> Unit
+): Route {
+    return documentation(builder) { route(path, method, build) }
+}
+
+fun Route.method(
+    method: HttpMethod,
+    builder: RouteDocumentation.() -> Unit = { },
+    body: Route.() -> Unit
+): Route {
+    return documentation(builder) { method(method, body) }
 }
 
 //============================//
