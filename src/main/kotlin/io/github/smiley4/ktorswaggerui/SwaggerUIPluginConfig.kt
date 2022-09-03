@@ -89,8 +89,8 @@ class SwaggerUIPluginConfig {
      */
     private val tags = mutableListOf<OpenApiTagConfig>()
 
-    fun tag(block: OpenApiTagConfig.() -> Unit) {
-        tags.add(OpenApiTagConfig().apply(block))
+    fun tag(name: String, block: OpenApiTagConfig.() -> Unit) {
+        tags.add(OpenApiTagConfig(name).apply(block))
     }
 
     fun getTags(): List<OpenApiTagConfig> = tags
@@ -301,12 +301,12 @@ class OpenApiSecuritySchemeConfig(
 /**
  * Adds metadata to a single tag.
  */
-class OpenApiTagConfig {
+class OpenApiTagConfig(
     /**
      * The name of the tag.
      */
-    var name: String? = null
-
+    var name: String
+) {
 
     /**
      * A short description for the tag.

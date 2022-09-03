@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.documentation.get
 import io.github.smiley4.ktorswaggerui.documentation.post
+import io.kotest.engine.extensions.SystemPropertyTagExtension.tags
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
@@ -39,6 +40,12 @@ fun main() {
             server {
                 url = "http://localhost:8080"
                 description = "Development Server"
+            }
+            tag("random") {
+                description = "Routes that return random things"
+            }
+            tag("math") {
+                description = "Routes for math related operations"
             }
             schemasInComponentSection = true
             automaticTagGenerator = { url -> url.firstOrNull() }
