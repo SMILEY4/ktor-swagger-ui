@@ -11,11 +11,17 @@ class OApiExampleGenerator {
     /**
      * Generate the OpenAPI Info-Example from the given config
      */
-    fun generate(config: ExampleDocumentation): Example {
-        return Example().apply {
-            value = config.value
-            summary = config.summary
-            description = config.description
+    fun generate(name: String, config: ExampleDocumentation, componentsCtx: ComponentsContext): Example {
+        return if (componentsCtx.examplesInComponents) {
+            Example().apply {
+                `$ref` = "#/components/examples/" + componentsCtx.addExample(name, config)
+            }
+        } else {
+            Example().apply {
+                value = config.value
+                summary = config.summary
+                description = config.description
+            }
         }
     }
 

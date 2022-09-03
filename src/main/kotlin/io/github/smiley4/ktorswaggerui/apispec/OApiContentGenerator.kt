@@ -29,7 +29,7 @@ class OApiContentGenerator {
                     addMediaType(mediaType.toString(), MediaType().apply {
                         schema = schemaObj
                         config.getExamples().forEach { (name, obj) ->
-                            addExamples(name, OApiExampleGenerator().generate(obj))
+                            addExamples(name, OApiExampleGenerator().generate(name, obj, componentCtx))
                         }
                     })
                 }
@@ -38,7 +38,7 @@ class OApiContentGenerator {
                 addMediaType(pickMediaType(schemaObj).toString(), MediaType().apply {
                     schema = schemaObj
                     config.getExamples().forEach { (name, obj) ->
-                        addExamples(name, OApiExampleGenerator().generate(obj))
+                        addExamples(name, OApiExampleGenerator().generate(name, obj, componentCtx))
                     }
                 })
             }

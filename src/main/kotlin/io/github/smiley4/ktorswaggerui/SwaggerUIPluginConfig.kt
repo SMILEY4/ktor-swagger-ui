@@ -36,6 +36,11 @@ class SwaggerUIPluginConfig {
     var schemasInComponentSection: Boolean = false
 
     /**
+     * Whether to put example objects in the component section and reference them or inline the examples at the actual place of usage.
+     */
+    var examplesInComponentSection: Boolean = false
+
+    /**
      * Swagger-UI configuration
      */
     private var swaggerUIConfig = SwaggerUIConfig()

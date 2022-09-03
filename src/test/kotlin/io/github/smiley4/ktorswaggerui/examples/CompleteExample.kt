@@ -48,6 +48,7 @@ fun main() {
                 description = "Routes for math related operations"
             }
             schemasInComponentSection = true
+            examplesInComponentSection = true
             automaticTagGenerator = { url -> url.firstOrNull() }
         }
 
