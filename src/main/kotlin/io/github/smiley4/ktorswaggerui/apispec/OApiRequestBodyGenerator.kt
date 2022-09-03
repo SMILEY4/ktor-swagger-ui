@@ -11,11 +11,11 @@ class OApiRequestBodyGenerator {
     /**
      * Generate the Request Body from the given config
      */
-    fun generate(config: BodyDocumentation): RequestBody {
+    fun generate(config: BodyDocumentation, componentCtx: ComponentsContext): RequestBody {
         return RequestBody().apply {
             description = config.description
             required = config.required
-            content = OApiContentGenerator().generate(config)
+            content = OApiContentGenerator().generate(config, componentCtx)
         }
     }
 

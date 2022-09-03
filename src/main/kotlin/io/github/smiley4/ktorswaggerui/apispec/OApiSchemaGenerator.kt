@@ -12,7 +12,7 @@ class OApiSchemaGenerator {
     /**
      * Generate the Content Object from the given class/type
      */
-    fun generate(schema: KClass<*>): Schema<Any> {
+    fun generate(schema: KClass<*>, componentCtx: ComponentsContext): Schema<Any> {
         return Schema<Any>().apply {
             when (schema) {
                 Byte::class -> {
@@ -169,10 +169,11 @@ class OApiSchemaGenerator {
                     }
                 }
                 else -> {
-                    return OApiJsonSchemaGenerator().generate(schema)
+                    return OApiJsonSchemaGenerator().generate(schema, componentCtx)
                 }
             }
         }
     }
+
 
 }

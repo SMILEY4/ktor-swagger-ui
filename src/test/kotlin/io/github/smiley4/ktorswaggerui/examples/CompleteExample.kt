@@ -39,6 +39,7 @@ fun main() {
                 url = "http://localhost:8080"
                 description = "Development Server"
             }
+            schemasInComponentSection = true
             automaticTagGenerator = { url -> url.firstOrNull() }
         }
 

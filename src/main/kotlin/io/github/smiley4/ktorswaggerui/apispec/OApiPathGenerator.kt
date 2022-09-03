@@ -20,7 +20,8 @@ class OApiPathGenerator {
         config: RouteMeta,
         defaultUnauthorizedResponses: SingleResponseDocumentation?,
         defaultSecurityScheme: String?,
-        tagGenerator: ((url: List<String>) -> String?)?
+        tagGenerator: ((url: List<String>) -> String?)?,
+        componentCtx: ComponentsContext
     ): Pair<String, PathItem> {
         return config.path to PathItem().apply {
             val operation = Operation().apply {
@@ -30,14 +31,14 @@ class OApiPathGenerator {
                 description = config.documentation.description
                 parameters = OApiParametersGenerator().generate(config.documentation.getRequest().getParameters())
                 config.documentation.getRequest().getBody()?.let {
-                    requestBody = OApiRequestBodyGenerator().generate(it)
+                    requestBody = OApiRequestBodyGenerator().generate(it, componentCtx)
                 }
                 responses = ApiResponses().apply {
-                    OApiResponsesGenerator().generate(config.documentation.getResponses().getResponses()).forEach {
+                    OApiResponsesGenerator().generate(config.documentation.getResponses().getResponses(), componentCtx).forEach {
                         addApiResponse(it.first, it.second)
                     }
                     if (shouldAddUnauthorized(config, defaultUnauthorizedResponses)) {
-                        OApiResponsesGenerator().generate(listOf(defaultUnauthorizedResponses!!)).forEach {
+                        OApiResponsesGenerator().generate(listOf(defaultUnauthorizedResponses!!), componentCtx).forEach {
                             addApiResponse(it.first, it.second)
                         }
                     }

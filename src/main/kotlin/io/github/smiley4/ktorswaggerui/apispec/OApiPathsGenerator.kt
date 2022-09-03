@@ -27,7 +27,7 @@ class OApiPathsGenerator {
     /**
      * Generate the OpenAPI Paths from the given config and application
      */
-    fun generate(config: SwaggerUIPluginConfig, application: Application): Paths {
+    fun generate(config: SwaggerUIPluginConfig, application: Application, componentCtx: ComponentsContext): Paths {
         return Paths().apply {
             collectRoutes(application, config.getSwaggerUI().swaggerUrl, config.getSwaggerUI().forwardRoot)
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
@@ -36,7 +36,8 @@ class OApiPathsGenerator {
                         it,
                         config.getDefaultUnauthorizedResponse(),
                         config.defaultSecuritySchemeName,
-                        config.automaticTagGenerator
+                        config.automaticTagGenerator,
+                        componentCtx
                     )
                 }
                 .forEach { merge(this, it.first, it.second) }

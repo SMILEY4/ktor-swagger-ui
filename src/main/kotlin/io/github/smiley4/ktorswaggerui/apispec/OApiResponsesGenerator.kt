@@ -11,12 +11,12 @@ class OApiResponsesGenerator {
     /**
      * Generate the Responses from the given configs
      */
-    fun generate(configs: List<SingleResponseDocumentation>): List<Pair<String, ApiResponse>> {
+    fun generate(configs: List<SingleResponseDocumentation>, componentCtx: ComponentsContext): List<Pair<String, ApiResponse>> {
         return configs.map { responseCfg ->
             responseCfg.statusCode.value.toString() to ApiResponse().apply {
                 description = responseCfg.description
                 responseCfg.getBody()?.let {
-                    content = OApiContentGenerator().generate(responseCfg.getBody()!!)
+                    content = OApiContentGenerator().generate(responseCfg.getBody()!!, componentCtx)
                 }
             }
         }

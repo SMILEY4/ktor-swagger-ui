@@ -20,7 +20,7 @@ class OApiParametersGenerator {
                     RequestParameterDocumentation.Location.PATH -> "path"
                 }
                 name = paramCfg.name
-                schema = OApiSchemaGenerator().generate(paramCfg.schema)
+                schema = OApiSchemaGenerator().generate(paramCfg.schema, ComponentsContext.NOOP)
                 description = paramCfg.description
                 required = paramCfg.required
                 deprecated = paramCfg.deprecated

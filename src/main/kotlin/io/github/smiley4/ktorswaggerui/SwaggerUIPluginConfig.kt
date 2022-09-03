@@ -30,6 +30,12 @@ class SwaggerUIPluginConfig {
 
 
     /**
+     * Whether to put json-schemas in the component section and reference them or inline the schemas at the actual place of usage.
+     * (https://swagger.io/specification/#components-object)
+     */
+    var schemasInComponentSection: Boolean = false
+
+    /**
      * Swagger-UI configuration
      */
     private var swaggerUIConfig = SwaggerUIConfig()

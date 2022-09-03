@@ -19,7 +19,20 @@ class OApiJsonSchemaGenerator {
     /**
      * Generate the Schema Object from the given class
      */
-    fun generate(schema: KClass<*>): Schema<Any> {
+    fun generate(schema: KClass<*>, componentCtx: ComponentsContext): Schema<Any> {
+        if (componentCtx.schemasInComponents) {
+            val schemaObj = createSchema(schema)
+            if (schemaObj.type == "array") {
+                return arrayRefSchema(componentCtx.addSchema(schema.java.componentType.kotlin, schemaObj.items))
+            } else {
+                return refSchema(componentCtx.addSchema(schema, schemaObj))
+            }
+        } else {
+            return createSchema(schema)
+        }
+    }
+
+    private fun createSchema(schema: KClass<*>): Schema<Any> {
         return if (schema.java.isArray) {
             Schema<Any>().apply {
                 type = "array"
@@ -49,8 +62,8 @@ class OApiJsonSchemaGenerator {
     private fun toSchema(node: JsonNode): Schema<Any> {
         return Schema<Any>().apply {
             node["\$schema"]?.let { this.`$schema` = it.asText() }
-            node["type"]?.let {  this.type = it.asText() }
-            node["items"]?.let {  this.items = toSchema(it) }
+            node["type"]?.let { this.type = it.asText() }
+            node["items"]?.let { this.items = toSchema(it) }
             node["properties"]?.let { this.properties = it.collectFields().associate { prop -> prop.key to toSchema(prop.value) } }
             node["allOf"]?.let { this.allOf = it.collectElements().map { prop -> toSchema(prop) } }
             node["anyOf"]?.let { this.anyOf = it.collectElements().map { prop -> toSchema(prop) } }
@@ -79,4 +92,21 @@ class OApiJsonSchemaGenerator {
             .build()
         return SchemaGenerator(config).generateSchema(type)
     }
+
+    private fun refSchema(key: String): Schema<Any> {
+        return Schema<Any>().apply {
+            `$ref` = "#/components/schemas/$key"
+        }
+    }
+
+    private fun arrayRefSchema(key: String): Schema<Any> {
+        return Schema<Any>().apply {
+            type = "array"
+            items = Schema<Any>().apply {
+                `$ref` = "#/components/schemas/$key"
+            }
+        }
+    }
+
+
 }

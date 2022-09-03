@@ -12,6 +12,7 @@ object ApiSpec {
     var jsonSpec: String = ""
 
     fun build(application: Application, config: SwaggerUIPluginConfig) {
+        val componentCtx = ComponentsContext(config.schemasInComponentSection, mutableMapOf())
         val openAPI = OpenAPI().apply {
             info = OApiInfoGenerator().generate(config.getInfo())
             servers = OApiServersGenerator().generate(config.getServers())
@@ -21,7 +22,8 @@ object ApiSpec {
                 }
             }
             tags = OApiTagsGenerator().generate(config.getTags())
-            paths = OApiPathsGenerator().generate(config, application)
+            paths = OApiPathsGenerator().generate(config, application, componentCtx)
+            components = OApiComponentsGenerator().generate(componentCtx)
         }
         jsonSpec = Json.pretty(openAPI)
     }
