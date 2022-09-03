@@ -1,11 +1,5 @@
 package io.github.smiley4.ktorswaggerui.routing
 
-import com.github.victools.jsonschema.generator.OptionPreset
-import com.github.victools.jsonschema.generator.SchemaGenerator
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
-import com.github.victools.jsonschema.generator.SchemaVersion
-import com.github.victools.jsonschema.module.jackson.JacksonModule
-import io.github.smiley4.ktorswaggerui.routing.SchemaRef.refToClassName
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.OutgoingContent
@@ -20,7 +14,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import mu.KotlinLogging
 import java.net.URL
-import kotlin.reflect.KClass
 
 /**
  * Registers and handles routes required for the swagger-ui
@@ -55,12 +48,6 @@ class SwaggerRouting(
                     "api.json" -> serveApiSpecJson(call)
                     else -> serveStaticResource(filename, call)
                 }
-            }
-            get("$swaggerUrl/schemas/{schemaname}") {
-                val schemaName = call.parameters["schemaname"]!!
-                val className = refToClassName(schemaName)
-                val clazz = Class.forName(className)
-                call.respondText(ContentType.Application.Json, HttpStatusCode.OK) { generateJsonSchema(clazz) }
             }
         }
     }
@@ -103,14 +90,6 @@ class SwaggerRouting(
         } else {
             call.respond(ResourceContent(resource))
         }
-    }
-
-
-    private fun <T> generateJsonSchema(type: Class<T>): String {
-        val config = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-            .with(JacksonModule())
-            .build()
-        return SchemaGenerator(config).generateSchema(type).toString()
     }
 
 }

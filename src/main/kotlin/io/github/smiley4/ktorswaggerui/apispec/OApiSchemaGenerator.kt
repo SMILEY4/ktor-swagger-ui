@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
-import io.github.smiley4.ktorswaggerui.routing.SchemaRef
 import io.swagger.v3.oas.models.media.Schema
 import java.math.BigDecimal
 import kotlin.reflect.KClass
@@ -11,7 +10,7 @@ import kotlin.reflect.KClass
 class OApiSchemaGenerator {
 
     /**
-     * Generate the Content Object from the given config
+     * Generate the Content Object from the given class/type
      */
     fun generate(schema: KClass<*>): Schema<Any> {
         return Schema<Any>().apply {
@@ -52,7 +51,6 @@ class OApiSchemaGenerator {
                 ULong::class -> {
                     type = "integer"
                     minimum = BigDecimal.valueOf(ULong.MIN_VALUE.toLong())
-                    maximum = BigDecimal.valueOf(ULong.MAX_VALUE.toLong())
                 }
                 Float::class -> {
                     type = "number"
@@ -133,7 +131,6 @@ class OApiSchemaGenerator {
                     items = Schema<String>().apply {
                         type = "integer"
                         minimum = BigDecimal.valueOf(ULong.MIN_VALUE.toLong())
-                        maximum = BigDecimal.valueOf(ULong.MAX_VALUE.toLong())
                     }
                 }
                 Array<Float>::class, FloatArray::class -> {
@@ -172,19 +169,7 @@ class OApiSchemaGenerator {
                     }
                 }
                 else -> {
-                    if (schema.java.isArray) {
-                        type = "array"
-                        items = Schema<String>().apply {
-                            type = "object"
-                            `$ref` = SchemaRef.refOfClass(schema.java.componentType)
-                        }
-                    } else if (schema.java.isEnum) {
-                        type = "string"
-                        enum = schema.java.enumConstants.map { it.toString() }
-                    } else {
-                        type = "object"
-                        `$ref` = SchemaRef.refOfClass(schema.java)
-                    }
+                    return OApiJsonSchemaGenerator().generate(schema)
                 }
             }
         }
