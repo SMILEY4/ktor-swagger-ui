@@ -1,8 +1,8 @@
 package io.github.smiley4.ktorswaggerui.apispec
 
+import io.github.smiley4.ktorswaggerui.AuthKeyLocation
 import io.github.smiley4.ktorswaggerui.AuthScheme
 import io.github.smiley4.ktorswaggerui.AuthType
-import io.github.smiley4.ktorswaggerui.KeyLocation
 import io.github.smiley4.ktorswaggerui.OpenApiSecuritySchemeConfig
 import io.swagger.v3.oas.models.security.SecurityScheme
 
@@ -28,12 +28,12 @@ class OApiSecuritySchemesGenerator {
                     }
                     name = it.name
                     `in` = when (it.location) {
-                        KeyLocation.QUERY -> SecurityScheme.In.QUERY
-                        KeyLocation.HEADER -> SecurityScheme.In.HEADER
-                        KeyLocation.COOKIE -> SecurityScheme.In.COOKIE
+                        AuthKeyLocation.QUERY -> SecurityScheme.In.QUERY
+                        AuthKeyLocation.HEADER -> SecurityScheme.In.HEADER
+                        AuthKeyLocation.COOKIE -> SecurityScheme.In.COOKIE
                         null -> null
                     }
-                    scheme = when(it.scheme) {
+                    scheme = when (it.scheme) {
                         AuthScheme.BASIC -> "Basic"
                         AuthScheme.BEARER -> "Bearer"
                         AuthScheme.DIGEST -> "Digest"
@@ -45,6 +45,8 @@ class OApiSecuritySchemesGenerator {
                         AuthScheme.VAPID -> "vapid"
                         else -> null
                     }
+                    bearerFormat = it.bearerFormat
+                    flows = it.getFlows()?.let { f -> OApiOAuthFlowsGenerator().generate(f) }
                 })
             }
         }

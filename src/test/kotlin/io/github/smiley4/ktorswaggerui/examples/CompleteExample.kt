@@ -24,7 +24,7 @@ import io.ktor.server.routing.routing
 import java.util.Random
 
 /**
- * Arbitrary example to show (and test) as many features as possible (for authentication see "AuthExample")
+ * Arbitrary examples to show (and test) as many features as possible (for authentication see "AuthExample")
  */
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost") {

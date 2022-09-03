@@ -12,10 +12,11 @@ class SwaggerUIPluginConfig {
     private var defaultUnauthorizedResponse: SingleResponseDocumentation? = null
 
     fun defaultUnauthorizedResponse(block: SingleResponseDocumentation.() -> Unit) {
-        defaultUnauthorizedResponse =  SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply(block)
+        defaultUnauthorizedResponse = SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply(block)
     }
 
     fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
+
 
     /**
      * The name of the security scheme to use for the protected paths
@@ -35,10 +36,12 @@ class SwaggerUIPluginConfig {
      */
     var schemasInComponentSection: Boolean = false
 
+
     /**
      * Whether to put example objects in the component section and reference them or inline the examples at the actual place of usage.
      */
     var examplesInComponentSection: Boolean = false
+
 
     /**
      * Swagger-UI configuration
@@ -228,30 +231,11 @@ class OpenApiServerConfig {
 }
 
 
-/**
- * Allows referencing an external resource for extended documentation.
- */
-class OpenApiExternalDocumentationConfig {
-
-    /**
-     * The URL for the target documentation. Value MUST be in the format of a URL.
-     */
-    var url: String = "/"
-
-
-    /**
-     * A short description of the target documentation
-     */
-    var description: String? = null
-
-}
-
-
 enum class AuthType {
     API_KEY, HTTP, OAUTH2, OPENID_CONNECT, MUTUAL_TLS
 }
 
-enum class KeyLocation {
+enum class AuthKeyLocation {
     QUERY, HEADER, COOKIE
 }
 
@@ -267,7 +251,8 @@ enum class AuthScheme {
  */
 class OpenApiSecuritySchemeConfig(
     /**
-     * The name of the header, query or cookie parameter to be used
+     * The name of the header, query or cookie parameter to be used.
+     * Required for type [AuthType.API_KEY]
      */
     val name: String
 ) {
@@ -279,27 +264,135 @@ class OpenApiSecuritySchemeConfig(
 
 
     /**
-     * The location of the API key (OpenAPI 'in')
+     * The location of the API key (OpenAPI 'in').
+     * Required for type [AuthType.API_KEY]
      */
-    var location: KeyLocation? = null
+    var location: AuthKeyLocation? = null
 
 
     /**
-     * The name of the HTTP Authorization scheme to be used
+     * The name of the HTTP Authorization scheme to be used.
+     * Required for type [AuthType.HTTP]
      */
     var scheme: AuthScheme? = null
 
 
     /**
-     * A hint to the client to identify how the bearer token is formatted
+     * A hint to the client to identify how the bearer token is formatted.
+     * Used for type [AuthType.HTTP] and schema [AuthScheme.BEARER]
      */
     var bearerFormat: String? = null
+
+
+    /**
+     * information for the oauth flow types supported.
+     * Required for type [AuthType.OAUTH2]
+     */
+    private var flows: OpenIdOAuthFlowsConfig? = null
+
+    fun flows(block: OpenIdOAuthFlowsConfig.() -> Unit) {
+        flows = OpenIdOAuthFlowsConfig().apply(block)
+    }
+
+    fun getFlows() = flows
+
+
+    /**
+     * OpenId Connect URL to discover OAuth2 configuration values.
+     * Required for type [AuthType.OPENID_CONNECT]
+     */
+    var openIdConnectUrl: String? = null
 
 
     /**
      * A short description for security scheme.
      */
     var description: String? = null
+}
+
+
+/**
+ * An object containing configuration information for the oauth flow types supported
+ */
+class OpenIdOAuthFlowsConfig {
+    /**
+     * Configuration for the OAuth Implicit flow
+     */
+    private var implicit: OpenIdOAuthFlowConfig? = null
+
+    fun implicit(block: OpenIdOAuthFlowConfig.() -> Unit) {
+        implicit = OpenIdOAuthFlowConfig().apply(block)
+    }
+
+    fun getImplicit() = implicit
+
+
+    /**
+     * Configuration for the OAuth Resource Owner Password flow
+     */
+    private var password: OpenIdOAuthFlowConfig? = null
+
+    fun password(block: OpenIdOAuthFlowConfig.() -> Unit) {
+        password = OpenIdOAuthFlowConfig().apply(block)
+    }
+
+    fun getPassword() = implicit
+
+
+    /**
+     * Configuration for the OAuth Client Credentials flow.
+     */
+    private var clientCredentials: OpenIdOAuthFlowConfig? = null
+
+    fun clientCredentials(block: OpenIdOAuthFlowConfig.() -> Unit) {
+        clientCredentials = OpenIdOAuthFlowConfig().apply(block)
+    }
+
+    fun getClientCredentials() = implicit
+
+
+    /**
+     * Configuration for the OAuth Authorization Code flow.
+     */
+    private var authorizationCode: OpenIdOAuthFlowConfig? = null
+
+    fun authorizationCode(block: OpenIdOAuthFlowConfig.() -> Unit) {
+        authorizationCode = OpenIdOAuthFlowConfig().apply(block)
+    }
+
+    fun getAuthorizationCode() = implicit
+
+}
+
+
+/**
+ * Configuration details for a supported OAuth Flow
+ */
+class OpenIdOAuthFlowConfig {
+
+    /**
+     * The authorization URL to be used for this flow
+     */
+    var authorizationUrl: String? = null
+
+
+    /**
+     * The token URL to be used for this flow
+     */
+    var tokenUrl: String? = null
+
+
+    /**
+     * The URL to be used for obtaining refresh tokens
+     */
+    var refreshUrl: String? = null
+
+
+    /**
+     * The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it
+     */
+    var scopes: Map<String, String>? = null
+
 }
 
 
