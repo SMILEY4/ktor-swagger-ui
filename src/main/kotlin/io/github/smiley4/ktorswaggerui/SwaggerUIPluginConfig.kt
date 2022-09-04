@@ -336,7 +336,7 @@ class OpenIdOAuthFlowsConfig {
         password = OpenIdOAuthFlowConfig().apply(block)
     }
 
-    fun getPassword() = implicit
+    fun getPassword() = password
 
 
     /**
@@ -348,7 +348,7 @@ class OpenIdOAuthFlowsConfig {
         clientCredentials = OpenIdOAuthFlowConfig().apply(block)
     }
 
-    fun getClientCredentials() = implicit
+    fun getClientCredentials() = clientCredentials
 
 
     /**
@@ -360,7 +360,7 @@ class OpenIdOAuthFlowsConfig {
         authorizationCode = OpenIdOAuthFlowConfig().apply(block)
     }
 
-    fun getAuthorizationCode() = implicit
+    fun getAuthorizationCode() = authorizationCode
 
 }
 

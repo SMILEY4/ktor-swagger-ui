@@ -18,11 +18,7 @@ class OApiComponentsGenerator {
         return Components().apply {
             schemas = ctx.schemas
             examples = ctx.examples.mapValues {
-                Example().apply {
-                    value = it.value.value
-                    summary = it.value.summary
-                    description = it.value.description
-                }
+                OApiExampleGenerator().generate("", it.value, ComponentsContext.NOOP)
             }
         }
     }

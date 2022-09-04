@@ -18,6 +18,8 @@ class OApiSecuritySchemesGenerator {
         return mutableMapOf<String, SecurityScheme>().apply {
             configs.forEach {
                 put(it.name, SecurityScheme().apply {
+                    description = it.description
+                    name = it.name
                     type = when (it.type) {
                         AuthType.API_KEY -> SecurityScheme.Type.APIKEY
                         AuthType.HTTP -> SecurityScheme.Type.HTTP
@@ -26,7 +28,6 @@ class OApiSecuritySchemesGenerator {
                         AuthType.MUTUAL_TLS -> SecurityScheme.Type.MUTUALTLS
                         null -> null
                     }
-                    name = it.name
                     `in` = when (it.location) {
                         AuthKeyLocation.QUERY -> SecurityScheme.In.QUERY
                         AuthKeyLocation.HEADER -> SecurityScheme.In.HEADER
@@ -47,6 +48,7 @@ class OApiSecuritySchemesGenerator {
                     }
                     bearerFormat = it.bearerFormat
                     flows = it.getFlows()?.let { f -> OApiOAuthFlowsGenerator().generate(f) }
+                    openIdConnectUrl = it.openIdConnectUrl
                 })
             }
         }

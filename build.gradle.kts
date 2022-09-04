@@ -20,6 +20,7 @@ dependencies {
     val kotlinLoggingVersion = "2.1.23"
     val logbackVersion = "1.2.11"
     val versionKotest = "5.4.2"
+    val versionMockk = "1.12.7"
 
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
@@ -37,6 +38,7 @@ dependencies {
     testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
     testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
 
+    testImplementation("io.mockk:mockk:$versionMockk")
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
 

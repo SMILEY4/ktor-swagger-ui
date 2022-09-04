@@ -25,7 +25,7 @@ object ApiSpec {
                 }
             }
             tags = OApiTagsGenerator().generate(config.getTags())
-            paths = OApiPathsGenerator().generate(config, application, componentCtx)
+            paths = OApiPathsGenerator(RouteCollector()).generate(config, application, componentCtx)
             components = OApiComponentsGenerator().generate(componentCtx)
         }
         jsonSpec = Json.pretty(openAPI)
