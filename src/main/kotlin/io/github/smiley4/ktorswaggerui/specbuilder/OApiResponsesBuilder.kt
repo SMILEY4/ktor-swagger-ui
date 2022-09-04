@@ -5,26 +5,26 @@ import io.swagger.v3.oas.models.headers.Header
 import io.swagger.v3.oas.models.responses.ApiResponse
 
 /**
- * Generator for the OpenAPI Responses
+ * Builder for the OpenAPI Responses
  */
-class OApiResponsesGenerator {
+class OApiResponsesBuilder(
+    private val contentBuilder: OApiContentBuilder,
+    private val schemaBuilder: OApiSchemaBuilder
+) {
 
-    /**
-     * Generate the Responses from the given configs
-     */
-    fun generate(configs: List<OpenApiResponse>, componentCtx: ComponentsContext): List<Pair<String, ApiResponse>> {
-        return configs.map { responseCfg ->
+    fun build(responses: List<OpenApiResponse>, components: ComponentsContext): List<Pair<String, ApiResponse>> {
+        return responses.map { responseCfg ->
             responseCfg.statusCode.value.toString() to ApiResponse().apply {
                 description = responseCfg.description
                 responseCfg.getBody()?.let {
-                    content = OApiContentGenerator().generate(responseCfg.getBody()!!, componentCtx)
+                    content = contentBuilder.build(responseCfg.getBody()!!, components)
                 }
                 headers = responseCfg.getHeaders().mapValues {
                     Header().apply {
                         description = it.value.description
                         required = it.value.required
                         deprecated = it.value.deprecated
-                        schema = it.value.schema?.let { s -> OApiSchemaGenerator().generate(s, ComponentsContext.NOOP) }
+                        schema = it.value.schema?.let { s -> schemaBuilder.build(s, ComponentsContext.NOOP) }
                     }
                 }
             }

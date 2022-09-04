@@ -7,23 +7,20 @@ import io.swagger.v3.oas.models.security.OAuthFlows
 import io.swagger.v3.oas.models.security.Scopes
 
 /**
- * Generator for the Flows Info-Object
+ * Builder for the Flows Info-Object
  */
-class OApiOAuthFlowsGenerator {
+class OApiOAuthFlowsBuilder {
 
-    /**
-     * Generate the OpenAPI Flows-Object from the given config
-     */
-    fun generate(config: OpenIdOAuthFlows): OAuthFlows {
+    fun build(flows: OpenIdOAuthFlows): OAuthFlows {
         return OAuthFlows().apply {
-            implicit = config.getImplicit()?.let { generate(it) }
-            password = config.getPassword()?.let { generate(it) }
-            clientCredentials = config.getClientCredentials()?.let { generate(it) }
-            authorizationCode = config.getAuthorizationCode()?.let { generate(it) }
+            implicit = flows.getImplicit()?.let { build(it) }
+            password = flows.getPassword()?.let { build(it) }
+            clientCredentials = flows.getClientCredentials()?.let { build(it) }
+            authorizationCode = flows.getAuthorizationCode()?.let { build(it) }
         }
     }
 
-    private fun generate(flow: OpenIdOAuthFlow): OAuthFlow {
+    private fun build(flow: OpenIdOAuthFlow): OAuthFlow {
         return OAuthFlow().apply {
             authorizationUrl = flow.authorizationUrl
             tokenUrl = flow.tokenUrl

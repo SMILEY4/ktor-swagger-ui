@@ -12,52 +12,52 @@ import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.KClass
 
 /**
- * Generator for an OpenAPI Schema Object that describes a json-object (or array)
+ * Builder for an OpenAPI Schema Object that describes a json-object (or array)
  */
-class OApiJsonSchemaGenerator {
+class OApiJsonSchemaBuilder {
 
-    /**
-     * Generate the Schema Object from the given class
-     */
-    fun generate(schema: KClass<*>, componentCtx: ComponentsContext): Schema<Any> {
-        if (componentCtx.schemasInComponents) {
-            val schemaObj = createSchema(schema)
-            if (schemaObj.type == "array") {
-                return arrayRefSchema(componentCtx.addSchema(schema.java.componentType.kotlin, schemaObj.items))
+    fun build(type: KClass<*>, components: ComponentsContext): Schema<Any> {
+        if (components.schemasInComponents) {
+            val schema = createSchema(type)
+            if (schema.type == "array") {
+                return arrayRefSchema(components.addSchema(type.java.componentType.kotlin, schema.items))
             } else {
-                return refSchema(componentCtx.addSchema(schema, schemaObj))
+                return refSchema(components.addSchema(type, schema))
             }
         } else {
-            return createSchema(schema)
+            return createSchema(type)
         }
     }
 
-    private fun createSchema(schema: KClass<*>): Schema<Any> {
-        return if (schema.java.isArray) {
+
+    private fun createSchema(type: KClass<*>): Schema<Any> {
+        return if (type.java.isArray) {
             Schema<Any>().apply {
-                type = "array"
-                items = createObjectSchema(schema.java.componentType.kotlin)
+                this.type = "array"
+                this.items = createObjectSchema(type.java.componentType.kotlin)
             }
-        } else if (schema.java.isEnum) {
+        } else if (type.java.isEnum) {
             Schema<Any>().apply {
-                type = "string"
-                enum = schema.java.enumConstants.map { it.toString() }
+                this.type = "string"
+                this.enum = type.java.enumConstants.map { it.toString() }
             }
         } else {
-            createObjectSchema(schema)
+            createObjectSchema(type)
         }
     }
 
-    private fun createObjectSchema(schema: KClass<*>): Schema<Any> {
-        return if (schema.java.isEnum) {
+
+    private fun createObjectSchema(type: KClass<*>): Schema<Any> {
+        return if (type.java.isEnum) {
             Schema<Any>().apply {
-                type = "string"
-                enum = schema.java.enumConstants.map { it.toString() }
+                this.type = "string"
+                this.enum = type.java.enumConstants.map { it.toString() }
             }
         } else {
-            toSchema(generateJsonSchema(schema.java))
+            toSchema(generateJsonSchema(type.java))
         }
     }
+
 
     private fun toSchema(node: JsonNode): Schema<Any> {
         return Schema<Any>().apply {
@@ -69,19 +69,21 @@ class OApiJsonSchemaGenerator {
             node["anyOf"]?.let { this.anyOf = it.collectElements().map { prop -> toSchema(prop) } }
             node["required"]?.let { this.required = it.collectElements().map { prop -> prop.asText() } }
             node["const"]?.let { this.setConst(it.asText()) }
-
             node["\$defs"]?.let { throw UnsupportedOperationException("'\"defs' in json-schema are not supported") }
             node["\$ref"]?.let { throw UnsupportedOperationException("'\"refs' in json-schema are not supported") }
         }
     }
 
+
     private fun JsonNode.collectFields(): List<MutableMap.MutableEntry<String, JsonNode>> {
         return this.fields().asSequence().toList()
     }
 
+
     private fun JsonNode.collectElements(): List<JsonNode> {
         return this.elements().asSequence().toList()
     }
+
 
     private fun <T> generateJsonSchema(type: Class<T>): ObjectNode {
         val config = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
@@ -93,20 +95,21 @@ class OApiJsonSchemaGenerator {
         return SchemaGenerator(config).generateSchema(type)
     }
 
+
     private fun refSchema(key: String): Schema<Any> {
         return Schema<Any>().apply {
-            `$ref` = "#/components/schemas/$key"
+            `$ref` = key
         }
     }
+
 
     private fun arrayRefSchema(key: String): Schema<Any> {
         return Schema<Any>().apply {
             type = "array"
             items = Schema<Any>().apply {
-                `$ref` = "#/components/schemas/$key"
+                `$ref` = key
             }
         }
     }
-
 
 }

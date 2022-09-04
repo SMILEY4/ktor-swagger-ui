@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.media.Schema
 import java.math.BigDecimal
@@ -9,7 +9,7 @@ import java.math.BigDecimal
 class PrimitiveArraysSchemaGenerationTests : StringSpec({
 
     "generate schema for byte-array" {
-        OApiSchemaGenerator().generate(Array<Byte>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Byte>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -17,7 +17,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
                 maximum = BigDecimal.valueOf(127)
             }
         }
-        OApiSchemaGenerator().generate(ByteArray::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(ByteArray::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -28,7 +28,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for unsigned byte" {
-        OApiSchemaGenerator().generate(Array<UByte>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<UByte>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -39,7 +39,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for short-array" {
-        OApiSchemaGenerator().generate(Array<Short>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Short>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -47,7 +47,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
                 maximum = BigDecimal.valueOf(32767)
             }
         }
-        OApiSchemaGenerator().generate(ShortArray::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(ShortArray::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -58,7 +58,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for unsigned short" {
-        OApiSchemaGenerator().generate(Array<UShort>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<UShort>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -69,14 +69,14 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for integer-array" {
-        OApiSchemaGenerator().generate(Array<Int>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Int>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
                 format = "int32"
             }
         }
-        OApiSchemaGenerator().generate(IntArray::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(IntArray::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -86,7 +86,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for unsigned integer" {
-        OApiSchemaGenerator().generate(Array<UInt>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<UInt>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -97,14 +97,14 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for long-array" {
-        OApiSchemaGenerator().generate(Array<Long>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Long>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
                 format = "int64"
             }
         }
-        OApiSchemaGenerator().generate(LongArray::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(LongArray::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -114,7 +114,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for unsigned long" {
-        OApiSchemaGenerator().generate(Array<ULong>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<ULong>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "integer"
@@ -124,14 +124,14 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for float-array" {
-        OApiSchemaGenerator().generate(Array<Float>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Float>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "number"
                 format = "float"
             }
         }
-        OApiSchemaGenerator().generate(FloatArray::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(FloatArray::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "number"
@@ -141,14 +141,14 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for double-array" {
-        OApiSchemaGenerator().generate(Array<Double>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Double>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "number"
                 format = "double"
             }
         }
-        OApiSchemaGenerator().generate(DoubleArray::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(DoubleArray::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "number"
@@ -158,7 +158,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for character-array" {
-        OApiSchemaGenerator().generate(Array<Char>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Char>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "string"
@@ -169,7 +169,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for string-array" {
-        OApiSchemaGenerator().generate(Array<String>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<String>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "string"
@@ -178,7 +178,7 @@ class PrimitiveArraysSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for boolean-array" {
-        OApiSchemaGenerator().generate(Array<Boolean>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<Boolean>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<String>().apply {
                 type = "boolean"

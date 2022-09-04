@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiPathsGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiPathsBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.RouteCollector
 import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -20,7 +20,7 @@ class PathsObjectTest : StringSpec({
 
     "test paths" {
         val config = pluginConfig {}
-        val paths = generatePaths(
+        val paths = buildPaths(
             config, listOf(
                 HttpMethod.Get to "/",
                 HttpMethod.Delete to "/test/path",
@@ -45,7 +45,7 @@ class PathsObjectTest : StringSpec({
                 forwardRoot = false
             }
         }
-        val paths = generatePaths(
+        val paths = buildPaths(
             config, listOf(
                 HttpMethod.Get to "/",
                 HttpMethod.Get to "/swagger-ui",
@@ -66,7 +66,7 @@ class PathsObjectTest : StringSpec({
                 forwardRoot = true
             }
         }
-        val paths = generatePaths(
+        val paths = buildPaths(
             config, listOf(
                 HttpMethod.Get to "/",
                 HttpMethod.Get to "/swagger-ui",
@@ -82,7 +82,7 @@ class PathsObjectTest : StringSpec({
 
     "test merge paths" {
         val config = pluginConfig {}
-        val paths = generatePaths(
+        val paths = buildPaths(
             config, listOf(
                 HttpMethod.Get to "/different/path",
                 HttpMethod.Get to "/test/path",
@@ -103,8 +103,8 @@ class PathsObjectTest : StringSpec({
 
     companion object {
 
-        private fun generatePaths(config: SwaggerUIPluginConfig, routes: List<Pair<HttpMethod, String>>): Paths {
-            return OApiPathsGenerator(routeCollector(routes)).generate(config, application(), ComponentsContext.NOOP)
+        private fun buildPaths(config: SwaggerUIPluginConfig, routes: List<Pair<HttpMethod, String>>): Paths {
+            return getOApiPathsBuilder(routeCollector(routes)).build(config, application(), ComponentsContext.NOOP)
         }
 
         private fun pluginConfig(builder: SwaggerUIPluginConfig.() -> Unit): SwaggerUIPluginConfig {
@@ -117,7 +117,6 @@ class PathsObjectTest : StringSpec({
             every { it.collectRoutes(any()) } returns routes
                 .map {
                     RouteMeta(
-                        route = mockk(),
                         method = it.first,
                         path = it.second,
                         documentation = OpenApiRoute(),

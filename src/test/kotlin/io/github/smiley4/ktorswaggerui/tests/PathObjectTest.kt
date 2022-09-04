@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiPathGenerator
 import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
@@ -9,7 +8,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-import io.mockk.mockk
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.headers.Header
@@ -24,7 +22,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement
 class PathObjectTest : StringSpec({
 
     "test get-route" {
-        val path = generatePath(HttpMethod.Get, "test/path") {}
+        val path = buildPath(HttpMethod.Get, "test/path") {}
         path.first shouldBe "test/path"
         path.second shouldBePath {
             get = Operation().apply {
@@ -36,7 +34,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test post-route" {
-        val path = generatePath(HttpMethod.Post, "test/path") {}
+        val path = buildPath(HttpMethod.Post, "test/path") {}
         path.first shouldBe "test/path"
         path.second shouldBePath {
             post = Operation().apply {
@@ -48,7 +46,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test complete route" {
-        val path = generatePath(HttpMethod.Get, "test/path") {
+        val path = buildPath(HttpMethod.Get, "test/path") {
             tags = mutableListOf("tag1", "tag2")
             summary = "Test Summary"
             description = "Test Description"
@@ -113,7 +111,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test automatic tag generator" {
-        val path = generatePath(HttpMethod.Get, "test/path", tagGenerator = tagGenerator()) {
+        val path = buildPath(HttpMethod.Get, "test/path", tagGenerator = tagGenerator()) {
             tags = mutableListOf("tag1", "tag2")
         }
         path.second shouldBePath {
@@ -126,7 +124,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test security scheme for non-protected path" {
-        val path = generatePath(HttpMethod.Get, "test/path") {
+        val path = buildPath(HttpMethod.Get, "test/path") {
             securitySchemeName = "TestAuth"
         }
         path.second shouldBePath {
@@ -139,7 +137,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test security scheme for protected path" {
-        val path = generateProtectedPath(HttpMethod.Get, "test/path") {
+        val path = buildProtectedPath(HttpMethod.Get, "test/path") {
             securitySchemeName = "TestAuth"
         }
         path.second shouldBePath {
@@ -155,7 +153,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test default security scheme for non-protected path" {
-        val path = generatePath(HttpMethod.Get, "test/path", defaultSecuritySchemeName = "DefaultAuth") {}
+        val path = buildPath(HttpMethod.Get, "test/path", defaultSecuritySchemeName = "DefaultAuth") {}
         path.second shouldBePath {
             get = Operation().apply {
                 tags = emptyList()
@@ -166,7 +164,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test default security scheme" {
-        val path = generateProtectedPath(HttpMethod.Get, "test/path", defaultSecuritySchemeName = "DefaultAuth") {}
+        val path = buildProtectedPath(HttpMethod.Get, "test/path", defaultSecuritySchemeName = "DefaultAuth") {}
         path.second shouldBePath {
             get = Operation().apply {
                 tags = emptyList()
@@ -180,7 +178,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test overwriting default security scheme" {
-        val path = generateProtectedPath(HttpMethod.Get, "test/path", defaultSecuritySchemeName = "DefaultAuth") {
+        val path = buildProtectedPath(HttpMethod.Get, "test/path", defaultSecuritySchemeName = "DefaultAuth") {
             securitySchemeName = "TestAuth"
         }
         path.second shouldBePath {
@@ -196,7 +194,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test default unauthorized response for non-protected path" {
-        val path = generatePath(HttpMethod.Get, "test/path", defaultUnauthorizedResponse()) {}
+        val path = buildPath(HttpMethod.Get, "test/path", defaultUnauthorizedResponse()) {}
         path.second shouldBePath {
             get = Operation().apply {
                 tags = emptyList()
@@ -207,7 +205,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test default unauthorized response" {
-        val path = generateProtectedPath(HttpMethod.Get, "test/path", defaultUnauthorizedResponse()) {}
+        val path = buildProtectedPath(HttpMethod.Get, "test/path", defaultUnauthorizedResponse()) {}
         path.second shouldBePath {
             get = Operation().apply {
                 tags = emptyList()
@@ -222,7 +220,7 @@ class PathObjectTest : StringSpec({
     }
 
     "test overwriting default unauthorized response" {
-        val path = generateProtectedPath(HttpMethod.Get, "test/path", defaultUnauthorizedResponse()) {
+        val path = buildProtectedPath(HttpMethod.Get, "test/path", defaultUnauthorizedResponse()) {
             response {
                 HttpStatusCode.Unauthorized to {
                     description = "Test Unauthorized-Response"
@@ -246,7 +244,7 @@ class PathObjectTest : StringSpec({
 
     companion object {
 
-        private fun generatePath(
+        private fun buildPath(
             method: HttpMethod,
             path: String,
             defaultUnauthorizedResponse: OpenApiResponse? = null,
@@ -254,7 +252,7 @@ class PathObjectTest : StringSpec({
             defaultSecuritySchemeName: String? = null,
             builder: OpenApiRoute.() -> Unit
         ): Pair<String, PathItem> {
-            return OApiPathGenerator().generate(
+            return getOApiPathBuilder().build(
                 routeMeta(method, path, builder),
                 defaultUnauthorizedResponse,
                 defaultSecuritySchemeName,
@@ -263,7 +261,7 @@ class PathObjectTest : StringSpec({
             )
         }
 
-        private fun generateProtectedPath(
+        private fun buildProtectedPath(
             method: HttpMethod,
             path: String,
             defaultUnauthorizedResponse: OpenApiResponse? = null,
@@ -271,7 +269,7 @@ class PathObjectTest : StringSpec({
             defaultSecuritySchemeName: String? = null,
             builder: OpenApiRoute.() -> Unit
         ): Pair<String, PathItem> {
-            return OApiPathGenerator().generate(
+            return getOApiPathBuilder().build(
                 protectedRouteMeta(method, path, builder),
                 defaultUnauthorizedResponse,
                 defaultSecuritySchemeName,
@@ -282,7 +280,6 @@ class PathObjectTest : StringSpec({
 
         private fun routeMeta(method: HttpMethod, path: String, builder: OpenApiRoute.() -> Unit): RouteMeta {
             return RouteMeta(
-                route = mockk(),
                 path = path,
                 method = method,
                 documentation = OpenApiRoute().apply(builder),
@@ -292,7 +289,6 @@ class PathObjectTest : StringSpec({
 
         private fun protectedRouteMeta(method: HttpMethod, path: String, builder: OpenApiRoute.() -> Unit): RouteMeta {
             return RouteMeta(
-                route = mockk(),
                 path = path,
                 method = method,
                 documentation = OpenApiRoute().apply(builder),

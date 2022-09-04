@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiInfoGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
@@ -10,7 +9,7 @@ import io.swagger.v3.oas.models.info.License
 class InfoObjectTest : StringSpec({
 
     "test default info object" {
-        val info = generateInfoObject {}
+        val info = buildInfoObject {}
         info shouldBeInfo {
             title = "API"
             version = "latest"
@@ -18,7 +17,7 @@ class InfoObjectTest : StringSpec({
     }
 
     "test complete info object" {
-        val info = generateInfoObject {
+        val info = buildInfoObject {
             title = "Test Title"
             version = "test"
             description = "Test Description"
@@ -54,8 +53,8 @@ class InfoObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateInfoObject(builder: OpenApiInfo.() -> Unit): Info {
-            return OApiInfoGenerator().generate(OpenApiInfo().apply(builder))
+        private fun buildInfoObject(builder: OpenApiInfo.() -> Unit): Info {
+            return getOApiInfoBuilder().build(OpenApiInfo().apply(builder))
         }
 
     }

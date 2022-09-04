@@ -3,21 +3,21 @@ package io.github.smiley4.ktorswaggerui.tests
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.media.Schema
 
 class JsonSchemaGenerationTests : StringSpec({
 
     "generate schema for a simple enum" {
-        OApiSchemaGenerator().generate(SimpleEnum::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SimpleEnum::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "string"
             enum = SimpleEnum.values().map { it.name }
         }
     }
 
     "generate schema for a list of simple classes" {
-        OApiSchemaGenerator().generate(Array<SimpleDataClass>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<SimpleDataClass>::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<Any>().apply {
                 type = "object"
@@ -34,7 +34,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a simple class" {
-        OApiSchemaGenerator().generate(SimpleDataClass::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SimpleDataClass::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "text" to Schema<Any>().apply {
@@ -48,7 +48,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a another class" {
-        OApiSchemaGenerator().generate(AnotherDataClass::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(AnotherDataClass::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "primitiveValue" to Schema<Any>().apply {
@@ -90,7 +90,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with inheritance" {
-        OApiSchemaGenerator().generate(SubClassA::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SubClassA::class, ComponentsContext.NOOP) shouldBeSchema {
             allOf = listOf(
                 Schema<Any>().apply {
                     type = "object"
@@ -117,7 +117,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with sub-classes" {
-        OApiSchemaGenerator().generate(Superclass::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Superclass::class, ComponentsContext.NOOP) shouldBeSchema {
             anyOf = listOf(
                 Schema<Any>().apply {
                     allOf = listOf(
@@ -172,7 +172,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with generic types" {
-        OApiSchemaGenerator().generate(WrapperForClassWithGenerics::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(WrapperForClassWithGenerics::class, ComponentsContext.NOOP) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "genericClass" to Schema<Any>().apply {

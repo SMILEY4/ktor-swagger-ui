@@ -14,12 +14,14 @@ import io.ktor.server.routing.TrailingSlashRouteSelector
 
 class RouteCollector {
 
+    /**
+     * Collect all routes from the given application
+     */
     fun collectRoutes(application: Application): Sequence<RouteMeta> {
         return allRoutes(application.plugin(Routing))
             .asSequence()
             .map { route ->
                 RouteMeta(
-                    route = route,
                     method = getMethod(route),
                     path = getPath(route),
                     documentation = getDocumentation(route, OpenApiRoute()),

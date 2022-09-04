@@ -6,16 +6,15 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme
 
 /**
- * Generator for OpenAPI SecurityScheme-Objects
+ * Builder for OpenAPI SecurityScheme-Objects
  */
-class OApiSecuritySchemesGenerator {
+class OApiSecuritySchemesBuilder(
+    private val authFlowsBuilder: OApiOAuthFlowsBuilder
+) {
 
-    /**
-     * Generate the OpenAPI SecurityScheme-Objects from the given configs
-     */
-    fun generate(configs: List<OpenApiSecurityScheme>): Map<String, SecurityScheme> {
+    fun build(securitySchemes: List<OpenApiSecurityScheme>): Map<String, SecurityScheme> {
         return mutableMapOf<String, SecurityScheme>().apply {
-            configs.forEach {
+            securitySchemes.forEach {
                 put(it.name, SecurityScheme().apply {
                     description = it.description
                     name = it.name
@@ -46,7 +45,7 @@ class OApiSecuritySchemesGenerator {
                         else -> null
                     }
                     bearerFormat = it.bearerFormat
-                    flows = it.getFlows()?.let { f -> OApiOAuthFlowsGenerator().generate(f) }
+                    flows = it.getFlows()?.let { f -> authFlowsBuilder.build(f) }
                     openIdConnectUrl = it.openIdConnectUrl
                 })
             }

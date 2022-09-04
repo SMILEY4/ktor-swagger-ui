@@ -1,8 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiContentGenerator
-import io.github.smiley4.ktorswaggerui.specbuilder.OpenApiBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
 import io.kotest.core.spec.style.StringSpec
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.examples.Example
@@ -15,7 +14,7 @@ import kotlin.reflect.KClass
 class ContentObjectTest : StringSpec({
 
     "test default (plain-text) content object" {
-        val content = generateContentObject(String::class) {}
+        val content = buildContentObject(String::class) {}
         content shouldBeContent {
             addMediaType(ContentType.Text.Plain.toString(), MediaType().apply {
                 schema = Schema<Any>().apply {
@@ -27,7 +26,7 @@ class ContentObjectTest : StringSpec({
     }
 
     "test default (json) content object" {
-        val content = generateContentObject(SimpleBody::class) {}
+        val content = buildContentObject(SimpleBody::class) {}
         content shouldBeContent {
             addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
                 schema = Schema<Any>().apply {
@@ -44,7 +43,7 @@ class ContentObjectTest : StringSpec({
     }
 
     "test complete (plain-text) content object" {
-        val content = generateContentObject(String::class) {
+        val content = buildContentObject(String::class) {
             description = "Test Description"
             required = true
             example("Example1", "Example Value 1")
@@ -69,7 +68,7 @@ class ContentObjectTest : StringSpec({
     }
 
     "test xml content object" {
-        val content = generateContentObject(SimpleBody::class) {
+        val content = buildContentObject(SimpleBody::class) {
             mediaType(ContentType.Application.Xml)
         }
         content shouldBeContent {
@@ -88,7 +87,7 @@ class ContentObjectTest : StringSpec({
     }
 
     "test image content object" {
-        val content = generateContentObject(null) {
+        val content = buildContentObject(null) {
             mediaType(ContentType.Image.SVG)
             mediaType(ContentType.Image.PNG)
             mediaType(ContentType.Image.JPEG)
@@ -104,17 +103,17 @@ class ContentObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateContentObject(schema: KClass<*>?, builder: OpenApiBody.() -> Unit): Content {
-            return generateContentObject(ComponentsContext.NOOP, schema, builder)
+        private fun buildContentObject(schema: KClass<*>?, builder: OpenApiBody.() -> Unit): Content {
+            return buildContentObject(ComponentsContext.NOOP, schema, builder)
         }
 
 
-        private fun generateContentObject(
+        private fun buildContentObject(
             componentCtx: ComponentsContext,
             schema: KClass<*>?,
             builder: OpenApiBody.() -> Unit
         ): Content {
-            return OApiContentGenerator().generate(OpenApiBody(schema).apply(builder), componentCtx)
+            return getOApiContentBuilder().build(OpenApiBody(schema).apply(builder), componentCtx)
         }
 
         private data class SimpleBody(

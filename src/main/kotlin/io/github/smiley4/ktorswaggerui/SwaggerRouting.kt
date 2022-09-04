@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.routing
+package io.github.smiley4.ktorswaggerui
 
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode

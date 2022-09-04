@@ -9,7 +9,14 @@ import io.swagger.v3.oas.models.OpenAPI
 /**
  * Build the OpenApi-json for the given application
  */
-class ApiSpecBuilder {
+class ApiSpecBuilder(
+    private val infoBuilder: OApiInfoBuilder,
+    private val serversBuilder: OApiServersBuilder,
+    private val securitySchemesBuilder: OApiSecuritySchemesBuilder,
+    private val tagsBuilder: OApiTagsBuilder,
+    private val pathsBuilder: OApiPathsBuilder,
+    private val componentsBuilder: OApiComponentsBuilder
+) {
 
     fun build(application: Application, config: SwaggerUIPluginConfig): String {
         val componentCtx = ComponentsContext(
@@ -17,16 +24,16 @@ class ApiSpecBuilder {
             config.examplesInComponentSection, mutableMapOf()
         )
         val openAPI = OpenAPI().apply {
-            info = OApiInfoGenerator().generate(config.getInfo())
-            servers = OApiServersGenerator().generate(config.getServers())
+            info = infoBuilder.build(config.getInfo())
+            servers = serversBuilder.build(config.getServers())
             if (config.getSecuritySchemes().isNotEmpty()) {
                 components = Components().apply {
-                    securitySchemes = OApiSecuritySchemesGenerator().generate(config.getSecuritySchemes())
+                    securitySchemes = securitySchemesBuilder.build(config.getSecuritySchemes())
                 }
             }
-            tags = OApiTagsGenerator().generate(config.getTags())
-            paths = OApiPathsGenerator(RouteCollector()).generate(config, application, componentCtx)
-            components = OApiComponentsGenerator().generate(componentCtx)
+            tags = tagsBuilder.build(config.getTags())
+            paths = pathsBuilder.build(config, application, componentCtx)
+            components = componentsBuilder.build(componentCtx)
         }
         return Json.pretty(openAPI)
     }

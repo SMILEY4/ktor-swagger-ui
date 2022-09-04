@@ -1,7 +1,5 @@
-package io.github.smiley4.ktorswaggerui.specbuilder
+package io.github.smiley4.ktorswaggerui.dsl
 
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.ktor.http.ContentType
 import kotlin.reflect.KClass
 

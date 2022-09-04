@@ -4,15 +4,12 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.swagger.v3.oas.models.servers.Server
 
 /**
- * Generator for the OpenAPI Server-Objects
+ * Builder for the OpenAPI Server-Objects
  */
-class OApiServersGenerator {
+class OApiServersBuilder {
 
-    /**
-     * Generate the OpenAPI Server-Objects from the given configs
-     */
-    fun generate(configs: List<OpenApiServer>): List<Server> {
-        return configs.map {
+    fun build(servers: List<OpenApiServer>): List<Server> {
+        return servers.map {
             Server().apply {
                 url = it.url
                 description = it.description

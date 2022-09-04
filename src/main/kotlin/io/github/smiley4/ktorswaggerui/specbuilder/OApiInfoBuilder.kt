@@ -6,27 +6,24 @@ import io.swagger.v3.oas.models.info.Info
 import io.swagger.v3.oas.models.info.License
 
 /**
- * Generator for the OpenAPI Info-Object
+ * Builder for the OpenAPI Info-Object
  */
-class OApiInfoGenerator {
+class OApiInfoBuilder {
 
-    /**
-     * Generate the OpenAPI Info-Object from the given config
-     */
-    fun generate(config: OpenApiInfo): Info {
+    fun build(info: OpenApiInfo): Info {
         return Info().apply {
-            title = config.title
-            version = config.version
-            description = config.description
-            termsOfService = config.termsOfService
-            config.getContact()?.let { cfgContact ->
+            title = info.title
+            version = info.version
+            description = info.description
+            termsOfService = info.termsOfService
+            info.getContact()?.let { cfgContact ->
                 contact = Contact().apply {
                     name = cfgContact.name
                     url = cfgContact.url
                     email = cfgContact.email
                 }
             }
-            config.getLicense()?.let { cfgLicense ->
+            info.getLicense()?.let { cfgLicense ->
                 license = License().apply {
                     name = cfgLicense.name
                     url = cfgLicense.url

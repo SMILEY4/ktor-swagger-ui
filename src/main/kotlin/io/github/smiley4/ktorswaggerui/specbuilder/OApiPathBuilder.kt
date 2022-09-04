@@ -9,42 +9,42 @@ import io.swagger.v3.oas.models.responses.ApiResponses
 import io.swagger.v3.oas.models.security.SecurityRequirement
 
 /**
- * Generator for a single OpenAPI Path
+ * Builder for a single OpenAPI Path
  */
-class OApiPathGenerator {
+class OApiPathBuilder(
+    private val parametersBuilder: OApiParametersBuilder,
+    private val requestBodyBuilder: OApiRequestBodyBuilder,
+    private val responsesBuilder: OApiResponsesBuilder
+) {
 
-    /**
-     * Generate the OpenAPI Path-Item from the given config
-     */
-    fun generate(
-        config: RouteMeta,
-        defaultUnauthorizedResponses: OpenApiResponse?,
+    fun build(
+        route: RouteMeta,
+        defaultUnauthorizedResponse: OpenApiResponse?,
         defaultSecurityScheme: String?,
         tagGenerator: ((url: List<String>) -> String?)?,
-        componentCtx: ComponentsContext
+        components: ComponentsContext
     ): Pair<String, PathItem> {
-        return config.path to PathItem().apply {
+        return route.path to PathItem().apply {
             val operation = Operation().apply {
-                tags = (config.documentation.tags + tagGenerator?.let { it(config.path.split("/").filter { it.isNotEmpty() }) })
-                    .filterNotNull()
-                summary = config.documentation.summary
-                description = config.documentation.description
-                parameters = OApiParametersGenerator().generate(config.documentation.getRequest().getParameters())
-                config.documentation.getRequest().getBody()?.let {
-                    requestBody = OApiRequestBodyGenerator().generate(it, componentCtx)
+                tags = buildTags(route, tagGenerator)
+                summary = route.documentation.summary
+                description = route.documentation.description
+                parameters = parametersBuilder.build(route.documentation.getRequest().getParameters())
+                route.documentation.getRequest().getBody()?.let {
+                    requestBody = requestBodyBuilder.build(it, components)
                 }
                 responses = ApiResponses().apply {
-                    OApiResponsesGenerator().generate(config.documentation.getResponses().getResponses(), componentCtx).forEach {
+                    responsesBuilder.build(route.documentation.getResponses().getResponses(), components).forEach {
                         addApiResponse(it.first, it.second)
                     }
-                    if (shouldAddUnauthorized(config, defaultUnauthorizedResponses)) {
-                        OApiResponsesGenerator().generate(listOf(defaultUnauthorizedResponses!!), componentCtx).forEach {
+                    if (shouldAddUnauthorized(route, defaultUnauthorizedResponse)) {
+                        responsesBuilder.build(listOf(defaultUnauthorizedResponse!!), components).forEach {
                             addApiResponse(it.first, it.second)
                         }
                     }
                 }
-                if (config.protected) {
-                    (config.documentation.securitySchemeName ?: defaultSecurityScheme)?.let { schemeName ->
+                if (route.protected) {
+                    (route.documentation.securitySchemeName ?: defaultSecurityScheme)?.let { schemeName ->
                         security = mutableListOf(
                             SecurityRequirement().apply {
                                 addList(schemeName, emptyList())
@@ -53,7 +53,7 @@ class OApiPathGenerator {
                     }
                 }
             }
-            when (config.method) {
+            when (route.method) {
                 HttpMethod.Get -> get = operation
                 HttpMethod.Post -> post = operation
                 HttpMethod.Put -> put = operation
@@ -66,9 +66,14 @@ class OApiPathGenerator {
     }
 
 
-    /**
-     * Whether a response for "Unauthorized" should be added automatically. Must be enabled and not already defined.
-     */
+    private fun buildTags(route: RouteMeta, tagGenerator: ((url: List<String>) -> String?)?): List<String> {
+        val generatedTags = tagGenerator?.let {
+            it(route.path.split("/").filter { it.isNotEmpty() })
+        }
+        return (route.documentation.tags + generatedTags).filterNotNull()
+    }
+
+
     private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: OpenApiResponse?) =
         defaultUnauthorizedResponses != null
                 && config.protected

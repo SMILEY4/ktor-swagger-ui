@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-import io.github.smiley4.ktorswaggerui.specbuilder.OpenApiBody
 import io.ktor.http.HttpStatusCode
 import kotlin.reflect.KClass
 

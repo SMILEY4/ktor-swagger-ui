@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiServersGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiServersBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.swagger.v3.oas.models.servers.Server
@@ -9,14 +9,14 @@ import io.swagger.v3.oas.models.servers.Server
 class ServersObjectTest : StringSpec({
 
     "test default server object" {
-        val server = generateServerObject {}
+        val server = buildServerObject {}
         server shouldBeServer {
             url = "/"
         }
     }
 
     "test complete server object" {
-        val server = generateServerObject {
+        val server = buildServerObject {
             url = "Test URL"
             description = "Test Description"
         }
@@ -27,7 +27,7 @@ class ServersObjectTest : StringSpec({
     }
 
     "test multiple server objects" {
-        val servers = generateServerObjects(
+        val servers = buildServerObjects(
             {
                 url = "Test URL 1"
                 description = "Test Description 1"
@@ -51,15 +51,15 @@ class ServersObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateServerObject(builder: OpenApiServer.() -> Unit): Server {
-            return OApiServersGenerator().generate(listOf(OpenApiServer().apply(builder))).let {
+        private fun buildServerObject(builder: OpenApiServer.() -> Unit): Server {
+            return getOApiServersBuilder().build(listOf(OpenApiServer().apply(builder))).let {
                 it shouldHaveSize 1
                 it.first()
             }
         }
 
-        private fun generateServerObjects(vararg builder: OpenApiServer.() -> Unit): List<Server> {
-            return OApiServersGenerator().generate(builder.map { OpenApiServer().apply(it) }).also {
+        private fun buildServerObjects(vararg builder: OpenApiServer.() -> Unit): List<Server> {
+            return getOApiServersBuilder().build(builder.map { OpenApiServer().apply(it) }).also {
                 it shouldHaveSize builder.size
             }
         }

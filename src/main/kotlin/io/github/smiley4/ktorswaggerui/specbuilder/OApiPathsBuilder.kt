@@ -7,17 +7,17 @@ import io.swagger.v3.oas.models.Paths
 import mu.KotlinLogging
 
 /**
- * Generator for the OpenAPI Paths
+ * Builder for the OpenAPI Paths
  */
-class OApiPathsGenerator(private val routeCollector: RouteCollector) {
+class OApiPathsBuilder(
+    private val routeCollector: RouteCollector,
+    private val pathBuilder: OApiPathBuilder
+) {
 
     private val logger = KotlinLogging.logger {}
 
 
-    /**
-     * Generate the OpenAPI Paths from the given config and application
-     */
-    fun generate(config: SwaggerUIPluginConfig, application: Application, componentCtx: ComponentsContext): Paths {
+    fun build(config: SwaggerUIPluginConfig, application: Application, components: ComponentsContext): Paths {
         return Paths().apply {
             routeCollector.collectRoutes(application)
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash(config.getSwaggerUI().swaggerUrl) }
@@ -25,12 +25,12 @@ class OApiPathsGenerator(private val routeCollector: RouteCollector) {
                 .filter { !config.getSwaggerUI().forwardRoot || it.path != "/" }
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
                 .map {
-                    OApiPathGenerator().generate(
+                    pathBuilder.build(
                         it,
                         config.getDefaultUnauthorizedResponse(),
                         config.defaultSecuritySchemeName,
                         config.automaticTagGenerator,
-                        componentCtx
+                        components
                     )
                 }
                 .forEach { addToPaths(this, it.first, it.second) }

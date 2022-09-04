@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiTagsGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.swagger.v3.oas.models.ExternalDocumentation
@@ -10,14 +9,14 @@ import io.swagger.v3.oas.models.tags.Tag
 class TagsObjectTest : StringSpec({
 
     "test default tag object" {
-        val tag = generateTagsObject("TestTag") {}
+        val tag = buildTagsObject("TestTag") {}
         tag shouldBeTag {
             name = "TestTag"
         }
     }
 
     "test complete tag object" {
-        val tag = generateTagsObject("TestTag") {
+        val tag = buildTagsObject("TestTag") {
             description = "Test Description"
             externalDocDescription = "External Doc Description"
             externalDocUrl = "External Doc URL"
@@ -33,7 +32,7 @@ class TagsObjectTest : StringSpec({
     }
 
     "test multiple tag objects" {
-        val tags = generateTagsObjects(mapOf(
+        val tags = buildTagsObjects(mapOf(
             "TestTag 1" to {
                 description = "Test Description 1"
                 externalDocDescription = "External Doc Description 1"
@@ -67,17 +66,17 @@ class TagsObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateTagsObject(name: String, builder: OpenApiTag.() -> Unit): Tag {
-            return OApiTagsGenerator().generate(listOf(OpenApiTag(name).apply(builder))).let {
+        private fun buildTagsObject(name: String, builder: OpenApiTag.() -> Unit): Tag {
+            return getOApiTagsBuilder().build(listOf(OpenApiTag(name).apply(builder))).let {
                 it shouldHaveSize 1
                 it.first()
             }
         }
 
-        private fun generateTagsObjects(builders: Map<String, OpenApiTag.() -> Unit>): List<Tag> {
+        private fun buildTagsObjects(builders: Map<String, OpenApiTag.() -> Unit>): List<Tag> {
             val tags = mutableListOf<Tag>()
             builders.forEach { (name, builder) ->
-                tags.addAll(OApiTagsGenerator().generate(listOf(OpenApiTag(name).apply(builder))))
+                tags.addAll(getOApiTagsBuilder().build(listOf(OpenApiTag(name).apply(builder))))
             }
             tags shouldHaveSize builders.size
             return tags

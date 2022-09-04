@@ -1,10 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiComponentsGenerator
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiExampleGenerator
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaGenerator
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldHaveSize
@@ -21,19 +18,19 @@ class ComponentsObjectTest : StringSpec({
     "test nothing in components section" {
         val context = ComponentsContext(false, mutableMapOf(), false, mutableMapOf())
 
-        generateSchema(ComponentsTestClass1::class, context).let {
+        buildSchema(ComponentsTestClass1::class, context).let {
             it.type shouldBe "object"
             it.properties shouldHaveSize 2
             it.`$ref`.shouldBeNull()
         }
 
-        generateSchema(ComponentsTestClass2::class, context).let {
+        buildSchema(ComponentsTestClass2::class, context).let {
             it.type shouldBe "object"
             it.properties shouldHaveSize 2
             it.`$ref`.shouldBeNull()
         }
 
-        generateSchema(Array<ComponentsTestClass2>::class, context).let {
+        buildSchema(Array<ComponentsTestClass2>::class, context).let {
             it.type shouldBe "array"
             it.items.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
@@ -41,22 +38,22 @@ class ComponentsObjectTest : StringSpec({
             it.items.type shouldBe "object"
         }
 
-        generateExample("Example1", ComponentsTestClass1("test1", true), context).let {
+        buildExample("Example1", ComponentsTestClass1("test1", true), context).let {
             it.value.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
         }
 
-        generateExample("Example1", ComponentsTestClass1("test1-different", false), context).let {
+        buildExample("Example1", ComponentsTestClass1("test1-different", false), context).let {
             it.value.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
         }
 
-        generateExample("Example2", ComponentsTestClass2("testCounter", 42), context).let {
+        buildExample("Example2", ComponentsTestClass2("testCounter", 42), context).let {
             it.value.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
         }
 
-        generateComponentsObject(context).let {
+        buildComponentsObject(context).let {
             it.schemas shouldHaveSize 0
             it.examples shouldHaveSize 0
             it.responses.shouldBeNull()
@@ -73,19 +70,19 @@ class ComponentsObjectTest : StringSpec({
     "test schemas in components section" {
         val context = ComponentsContext(true, mutableMapOf(), false, mutableMapOf())
 
-        generateSchema(ComponentsTestClass1::class, context).let {
+        buildSchema(ComponentsTestClass1::class, context).let {
             it.type.shouldBeNull()
             it.properties.shouldBeNull()
             it.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass1"
         }
 
-        generateSchema(ComponentsTestClass2::class, context).let {
+        buildSchema(ComponentsTestClass2::class, context).let {
             it.type.shouldBeNull()
             it.properties.shouldBeNull()
             it.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass2"
         }
 
-        generateSchema(Array<ComponentsTestClass2>::class, context).let {
+        buildSchema(Array<ComponentsTestClass2>::class, context).let {
             it.type shouldBe "array"
             it.properties.shouldBeNull()
             it.`$ref`.shouldBeNull()
@@ -94,22 +91,22 @@ class ComponentsObjectTest : StringSpec({
             it.items.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass2"
         }
 
-        generateExample("Example1", ComponentsTestClass1("test1", true), context).let {
+        buildExample("Example1", ComponentsTestClass1("test1", true), context).let {
             it.value.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
         }
 
-        generateExample("Example1", ComponentsTestClass1("test1-different", false), context).let {
+        buildExample("Example1", ComponentsTestClass1("test1-different", false), context).let {
             it.value.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
         }
 
-        generateExample("Example2", ComponentsTestClass2("testCounter", 42), context).let {
+        buildExample("Example2", ComponentsTestClass2("testCounter", 42), context).let {
             it.value.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
         }
 
-        generateComponentsObject(context).let {
+        buildComponentsObject(context).let {
             it.schemas shouldHaveSize 2
             it.schemas.keys shouldContainExactlyInAnyOrder listOf(
                 "io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass1",
@@ -140,19 +137,19 @@ class ComponentsObjectTest : StringSpec({
     "test examples in components section" {
         val context = ComponentsContext(false, mutableMapOf(), true, mutableMapOf())
 
-        generateSchema(ComponentsTestClass1::class, context).let {
+        buildSchema(ComponentsTestClass1::class, context).let {
             it.type shouldBe "object"
             it.properties shouldHaveSize 2
             it.`$ref`.shouldBeNull()
         }
 
-        generateSchema(ComponentsTestClass2::class, context).let {
+        buildSchema(ComponentsTestClass2::class, context).let {
             it.type shouldBe "object"
             it.properties shouldHaveSize 2
             it.`$ref`.shouldBeNull()
         }
 
-        generateSchema(Array<ComponentsTestClass2>::class, context).let {
+        buildSchema(Array<ComponentsTestClass2>::class, context).let {
             it.type shouldBe "array"
             it.items.shouldNotBeNull()
             it.`$ref`.shouldBeNull()
@@ -160,23 +157,23 @@ class ComponentsObjectTest : StringSpec({
             it.items.type shouldBe "object"
         }
 
-        generateExample("Example1", ComponentsTestClass1("test1", true), context).let {
+        buildExample("Example1", ComponentsTestClass1("test1", true), context).let {
             it.value.shouldBeNull()
             it.`$ref` shouldBe "#/components/examples/Example1"
         }
 
         val exampleValue1Different = OpenApiExample(ComponentsTestClass1("test1-different", false))
-        generateExample("Example1", exampleValue1Different, context).let {
+        buildExample("Example1", exampleValue1Different, context).let {
             it.value.shouldBeNull()
             it.`$ref` shouldBe "#/components/examples/Example1#" + exampleValue1Different.hashCode().toString(16)
         }
 
-        generateExample("Example2", ComponentsTestClass2("testCounter", 42), context).let {
+        buildExample("Example2", ComponentsTestClass2("testCounter", 42), context).let {
             it.value.shouldBeNull()
             it.`$ref` shouldBe "#/components/examples/Example2"
         }
 
-        generateComponentsObject(context).let {
+        buildComponentsObject(context).let {
             it.examples shouldHaveSize 3
             it.examples.keys shouldContainExactlyInAnyOrder listOf(
                 "Example1",
@@ -203,20 +200,20 @@ class ComponentsObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateComponentsObject(context: ComponentsContext): Components {
-            return OApiComponentsGenerator().generate(context)
+        private fun buildComponentsObject(context: ComponentsContext): Components {
+            return getOApiComponentsBuilder().build(context)
         }
 
-        private fun generateSchema(type: KClass<*>, context: ComponentsContext): Schema<*> {
-            return OApiSchemaGenerator().generate(type, context)
+        private fun buildSchema(type: KClass<*>, context: ComponentsContext): Schema<*> {
+            return getOApiSchemaBuilder().build(type, context)
         }
 
-        private fun generateExample(name: String, example: Any, context: ComponentsContext): Example {
-            return OApiExampleGenerator().generate(name, OpenApiExample(example), context)
+        private fun buildExample(name: String, example: Any, context: ComponentsContext): Example {
+            return getOApiExampleBuilder().build(name, OpenApiExample(example), context)
         }
 
-        private fun generateExample(name: String, example: OpenApiExample, context: ComponentsContext): Example {
-            return OApiExampleGenerator().generate(name, example, context)
+        private fun buildExample(name: String, example: OpenApiExample, context: ComponentsContext): Example {
+            return getOApiExampleBuilder().build(name, example, context)
         }
 
         private data class ComponentsTestClass1(
