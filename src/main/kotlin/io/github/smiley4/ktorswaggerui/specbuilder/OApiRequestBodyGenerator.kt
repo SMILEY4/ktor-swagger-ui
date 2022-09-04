@@ -1,6 +1,5 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.documentation.BodyDocumentation
 import io.swagger.v3.oas.models.parameters.RequestBody
 
 /**
@@ -11,7 +10,7 @@ class OApiRequestBodyGenerator {
     /**
      * Generate the Request Body from the given config
      */
-    fun generate(config: BodyDocumentation, componentCtx: ComponentsContext): RequestBody {
+    fun generate(config: OpenApiBody, componentCtx: ComponentsContext): RequestBody {
         return RequestBody().apply {
             description = config.description
             required = config.required

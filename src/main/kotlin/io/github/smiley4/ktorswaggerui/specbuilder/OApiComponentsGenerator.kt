@@ -1,8 +1,7 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.documentation.ExampleDocumentation
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.swagger.v3.oas.models.Components
-import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.KClass
 
@@ -30,7 +29,7 @@ data class ComponentsContext(
     val schemasInComponents: Boolean,
     val schemas: MutableMap<String, Schema<*>>,
     val examplesInComponents: Boolean,
-    val examples: MutableMap<String, ExampleDocumentation>
+    val examples: MutableMap<String, OpenApiExample>
 ) {
 
     companion object {
@@ -45,7 +44,7 @@ data class ComponentsContext(
         return key
     }
 
-    fun addExample(name: String, example: ExampleDocumentation): String {
+    fun addExample(name: String, example: OpenApiExample): String {
         if (examples[name] == null) {
             examples[name] = example
             return name

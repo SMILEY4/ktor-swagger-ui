@@ -1,7 +1,7 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.OpenIdOAuthFlowConfig
-import io.github.smiley4.ktorswaggerui.OpenIdOAuthFlowsConfig
+import io.github.smiley4.ktorswaggerui.dsl.OpenIdOAuthFlow
+import io.github.smiley4.ktorswaggerui.dsl.OpenIdOAuthFlows
 import io.swagger.v3.oas.models.security.OAuthFlow
 import io.swagger.v3.oas.models.security.OAuthFlows
 import io.swagger.v3.oas.models.security.Scopes
@@ -14,7 +14,7 @@ class OApiOAuthFlowsGenerator {
     /**
      * Generate the OpenAPI Flows-Object from the given config
      */
-    fun generate(config: OpenIdOAuthFlowsConfig): OAuthFlows {
+    fun generate(config: OpenIdOAuthFlows): OAuthFlows {
         return OAuthFlows().apply {
             implicit = config.getImplicit()?.let { generate(it) }
             password = config.getPassword()?.let { generate(it) }
@@ -23,7 +23,7 @@ class OApiOAuthFlowsGenerator {
         }
     }
 
-    private fun generate(flow: OpenIdOAuthFlowConfig): OAuthFlow {
+    private fun generate(flow: OpenIdOAuthFlow): OAuthFlow {
         return OAuthFlow().apply {
             authorizationUrl = flow.authorizationUrl
             tokenUrl = flow.tokenUrl

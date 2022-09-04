@@ -1,6 +1,5 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.documentation.BodyDocumentation
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
@@ -16,7 +15,7 @@ class OApiContentGenerator {
     /**
      * Generate the Content Object from the given config
      */
-    fun generate(config: BodyDocumentation, componentCtx: ComponentsContext): Content {
+    fun generate(config: OpenApiBody, componentCtx: ComponentsContext): Content {
         return Content().apply {
             val schemaObj = config.schema
                 ?.let { OApiSchemaGenerator().generate(it, componentCtx) }

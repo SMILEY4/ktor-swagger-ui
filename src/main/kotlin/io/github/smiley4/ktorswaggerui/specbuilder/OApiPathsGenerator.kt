@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.ktor.server.application.Application

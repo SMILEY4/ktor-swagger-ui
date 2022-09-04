@@ -1,10 +1,10 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.apispec.ComponentsContext
-import io.github.smiley4.ktorswaggerui.apispec.OApiComponentsGenerator
-import io.github.smiley4.ktorswaggerui.apispec.OApiExampleGenerator
-import io.github.smiley4.ktorswaggerui.apispec.OApiSchemaGenerator
-import io.github.smiley4.ktorswaggerui.documentation.ExampleDocumentation
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiComponentsGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiExampleGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaGenerator
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldHaveSize
@@ -165,7 +165,7 @@ class ComponentsObjectTest : StringSpec({
             it.`$ref` shouldBe "#/components/examples/Example1"
         }
 
-        val exampleValue1Different = ExampleDocumentation(ComponentsTestClass1("test1-different", false))
+        val exampleValue1Different = OpenApiExample(ComponentsTestClass1("test1-different", false))
         generateExample("Example1", exampleValue1Different, context).let {
             it.value.shouldBeNull()
             it.`$ref` shouldBe "#/components/examples/Example1#" + exampleValue1Different.hashCode().toString(16)
@@ -212,10 +212,10 @@ class ComponentsObjectTest : StringSpec({
         }
 
         private fun generateExample(name: String, example: Any, context: ComponentsContext): Example {
-            return OApiExampleGenerator().generate(name, ExampleDocumentation(example), context)
+            return OApiExampleGenerator().generate(name, OpenApiExample(example), context)
         }
 
-        private fun generateExample(name: String, example: ExampleDocumentation, context: ComponentsContext): Example {
+        private fun generateExample(name: String, example: OpenApiExample, context: ComponentsContext): Example {
             return OApiExampleGenerator().generate(name, example, context)
         }
 

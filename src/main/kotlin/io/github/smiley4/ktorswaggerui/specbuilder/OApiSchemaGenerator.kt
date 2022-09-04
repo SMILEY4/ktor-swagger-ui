@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.swagger.v3.oas.models.media.Schema
 import java.math.BigDecimal

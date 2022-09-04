@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.OpenApiTagConfig
-import io.github.smiley4.ktorswaggerui.apispec.OApiTagsGenerator
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiTagsGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.swagger.v3.oas.models.ExternalDocumentation
@@ -67,17 +67,17 @@ class TagsObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateTagsObject(name: String, builder: OpenApiTagConfig.() -> Unit): Tag {
-            return OApiTagsGenerator().generate(listOf(OpenApiTagConfig(name).apply(builder))).let {
+        private fun generateTagsObject(name: String, builder: OpenApiTag.() -> Unit): Tag {
+            return OApiTagsGenerator().generate(listOf(OpenApiTag(name).apply(builder))).let {
                 it shouldHaveSize 1
                 it.first()
             }
         }
 
-        private fun generateTagsObjects(builders: Map<String, OpenApiTagConfig.() -> Unit>): List<Tag> {
+        private fun generateTagsObjects(builders: Map<String, OpenApiTag.() -> Unit>): List<Tag> {
             val tags = mutableListOf<Tag>()
             builders.forEach { (name, builder) ->
-                tags.addAll(OApiTagsGenerator().generate(listOf(OpenApiTagConfig(name).apply(builder))))
+                tags.addAll(OApiTagsGenerator().generate(listOf(OpenApiTag(name).apply(builder))))
             }
             tags shouldHaveSize builders.size
             return tags

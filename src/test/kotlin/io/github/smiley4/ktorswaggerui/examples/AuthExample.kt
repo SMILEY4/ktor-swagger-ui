@@ -1,9 +1,9 @@
 package io.github.smiley4.ktorswaggerui.examples
 
-import io.github.smiley4.ktorswaggerui.AuthScheme
-import io.github.smiley4.ktorswaggerui.AuthType
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.documentation.get
+import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
+import io.github.smiley4.ktorswaggerui.dsl.AuthType
+import io.github.smiley4.ktorswaggerui.dsl.get
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -38,11 +38,9 @@ fun main() {
         }
         // Install "Swagger-UI"-Plugin
         install(SwaggerUI) {
-            swagger {
-                // default value for "401 Unauthorized"-responses.
-                // the name of the security scheme (see below) to use for each route when nothing else is specified
-                defaultSecuritySchemeName = "MySecurityScheme"
-            }
+            // default value for "401 Unauthorized"-responses.
+            // the name of the security scheme (see below) to use for each route when nothing else is specified
+            defaultSecuritySchemeName = "MySecurityScheme"
             defaultUnauthorizedResponse {
                 description = "Username or password is invalid."
             }

@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.OpenApiServerConfig
-import io.github.smiley4.ktorswaggerui.apispec.OApiServersGenerator
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiServersGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.swagger.v3.oas.models.servers.Server
@@ -51,15 +51,15 @@ class ServersObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateServerObject(builder: OpenApiServerConfig.() -> Unit): Server {
-            return OApiServersGenerator().generate(listOf(OpenApiServerConfig().apply(builder))).let {
+        private fun generateServerObject(builder: OpenApiServer.() -> Unit): Server {
+            return OApiServersGenerator().generate(listOf(OpenApiServer().apply(builder))).let {
                 it shouldHaveSize 1
                 it.first()
             }
         }
 
-        private fun generateServerObjects(vararg builder: OpenApiServerConfig.() -> Unit): List<Server> {
-            return OApiServersGenerator().generate(builder.map { OpenApiServerConfig().apply(it) }).also {
+        private fun generateServerObjects(vararg builder: OpenApiServer.() -> Unit): List<Server> {
+            return OApiServersGenerator().generate(builder.map { OpenApiServer().apply(it) }).also {
                 it shouldHaveSize builder.size
             }
         }

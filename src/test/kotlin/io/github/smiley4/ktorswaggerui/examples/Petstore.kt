@@ -1,9 +1,9 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.documentation.delete
-import io.github.smiley4.ktorswaggerui.documentation.get
-import io.github.smiley4.ktorswaggerui.documentation.post
+import io.github.smiley4.ktorswaggerui.dsl.delete
+import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
@@ -11,7 +11,6 @@ import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
-import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 
 
@@ -49,10 +48,12 @@ fun main() {
                         body(Array<Pet>::class) {
                             mediaType(ContentType.Application.Json)
                             mediaType(ContentType.Application.Xml)
-                            example("example", listOf(
-                                Pet(1, "Chloe", "cat"),
-                                Pet(2, "Oliver", "dog")
-                            ))
+                            example(
+                                "example", listOf(
+                                    Pet(1, "Chloe", "cat"),
+                                    Pet(2, "Oliver", "dog")
+                                )
+                            )
                         }
                     }
                 }
@@ -94,14 +95,14 @@ fun main() {
                         description = "ID of pet to fetch"
                         required = true
                     }
-                    response {
-                        HttpStatusCode.OK to {
-                            description = "pet response"
-                            body(Pet::class) {
-                                mediaType(ContentType.Application.Json)
-                                mediaType(ContentType.Application.Xml)
-                                example("example", Pet(4, "Bella", "dog"))
-                            }
+                }
+                response {
+                    HttpStatusCode.OK to {
+                        description = "pet response"
+                        body(Pet::class) {
+                            mediaType(ContentType.Application.Json)
+                            mediaType(ContentType.Application.Xml)
+                            example("example", Pet(4, "Bella", "dog"))
                         }
                     }
                 }
@@ -117,10 +118,10 @@ fun main() {
                         description = "ID of pet to delete"
                         required = true
                     }
-                    response {
-                        HttpStatusCode.NoContent to {
-                            description = "pet deleted"
-                        }
+                }
+                response {
+                    HttpStatusCode.NoContent to {
+                        description = "pet deleted"
                     }
                 }
             }) {

@@ -68,7 +68,7 @@ get("hello", {
     response {
         HttpStatusCode.OK to {
             description = "Successful Request"
-            body(String::class.java) { description = "the response" }
+            body(String::class) { description = "the response" }
         }
         HttpStatusCode.InternalServerError to {
             description = "Something unexpected happened"
@@ -84,15 +84,15 @@ post("math/{operation}", {
     tags = listOf("test")
     description = "Performs the given operation on the given values and returns the result"
     request {
-        pathParameter("operation", String::class.java) {
+        pathParameter("operation", String::class) {
             description = "the math operation to perform. Either 'add' or 'sub'"
         }
-        body(MathRequest::class.java)
+        body(MathRequest::class)
     }
     response {
         HttpStatusCode.OK to {
             description = "The operation was successful"
-            body(MathResult::class.java) {
+            body(MathResult::class) {
                 description = "The result of the operation"
             }
         }

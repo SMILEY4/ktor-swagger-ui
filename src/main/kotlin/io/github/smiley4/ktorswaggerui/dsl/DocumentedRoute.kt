@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.documentation
+package io.github.smiley4.ktorswaggerui.dsl
 
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.ApplicationCall
@@ -19,16 +19,15 @@ import io.ktor.util.KtorDsl
 import io.ktor.util.pipeline.PipelineContext
 import io.ktor.util.pipeline.PipelineInterceptor
 
-class DocumentedRouteSelector(val documentation: RouteDocumentation) : RouteSelector() {
+class DocumentedRouteSelector(val documentation: OpenApiRoute) : RouteSelector() {
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int) = RouteSelectorEvaluation.Transparent
 }
 
-
 fun Route.documentation(
-    documentation: RouteDocumentation.() -> Unit = { },
+    documentation: OpenApiRoute.() -> Unit = { },
     build: Route.() -> Unit
 ): Route {
-    val documentedRoute = createChild(DocumentedRouteSelector(RouteDocumentation().apply(documentation)))
+    val documentedRoute = createChild(DocumentedRouteSelector(OpenApiRoute().apply(documentation)))
     documentedRoute.build()
     return documentedRoute
 }
@@ -39,7 +38,7 @@ fun Route.documentation(
 
 fun Route.route(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     build: Route.() -> Unit
 ): Route {
     return documentation(builder) { route(path, build) }
@@ -48,7 +47,7 @@ fun Route.route(
 fun Route.route(
     path: String,
     method: HttpMethod,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     build: Route.() -> Unit
 ): Route {
     return documentation(builder) { route(path, method, build) }
@@ -56,7 +55,7 @@ fun Route.route(
 
 fun Route.method(
     method: HttpMethod,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: Route.() -> Unit
 ): Route {
     return documentation(builder) { method(method, body) }
@@ -68,14 +67,14 @@ fun Route.method(
 
 fun Route.get(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { get(path, body) }
 }
 
 fun Route.get(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { get(body) }
@@ -87,7 +86,7 @@ fun Route.get(
 
 fun Route.post(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { post(path, body) }
@@ -96,7 +95,7 @@ fun Route.post(
 
 @JvmName("postTyped")
 inline fun <reified R : Any> Route.post(
-    noinline builder: RouteDocumentation.() -> Unit = { },
+    noinline builder: OpenApiRoute.() -> Unit = { },
     crossinline body: suspend PipelineContext<Unit, ApplicationCall>.(R) -> Unit
 ): Route {
     return documentation(builder) { post(body) }
@@ -106,7 +105,7 @@ inline fun <reified R : Any> Route.post(
 @JvmName("postTypedPath")
 inline fun <reified R : Any> Route.post(
     path: String,
-    noinline builder: RouteDocumentation.() -> Unit = { },
+    noinline builder: OpenApiRoute.() -> Unit = { },
     crossinline body: suspend PipelineContext<Unit, ApplicationCall>.(R) -> Unit
 ): Route {
     return documentation(builder) { post(path, body) }
@@ -114,7 +113,7 @@ inline fun <reified R : Any> Route.post(
 
 
 fun Route.post(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { post(body) }
@@ -126,14 +125,14 @@ fun Route.post(
 
 fun Route.put(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { put(path, body) }
 }
 
 fun Route.put(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { put(body) }
@@ -142,7 +141,7 @@ fun Route.put(
 
 @JvmName("putTyped")
 inline fun <reified R : Any> Route.put(
-    noinline builder: RouteDocumentation.() -> Unit = { },
+    noinline builder: OpenApiRoute.() -> Unit = { },
     crossinline body: suspend PipelineContext<Unit, ApplicationCall>.(R) -> Unit
 ): Route {
     return documentation(builder) { put(body) }
@@ -152,7 +151,7 @@ inline fun <reified R : Any> Route.put(
 @JvmName("putTypedPath")
 inline fun <reified R : Any> Route.put(
     path: String,
-    noinline builder: RouteDocumentation.() -> Unit = { },
+    noinline builder: OpenApiRoute.() -> Unit = { },
     crossinline body: suspend PipelineContext<Unit, ApplicationCall>.(R) -> Unit
 ): Route {
     return documentation(builder) { put(path, body) }
@@ -164,14 +163,14 @@ inline fun <reified R : Any> Route.put(
 
 fun Route.delete(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { delete(path, body) }
 }
 
 fun Route.delete(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { delete(body) }
@@ -184,7 +183,7 @@ fun Route.delete(
 @KtorDsl
 fun Route.patch(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { patch(path, body) }
@@ -193,7 +192,7 @@ fun Route.patch(
 
 @KtorDsl
 fun Route.patch(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { patch(body) }
@@ -202,7 +201,7 @@ fun Route.patch(
 
 @JvmName("patchTyped")
 inline fun <reified R : Any> Route.patch(
-    noinline builder: RouteDocumentation.() -> Unit = { },
+    noinline builder: OpenApiRoute.() -> Unit = { },
     crossinline body: suspend PipelineContext<Unit, ApplicationCall>.(R) -> Unit
 ): Route {
     return documentation(builder) { patch(body) }
@@ -213,7 +212,7 @@ inline fun <reified R : Any> Route.patch(
 @JvmName("patchTypedPath")
 inline fun <reified R : Any> Route.patch(
     path: String,
-    noinline builder: RouteDocumentation.() -> Unit = { },
+    noinline builder: OpenApiRoute.() -> Unit = { },
     crossinline body: suspend PipelineContext<Unit, ApplicationCall>.(R) -> Unit
 ): Route {
     return documentation(builder) { patch(path, body) }
@@ -225,14 +224,14 @@ inline fun <reified R : Any> Route.patch(
 
 fun Route.options(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { options(path, body) }
 }
 
 fun Route.options(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { options(body) }
@@ -244,14 +243,14 @@ fun Route.options(
 
 fun Route.head(
     path: String,
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { head(path, body) }
 }
 
 fun Route.head(
-    builder: RouteDocumentation.() -> Unit = { },
+    builder: OpenApiRoute.() -> Unit = { },
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { head(body) }

@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.ktor.server.application.Application
@@ -6,12 +6,12 @@ import io.swagger.v3.core.util.Json
 import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.OpenAPI
 
+/**
+ * Build the OpenApi-json for the given application
+ */
+class ApiSpecBuilder {
 
-object ApiSpec {
-
-    var jsonSpec: String = "{}"
-
-    fun build(application: Application, config: SwaggerUIPluginConfig) {
+    fun build(application: Application, config: SwaggerUIPluginConfig): String {
         val componentCtx = ComponentsContext(
             config.schemasInComponentSection, mutableMapOf(),
             config.examplesInComponentSection, mutableMapOf()
@@ -28,7 +28,7 @@ object ApiSpec {
             paths = OApiPathsGenerator(RouteCollector()).generate(config, application, componentCtx)
             components = OApiComponentsGenerator().generate(componentCtx)
         }
-        jsonSpec = Json.pretty(openAPI)
+        return Json.pretty(openAPI)
     }
 
 }

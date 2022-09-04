@@ -1,19 +1,32 @@
 package io.github.smiley4.ktorswaggerui
 
-import io.github.smiley4.ktorswaggerui.documentation.SingleResponseDocumentation
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
 import io.ktor.http.HttpStatusCode
 
+
+/**
+ * Main-Configuration of the "SwaggerUI"-Plugin
+ */
+@OpenApiDslMarker
 class SwaggerUIPluginConfig {
+
+    private var defaultUnauthorizedResponse: OpenApiResponse? = null
+
 
     /**
      * Default response to automatically add to each protected route for the "Unauthorized"-Response-Code.
      * Generated response can be overwritten with custom response.
      */
-    private var defaultUnauthorizedResponse: SingleResponseDocumentation? = null
-
-    fun defaultUnauthorizedResponse(block: SingleResponseDocumentation.() -> Unit) {
-        defaultUnauthorizedResponse = SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply(block)
+    fun defaultUnauthorizedResponse(block: OpenApiResponse.() -> Unit) {
+        defaultUnauthorizedResponse = OpenApiResponse(HttpStatusCode.Unauthorized).apply(block)
     }
+
 
     fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
 
@@ -42,385 +55,73 @@ class SwaggerUIPluginConfig {
      */
     var examplesInComponentSection: Boolean = false
 
+    private var swaggerUI = SwaggerUI()
+
 
     /**
      * Swagger-UI configuration
      */
-    private var swaggerUIConfig = SwaggerUIConfig()
-
-    fun swagger(block: SwaggerUIConfig.() -> Unit) {
-        swaggerUIConfig = SwaggerUIConfig().apply(block)
+    fun swagger(block: SwaggerUI.() -> Unit) {
+        swaggerUI = SwaggerUI().apply(block)
     }
 
-    fun getSwaggerUI() = swaggerUIConfig
+
+    fun getSwaggerUI() = swaggerUI
+
+
+    private var info = OpenApiInfo()
 
 
     /**
      * OpenAPI info configuration - provides metadata about the API
      */
-    private var info = OpenApiInfoConfig()
-
-    fun info(block: OpenApiInfoConfig.() -> Unit) {
-        info = OpenApiInfoConfig().apply(block)
+    fun info(block: OpenApiInfo.() -> Unit) {
+        info = OpenApiInfo().apply(block)
     }
 
+
     fun getInfo() = info
+
+
+    private val servers = mutableListOf<OpenApiServer>()
 
 
     /**
      * OpenAPI server configuration - an array of servers, which provide connectivity information to a target server
      */
-    private val servers = mutableListOf<OpenApiServerConfig>()
-
-    fun server(block: OpenApiServerConfig.() -> Unit) {
-        servers.add(OpenApiServerConfig().apply(block))
+    fun server(block: OpenApiServer.() -> Unit) {
+        servers.add(OpenApiServer().apply(block))
     }
 
-    fun getServers(): List<OpenApiServerConfig> = servers
+
+    fun getServers(): List<OpenApiServer> = servers
+
+
+    private val securitySchemes = mutableListOf<OpenApiSecurityScheme>()
 
 
     /**
      * Defines security schemes that can be used by operations
      */
-    private val securitySchemes = mutableListOf<OpenApiSecuritySchemeConfig>()
-
-    fun securityScheme(name: String, block: OpenApiSecuritySchemeConfig.() -> Unit) {
-        securitySchemes.add(OpenApiSecuritySchemeConfig(name).apply(block))
+    fun securityScheme(name: String, block: OpenApiSecurityScheme.() -> Unit) {
+        securitySchemes.add(OpenApiSecurityScheme(name).apply(block))
     }
 
-    fun getSecuritySchemes(): List<OpenApiSecuritySchemeConfig> = securitySchemes
+
+    fun getSecuritySchemes(): List<OpenApiSecurityScheme> = securitySchemes
+
+
+    private val tags = mutableListOf<OpenApiTag>()
 
 
     /**
-     * A list of tags used by the specification with additional metadata. The order of the tags can be used to reflect on their order by the
-     * parsing tools. Not all tags that are used must be declared
+     * Tags used by the specification with additional metadata. Not all tags that are used must be declared
      */
-    private val tags = mutableListOf<OpenApiTagConfig>()
-
-    fun tag(name: String, block: OpenApiTagConfig.() -> Unit) {
-        tags.add(OpenApiTagConfig(name).apply(block))
+    fun tag(name: String, block: OpenApiTag.() -> Unit) {
+        tags.add(OpenApiTag(name).apply(block))
     }
 
-    fun getTags(): List<OpenApiTagConfig> = tags
 
-}
-
-
-class SwaggerUIConfig {
-    /**
-     * Whether to forward the root-url to the swagger-url
-     */
-    var forwardRoot: Boolean = false
-
-
-    /**
-     * the url to the swagger-ui
-     */
-    var swaggerUrl: String = "swagger-ui"
-}
-
-
-class OpenApiInfoConfig {
-    /**
-     * The title of the api
-     */
-    var title: String = "API"
-
-
-    /**
-     * The version of the OpenAPI document
-     */
-    var version: String? = "latest"
-
-
-    /**
-     * A short description of the API
-     */
-    var description: String? = null
-
-
-    /**
-     * A URL to the Terms of Service for the API. MUST be in the format of a URL.
-     */
-    var termsOfService: String? = null
-
-
-    /**
-     * The contact information for the exposed API.
-     */
-    private var contact: OpenApiContactConfig? = null
-
-    fun contact(block: OpenApiContactConfig.() -> Unit) {
-        contact = OpenApiContactConfig().apply(block)
-    }
-
-    fun getContact() = contact
-
-
-    /**
-     * The license information for the exposed API.
-     */
-    private var license: OpenApiLicenseConfig? = null
-
-    fun license(block: OpenApiLicenseConfig.() -> Unit) {
-        license = OpenApiLicenseConfig().apply(block)
-    }
-
-    fun getLicense() = license
-
-}
-
-
-/**
- * Contact information for the exposed API.
- */
-class OpenApiContactConfig {
-    /**
-     * The identifying name of the contact person/organization.
-     */
-    var name: String? = null
-
-
-    /**
-     * The URL pointing to the contact information. MUST be in the format of a URL.
-     */
-    var url: String? = null
-
-
-    /**
-     * The email address of the contact person/organization. MUST be in the format of an email address.
-     */
-    var email: String? = null
-}
-
-
-/**
- * License information for the exposed API.
- */
-class OpenApiLicenseConfig {
-    /**
-     * The license name used for the API
-     */
-    var name: String = "?"
-
-
-    /**
-     * A URL to the license used for the API. MUST be in the format of a URL.
-     */
-    var url: String? = null
-
-}
-
-
-/**
- * An object representing a Server.
- */
-class OpenApiServerConfig {
-
-    /**
-     * A URL to the target host. This URL supports Server Variables and MAY be relative, to indicate that the host location is relative to
-     * the location where the OpenAPI document is being served
-     */
-    var url: String = "/"
-
-
-    /**
-     * An optional string describing the host designated by the URL
-     */
-    var description: String? = null
-}
-
-
-enum class AuthType {
-    API_KEY, HTTP, OAUTH2, OPENID_CONNECT, MUTUAL_TLS
-}
-
-enum class AuthKeyLocation {
-    QUERY, HEADER, COOKIE
-}
-
-enum class AuthScheme {
-    //  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
-    BASIC, BEARER, DIGEST, HOBA, MUTUAL, OAUTH, SCRAM_SHA_1, SCRAM_SHA_256, VAPID
-}
-
-
-/**
- * Defines a security scheme that can be used by the operations. Supported schemes are HTTP authentication, an API key (either as a header,
- * a cookie parameter or as a query parameter), OAuth2's common flows (implicit, password, client credentials and authorization code)
- */
-class OpenApiSecuritySchemeConfig(
-    /**
-     * The name of the header, query or cookie parameter to be used.
-     * Required for type [AuthType.API_KEY]
-     */
-    val name: String
-) {
-
-    /**
-     * The type of the security scheme
-     */
-    var type: AuthType? = null
-
-
-    /**
-     * The location of the API key (OpenAPI 'in').
-     * Required for type [AuthType.API_KEY]
-     */
-    var location: AuthKeyLocation? = null
-
-
-    /**
-     * The name of the HTTP Authorization scheme to be used.
-     * Required for type [AuthType.HTTP]
-     */
-    var scheme: AuthScheme? = null
-
-
-    /**
-     * A hint to the client to identify how the bearer token is formatted.
-     * Used for type [AuthType.HTTP] and schema [AuthScheme.BEARER]
-     */
-    var bearerFormat: String? = null
-
-
-    /**
-     * information for the oauth flow types supported.
-     * Required for type [AuthType.OAUTH2]
-     */
-    private var flows: OpenIdOAuthFlowsConfig? = null
-
-    fun flows(block: OpenIdOAuthFlowsConfig.() -> Unit) {
-        flows = OpenIdOAuthFlowsConfig().apply(block)
-    }
-
-    fun getFlows() = flows
-
-
-    /**
-     * OpenId Connect URL to discover OAuth2 configuration values.
-     * Required for type [AuthType.OPENID_CONNECT]
-     */
-    var openIdConnectUrl: String? = null
-
-
-    /**
-     * A short description for security scheme.
-     */
-    var description: String? = null
-}
-
-
-/**
- * An object containing configuration information for the oauth flow types supported
- */
-class OpenIdOAuthFlowsConfig {
-    /**
-     * Configuration for the OAuth Implicit flow
-     */
-    private var implicit: OpenIdOAuthFlowConfig? = null
-
-    fun implicit(block: OpenIdOAuthFlowConfig.() -> Unit) {
-        implicit = OpenIdOAuthFlowConfig().apply(block)
-    }
-
-    fun getImplicit() = implicit
-
-
-    /**
-     * Configuration for the OAuth Resource Owner Password flow
-     */
-    private var password: OpenIdOAuthFlowConfig? = null
-
-    fun password(block: OpenIdOAuthFlowConfig.() -> Unit) {
-        password = OpenIdOAuthFlowConfig().apply(block)
-    }
-
-    fun getPassword() = password
-
-
-    /**
-     * Configuration for the OAuth Client Credentials flow.
-     */
-    private var clientCredentials: OpenIdOAuthFlowConfig? = null
-
-    fun clientCredentials(block: OpenIdOAuthFlowConfig.() -> Unit) {
-        clientCredentials = OpenIdOAuthFlowConfig().apply(block)
-    }
-
-    fun getClientCredentials() = clientCredentials
-
-
-    /**
-     * Configuration for the OAuth Authorization Code flow.
-     */
-    private var authorizationCode: OpenIdOAuthFlowConfig? = null
-
-    fun authorizationCode(block: OpenIdOAuthFlowConfig.() -> Unit) {
-        authorizationCode = OpenIdOAuthFlowConfig().apply(block)
-    }
-
-    fun getAuthorizationCode() = authorizationCode
-
-}
-
-
-/**
- * Configuration details for a supported OAuth Flow
- */
-class OpenIdOAuthFlowConfig {
-
-    /**
-     * The authorization URL to be used for this flow
-     */
-    var authorizationUrl: String? = null
-
-
-    /**
-     * The token URL to be used for this flow
-     */
-    var tokenUrl: String? = null
-
-
-    /**
-     * The URL to be used for obtaining refresh tokens
-     */
-    var refreshUrl: String? = null
-
-
-    /**
-     * The available scopes for the OAuth2 security scheme. A map between the scope name and a short description for it
-     */
-    var scopes: Map<String, String>? = null
-
-}
-
-
-/**
- * Adds metadata to a single tag.
- */
-class OpenApiTagConfig(
-    /**
-     * The name of the tag.
-     */
-    var name: String
-) {
-
-    /**
-     * A short description for the tag.
-     */
-    var description: String? = null
-
-
-    /**
-     * A short description of additional external documentation for this tag.
-     */
-    var externalDocDescription: String? = null
-
-
-    /**
-     *The URL for additional external documentation for this tag.
-     */
-    var externalDocUrl: String? = null
+    fun getTags(): List<OpenApiTag> = tags
 
 }

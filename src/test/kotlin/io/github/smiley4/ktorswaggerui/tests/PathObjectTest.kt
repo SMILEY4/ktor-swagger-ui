@@ -1,10 +1,10 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.apispec.ComponentsContext
-import io.github.smiley4.ktorswaggerui.apispec.OApiPathGenerator
-import io.github.smiley4.ktorswaggerui.apispec.RouteMeta
-import io.github.smiley4.ktorswaggerui.documentation.RouteDocumentation
-import io.github.smiley4.ktorswaggerui.documentation.SingleResponseDocumentation
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiPathGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
@@ -249,10 +249,10 @@ class PathObjectTest : StringSpec({
         private fun generatePath(
             method: HttpMethod,
             path: String,
-            defaultUnauthorizedResponse: SingleResponseDocumentation? = null,
+            defaultUnauthorizedResponse: OpenApiResponse? = null,
             tagGenerator: ((url: List<String>) -> String?)? = null,
             defaultSecuritySchemeName: String? = null,
-            builder: RouteDocumentation.() -> Unit
+            builder: OpenApiRoute.() -> Unit
         ): Pair<String, PathItem> {
             return OApiPathGenerator().generate(
                 routeMeta(method, path, builder),
@@ -266,10 +266,10 @@ class PathObjectTest : StringSpec({
         private fun generateProtectedPath(
             method: HttpMethod,
             path: String,
-            defaultUnauthorizedResponse: SingleResponseDocumentation? = null,
+            defaultUnauthorizedResponse: OpenApiResponse? = null,
             tagGenerator: ((url: List<String>) -> String?)? = null,
             defaultSecuritySchemeName: String? = null,
-            builder: RouteDocumentation.() -> Unit
+            builder: OpenApiRoute.() -> Unit
         ): Pair<String, PathItem> {
             return OApiPathGenerator().generate(
                 protectedRouteMeta(method, path, builder),
@@ -280,28 +280,28 @@ class PathObjectTest : StringSpec({
             )
         }
 
-        private fun routeMeta(method: HttpMethod, path: String, builder: RouteDocumentation.() -> Unit): RouteMeta {
+        private fun routeMeta(method: HttpMethod, path: String, builder: OpenApiRoute.() -> Unit): RouteMeta {
             return RouteMeta(
                 route = mockk(),
                 path = path,
                 method = method,
-                documentation = RouteDocumentation().apply(builder),
+                documentation = OpenApiRoute().apply(builder),
                 protected = false
             )
         }
 
-        private fun protectedRouteMeta(method: HttpMethod, path: String, builder: RouteDocumentation.() -> Unit): RouteMeta {
+        private fun protectedRouteMeta(method: HttpMethod, path: String, builder: OpenApiRoute.() -> Unit): RouteMeta {
             return RouteMeta(
                 route = mockk(),
                 path = path,
                 method = method,
-                documentation = RouteDocumentation().apply(builder),
+                documentation = OpenApiRoute().apply(builder),
                 protected = true
             )
         }
 
-        private fun defaultUnauthorizedResponse(): SingleResponseDocumentation {
-            return SingleResponseDocumentation(HttpStatusCode.Unauthorized).apply {
+        private fun defaultUnauthorizedResponse(): OpenApiResponse {
+            return OpenApiResponse(HttpStatusCode.Unauthorized).apply {
                 description = "Authentication failed"
             }
         }

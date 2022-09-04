@@ -1,6 +1,6 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.documentation.SingleResponseDocumentation
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.swagger.v3.oas.models.Operation
@@ -18,7 +18,7 @@ class OApiPathGenerator {
      */
     fun generate(
         config: RouteMeta,
-        defaultUnauthorizedResponses: SingleResponseDocumentation?,
+        defaultUnauthorizedResponses: OpenApiResponse?,
         defaultSecurityScheme: String?,
         tagGenerator: ((url: List<String>) -> String?)?,
         componentCtx: ComponentsContext
@@ -69,7 +69,7 @@ class OApiPathGenerator {
     /**
      * Whether a response for "Unauthorized" should be added automatically. Must be enabled and not already defined.
      */
-    private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: SingleResponseDocumentation?) =
+    private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: OpenApiResponse?) =
         defaultUnauthorizedResponses != null
                 && config.protected
                 && config.documentation.getResponses().getResponses().count { it.statusCode == HttpStatusCode.Unauthorized } == 0

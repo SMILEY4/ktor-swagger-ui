@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.apispec.ComponentsContext
-import io.github.smiley4.ktorswaggerui.apispec.OApiSchemaGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.media.Schema
 import java.math.BigDecimal

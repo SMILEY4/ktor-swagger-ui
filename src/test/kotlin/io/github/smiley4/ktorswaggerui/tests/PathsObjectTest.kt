@@ -1,11 +1,11 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.apispec.ComponentsContext
-import io.github.smiley4.ktorswaggerui.apispec.OApiPathsGenerator
-import io.github.smiley4.ktorswaggerui.apispec.RouteCollector
-import io.github.smiley4.ktorswaggerui.apispec.RouteMeta
-import io.github.smiley4.ktorswaggerui.documentation.RouteDocumentation
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiPathsGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.RouteCollector
+import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldHaveSize
@@ -120,7 +120,7 @@ class PathsObjectTest : StringSpec({
                         route = mockk(),
                         method = it.first,
                         path = it.second,
-                        documentation = RouteDocumentation(),
+                        documentation = OpenApiRoute(),
                         protected = false,
                     )
                 }

@@ -1,9 +1,8 @@
-package io.github.smiley4.ktorswaggerui.apispec
-
-import io.github.smiley4.ktorswaggerui.AuthKeyLocation
-import io.github.smiley4.ktorswaggerui.AuthScheme
-import io.github.smiley4.ktorswaggerui.AuthType
-import io.github.smiley4.ktorswaggerui.OpenApiSecuritySchemeConfig
+package io.github.smiley4.ktorswaggerui.specbuilder
+import io.github.smiley4.ktorswaggerui.dsl.AuthKeyLocation
+import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
+import io.github.smiley4.ktorswaggerui.dsl.AuthType
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
 import io.swagger.v3.oas.models.security.SecurityScheme
 
 /**
@@ -14,7 +13,7 @@ class OApiSecuritySchemesGenerator {
     /**
      * Generate the OpenAPI SecurityScheme-Objects from the given configs
      */
-    fun generate(configs: List<OpenApiSecuritySchemeConfig>): Map<String, SecurityScheme> {
+    fun generate(configs: List<OpenApiSecurityScheme>): Map<String, SecurityScheme> {
         return mutableMapOf<String, SecurityScheme>().apply {
             configs.forEach {
                 put(it.name, SecurityScheme().apply {

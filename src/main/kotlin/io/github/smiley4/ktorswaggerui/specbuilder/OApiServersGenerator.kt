@@ -1,6 +1,6 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.OpenApiServerConfig
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.swagger.v3.oas.models.servers.Server
 
 /**
@@ -11,7 +11,7 @@ class OApiServersGenerator {
     /**
      * Generate the OpenAPI Server-Objects from the given configs
      */
-    fun generate(configs: List<OpenApiServerConfig>): List<Server> {
+    fun generate(configs: List<OpenApiServer>): List<Server> {
         return configs.map {
             Server().apply {
                 url = it.url

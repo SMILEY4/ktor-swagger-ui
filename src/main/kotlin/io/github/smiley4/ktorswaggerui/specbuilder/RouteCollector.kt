@@ -1,7 +1,7 @@
-package io.github.smiley4.ktorswaggerui.apispec
+package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.documentation.DocumentedRouteSelector
-import io.github.smiley4.ktorswaggerui.documentation.RouteDocumentation
+import io.github.smiley4.ktorswaggerui.dsl.DocumentedRouteSelector
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
 import io.ktor.server.application.plugin
@@ -22,13 +22,13 @@ class RouteCollector {
                     route = route,
                     method = getMethod(route),
                     path = getPath(route),
-                    documentation = getDocumentation(route, RouteDocumentation()),
+                    documentation = getDocumentation(route, OpenApiRoute()),
                     protected = isProtected(route)
                 )
             }
     }
 
-    private fun getDocumentation(route: Route, base: RouteDocumentation): RouteDocumentation {
+    private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
         var documentation = base
         if (route.selector is DocumentedRouteSelector) {
             documentation = merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
@@ -72,8 +72,8 @@ class RouteCollector {
     }
 
 
-    private fun merge(a: RouteDocumentation, b: RouteDocumentation): RouteDocumentation {
-        return RouteDocumentation().apply {
+    private fun merge(a: OpenApiRoute, b: OpenApiRoute): OpenApiRoute {
+        return OpenApiRoute().apply {
             tags = mutableListOf<String>().also {
                 it.addAll(a.tags)
                 it.addAll(b.tags)

@@ -1,8 +1,8 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.apispec.ComponentsContext
-import io.github.smiley4.ktorswaggerui.apispec.OApiExampleGenerator
-import io.github.smiley4.ktorswaggerui.documentation.ExampleDocumentation
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiExampleGenerator
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.examples.Example
 
@@ -46,16 +46,16 @@ class ExampleObjectTest : StringSpec({
     companion object {
 
         private fun generateExampleObject(name: String, example: Any, context: ComponentsContext): Example {
-            return OApiExampleGenerator().generate(name, ExampleDocumentation(example), context)
+            return OApiExampleGenerator().generate(name, OpenApiExample(example), context)
         }
 
         private fun generateExampleObject(
             name: String,
             example: Any,
             context: ComponentsContext,
-            builder: ExampleDocumentation.() -> Unit
+            builder: OpenApiExample.() -> Unit
         ): Example {
-            return OApiExampleGenerator().generate(name, ExampleDocumentation(example).apply(builder), context)
+            return OApiExampleGenerator().generate(name, OpenApiExample(example).apply(builder), context)
         }
 
         private data class ExampleTestClass(

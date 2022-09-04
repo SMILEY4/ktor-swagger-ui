@@ -1,8 +1,8 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.apispec.ComponentsContext
-import io.github.smiley4.ktorswaggerui.apispec.OApiContentGenerator
-import io.github.smiley4.ktorswaggerui.documentation.BodyDocumentation
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiContentGenerator
+import io.github.smiley4.ktorswaggerui.specbuilder.OpenApiBody
 import io.kotest.core.spec.style.StringSpec
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.examples.Example
@@ -104,7 +104,7 @@ class ContentObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateContentObject(schema: KClass<*>?, builder: BodyDocumentation.() -> Unit): Content {
+        private fun generateContentObject(schema: KClass<*>?, builder: OpenApiBody.() -> Unit): Content {
             return generateContentObject(ComponentsContext.NOOP, schema, builder)
         }
 
@@ -112,9 +112,9 @@ class ContentObjectTest : StringSpec({
         private fun generateContentObject(
             componentCtx: ComponentsContext,
             schema: KClass<*>?,
-            builder: BodyDocumentation.() -> Unit
+            builder: OpenApiBody.() -> Unit
         ): Content {
-            return OApiContentGenerator().generate(BodyDocumentation(schema).apply(builder), componentCtx)
+            return OApiContentGenerator().generate(OpenApiBody(schema).apply(builder), componentCtx)
         }
 
         private data class SimpleBody(

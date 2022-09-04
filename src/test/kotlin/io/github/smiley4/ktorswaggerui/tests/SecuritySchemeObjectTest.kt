@@ -1,10 +1,10 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.AuthKeyLocation
-import io.github.smiley4.ktorswaggerui.AuthScheme
-import io.github.smiley4.ktorswaggerui.AuthType
-import io.github.smiley4.ktorswaggerui.OpenApiSecuritySchemeConfig
-import io.github.smiley4.ktorswaggerui.apispec.OApiSecuritySchemesGenerator
+import io.github.smiley4.ktorswaggerui.dsl.AuthKeyLocation
+import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
+import io.github.smiley4.ktorswaggerui.dsl.AuthType
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiSecuritySchemesGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
@@ -146,18 +146,18 @@ class SecuritySchemeObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateSecuritySchemeObject(name: String, builder: OpenApiSecuritySchemeConfig.() -> Unit): SecurityScheme {
-            return OApiSecuritySchemesGenerator().generate(listOf(OpenApiSecuritySchemeConfig(name).apply(builder))).let {
+        private fun generateSecuritySchemeObject(name: String, builder: OpenApiSecurityScheme.() -> Unit): SecurityScheme {
+            return OApiSecuritySchemesGenerator().generate(listOf(OpenApiSecurityScheme(name).apply(builder))).let {
                 it shouldHaveSize 1
                 it shouldContainKey name
                 it[name]!!
             }
         }
 
-        private fun generateSecuritySchemeObjects(builders: Map<String, OpenApiSecuritySchemeConfig.() -> Unit>): List<SecurityScheme> {
+        private fun generateSecuritySchemeObjects(builders: Map<String, OpenApiSecurityScheme.() -> Unit>): List<SecurityScheme> {
             val schemes = mutableListOf<SecurityScheme>()
             builders.forEach { (name, builder) ->
-                schemes.addAll(OApiSecuritySchemesGenerator().generate(listOf(OpenApiSecuritySchemeConfig(name).apply(builder))).values)
+                schemes.addAll(OApiSecuritySchemesGenerator().generate(listOf(OpenApiSecurityScheme(name).apply(builder))).values)
             }
             schemes shouldHaveSize builders.size
             return schemes

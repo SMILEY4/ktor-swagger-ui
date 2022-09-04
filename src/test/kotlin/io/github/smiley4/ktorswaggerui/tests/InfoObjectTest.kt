@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.OpenApiInfoConfig
-import io.github.smiley4.ktorswaggerui.apispec.OApiInfoGenerator
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
+import io.github.smiley4.ktorswaggerui.specbuilder.OApiInfoGenerator
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.info.Contact
 import io.swagger.v3.oas.models.info.Info
@@ -54,8 +54,8 @@ class InfoObjectTest : StringSpec({
 
     companion object {
 
-        private fun generateInfoObject(builder: OpenApiInfoConfig.() -> Unit): Info {
-            return OApiInfoGenerator().generate(OpenApiInfoConfig().apply(builder))
+        private fun generateInfoObject(builder: OpenApiInfo.() -> Unit): Info {
+            return OApiInfoGenerator().generate(OpenApiInfo().apply(builder))
         }
 
     }
