@@ -1,36 +1,22 @@
-package io.github.smiley4.ktorswaggerui.dsl
+package io.github.smiley4.ktorswaggerui.routes
 
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.routing.Route
-import io.ktor.server.routing.RouteSelector
-import io.ktor.server.routing.RouteSelectorEvaluation
-import io.ktor.server.routing.RoutingResolveContext
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.head
+import io.ktor.server.routing.method
 import io.ktor.server.routing.options
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.ktor.server.routing.method
 import io.ktor.util.KtorDsl
 import io.ktor.util.pipeline.PipelineContext
 import io.ktor.util.pipeline.PipelineInterceptor
 
-class DocumentedRouteSelector(val documentation: OpenApiRoute) : RouteSelector() {
-    override fun evaluate(context: RoutingResolveContext, segmentIndex: Int) = RouteSelectorEvaluation.Transparent
-}
-
-fun Route.documentation(
-    documentation: OpenApiRoute.() -> Unit = { },
-    build: Route.() -> Unit
-): Route {
-    val documentedRoute = createChild(DocumentedRouteSelector(OpenApiRoute().apply(documentation)))
-    documentedRoute.build()
-    return documentedRoute
-}
 
 //============================//
 //           ROUTING          //

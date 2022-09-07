@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.6.20"
     `maven-publish`
+    kotlin("plugin.serialization") version "1.6.20"
 }
 
 group = "io.github.smiley4"
@@ -25,11 +26,13 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-resources:$ktorVersion")
     implementation("org.webjars:swagger-ui:$swaggerUiVersion")
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
     implementation("com.github.victools:jsonschema-generator:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+
 
     testImplementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")

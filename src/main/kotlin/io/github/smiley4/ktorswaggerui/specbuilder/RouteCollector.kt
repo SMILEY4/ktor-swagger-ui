@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
-import io.github.smiley4.ktorswaggerui.dsl.DocumentedRouteSelector
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.routes.DocumentedRouteSelector
 import io.ktor.http.HttpMethod
 import io.ktor.server.application.Application
 import io.ktor.server.application.plugin
