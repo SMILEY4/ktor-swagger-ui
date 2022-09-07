@@ -35,12 +35,14 @@ dependencies {
     testImplementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
     testImplementation("io.ktor:ktor-server-auth:$ktorVersion")
-    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
     testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     testImplementation("io.mockk:mockk:$versionMockk")
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.20")
 
 }
 
