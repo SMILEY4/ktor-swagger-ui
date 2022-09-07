@@ -21,6 +21,7 @@ class OApiPathsBuilder(
         return Paths().apply {
             routeCollector.collectRoutes(application)
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash(config.getSwaggerUI().swaggerUrl) }
+                .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/api.json") }
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/{filename}") }
                 .filter { !config.getSwaggerUI().forwardRoot || it.path != "/" }
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }

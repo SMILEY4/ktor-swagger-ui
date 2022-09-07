@@ -14,4 +14,10 @@ class SwaggerUI {
      */
     var swaggerUrl: String = "swagger-ui"
 
+
+    /**
+     * The name of the authentication to use for the swagger routes. Null to not protect the swagger-ui.
+     */
+    var authentication: String? = null
+
 }
