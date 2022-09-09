@@ -205,7 +205,7 @@ class ComponentsObjectTest : StringSpec({
         }
 
         private fun buildSchema(type: KClass<*>, context: ComponentsContext): Schema<*> {
-            return getOApiSchemaBuilder().build(type, context)
+            return getOApiSchemaBuilder().build(type.java, context)
         }
 
         private fun buildExample(name: String, example: Any, context: ComponentsContext): Example {

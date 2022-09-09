@@ -2,6 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.core.type.TypeReference
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
@@ -10,14 +11,14 @@ import io.swagger.v3.oas.models.media.Schema
 class JsonSchemaGenerationTests : StringSpec({
 
     "generate schema for a simple enum" {
-        getOApiSchemaBuilder().build(SimpleEnum::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SimpleEnum::class.java, ComponentsContext.NOOP) shouldBeSchema {
             type = "string"
             enum = SimpleEnum.values().map { it.name }
         }
     }
 
     "generate schema for a list of simple classes" {
-        getOApiSchemaBuilder().build(Array<SimpleDataClass>::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<SimpleDataClass>::class.java, ComponentsContext.NOOP) shouldBeSchema {
             type = "array"
             items = Schema<Any>().apply {
                 type = "object"
@@ -34,7 +35,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a simple class" {
-        getOApiSchemaBuilder().build(SimpleDataClass::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SimpleDataClass::class.java, ComponentsContext.NOOP) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "text" to Schema<Any>().apply {
@@ -48,7 +49,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a another class" {
-        getOApiSchemaBuilder().build(AnotherDataClass::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(AnotherDataClass::class.java, ComponentsContext.NOOP) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "primitiveValue" to Schema<Any>().apply {
@@ -90,7 +91,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with inheritance" {
-        getOApiSchemaBuilder().build(SubClassA::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SubClassA::class.java, ComponentsContext.NOOP) shouldBeSchema {
             allOf = listOf(
                 Schema<Any>().apply {
                     type = "object"
@@ -117,7 +118,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with sub-classes" {
-        getOApiSchemaBuilder().build(Superclass::class, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Superclass::class.java, ComponentsContext.NOOP) shouldBeSchema {
             anyOf = listOf(
                 Schema<Any>().apply {
                     allOf = listOf(
@@ -171,8 +172,8 @@ class JsonSchemaGenerationTests : StringSpec({
         }
     }
 
-    "generate schema for a class with generic types" {
-        getOApiSchemaBuilder().build(WrapperForClassWithGenerics::class, ComponentsContext.NOOP) shouldBeSchema {
+    "generate schema for a class with nested generic type" {
+        getOApiSchemaBuilder().build(WrapperForClassWithGenerics::class.java, ComponentsContext.NOOP) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "genericClass" to Schema<Any>().apply {
@@ -193,9 +194,43 @@ class JsonSchemaGenerationTests : StringSpec({
         }
     }
 
+    "generate schema for a class with generic types" {
+        getOApiSchemaBuilder().build(getType<ClassWithGenerics<SimpleDataClass>>(), ComponentsContext.NOOP) shouldBeSchema {
+            type = "object"
+            properties = mapOf(
+                "genericField" to Schema<Any>().apply {
+                    type = "object"
+                    properties = mapOf(
+                        "text" to Schema<Any>().apply {
+                            type = "string"
+                        },
+                        "value" to Schema<Any>().apply {
+                            type = "number"
+                        }
+                    )
+                },
+                "genericList" to Schema<Any>().apply {
+                    type = "array"
+                    items = Schema<Any>().apply {
+                        type = "object"
+                        properties = mapOf(
+                            "text" to Schema<Any>().apply {
+                                type = "string"
+                            },
+                            "value" to Schema<Any>().apply {
+                                type = "number"
+                            }
+                        )
+                    }
+                }
+            )
+        }
+    }
+
 }) {
     companion object {
 
+        inline fun <reified T> getType() = object : TypeReference<T>() {}.type
 
         enum class SimpleEnum {
             RED, GREEN, BLUE

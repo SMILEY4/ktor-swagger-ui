@@ -110,10 +110,10 @@ class ContentObjectTest : StringSpec({
 
         private fun buildContentObject(
             componentCtx: ComponentsContext,
-            schema: KClass<*>?,
+            type: KClass<*>?,
             builder: OpenApiBody.() -> Unit
         ): Content {
-            return getOApiContentBuilder().build(OpenApiBody(schema).apply(builder), componentCtx)
+            return getOApiContentBuilder().build(OpenApiBody(type?.java).apply(builder), componentCtx)
         }
 
         private data class SimpleBody(

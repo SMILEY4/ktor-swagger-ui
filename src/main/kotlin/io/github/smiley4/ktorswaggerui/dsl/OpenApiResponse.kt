@@ -1,6 +1,8 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import com.fasterxml.jackson.core.type.TypeReference
 import io.ktor.http.HttpStatusCode
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /**
@@ -29,11 +31,24 @@ class OpenApiResponse(val statusCode: HttpStatusCode) {
     /**
      * Possible headers returned with this response
      */
-    fun header(name: String, schema: KClass<*>) {
+    fun header(name: String, type: Type) {
         headers[name] = OpenApiHeader().apply {
-            this.schema = schema
+            this.type = type
         }
     }
+
+
+    /**
+     * Possible headers returned with this response
+     */
+    fun header(name: String, type: KClass<*>) = header(name, type.java)
+
+
+    /**
+     * Possible headers returned with this response
+     */
+    inline fun <reified TYPE> header(name: String) = header(name, object : TypeReference<TYPE>() {}.type)
+
 
     fun getHeaders(): Map<String, OpenApiHeader> = headers
 
@@ -44,15 +59,36 @@ class OpenApiResponse(val statusCode: HttpStatusCode) {
     /**
      * The body returned with this response
      */
-    fun body(schema: KClass<*>, block: OpenApiBody.() -> Unit) {
-        body = OpenApiBody(schema).apply(block)
+    fun body(type: Type, block: OpenApiBody.() -> Unit) {
+        body = OpenApiBody(type).apply(block)
     }
 
 
     /**
      * The body returned with this response
      */
-    fun body(schema: KClass<*>) = body(schema) {}
+    fun body(type: KClass<*>, block: OpenApiBody.() -> Unit) {
+        body = OpenApiBody(type.java).apply(block)
+    }
+
+
+    /**
+     * The body returned with this response
+     */
+    @JvmName("bodyGenericType")
+    inline fun <reified TYPE> body(noinline block: OpenApiBody.() -> Unit) = body(object : TypeReference<TYPE>() {}.type, block)
+
+
+    /**
+     * The body returned with this response
+     */
+    fun body(type: KClass<*>) = body(type.java) {}
+
+
+    /**
+     * The body returned with this response
+     */
+    inline fun <reified TYPE> body() = body(object : TypeReference<TYPE>() {}.type) {}
 
 
     /**
@@ -61,7 +97,6 @@ class OpenApiResponse(val statusCode: HttpStatusCode) {
     fun body(block: OpenApiBody.() -> Unit) {
         body = OpenApiBody(null).apply(block)
     }
-
 
     fun getBody() = body
 

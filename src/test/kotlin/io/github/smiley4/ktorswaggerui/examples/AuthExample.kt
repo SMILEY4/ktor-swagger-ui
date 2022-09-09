@@ -61,7 +61,7 @@ fun main() {
                     response {
                         HttpStatusCode.OK to {
                             description = "Successful Request"
-                            body(String::class) { description = "the response" }
+                            body<String> { description = "the response" }
                         }
                         // response for "401 Unauthorized" is automatically added (see plugin-config "defaultUnauthorizedResponse").
                     }

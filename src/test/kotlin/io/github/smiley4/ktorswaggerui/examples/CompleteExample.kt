@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.delete
+import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.github.smiley4.ktorswaggerui.dsl.route
 import io.ktor.http.ContentType
@@ -72,7 +72,7 @@ fun main() {
                 response {
                     HttpStatusCode.OK to {
                         description = "Successful Request"
-                        body(String::class) { description = "the response" }
+                        body<String> { description = "the response" }
                     }
                     HttpStatusCode.InternalServerError to {
                         description = "Something unexpected happened"
@@ -86,10 +86,10 @@ fun main() {
                 tags = listOf("test")
                 description = "Performs the given operation on the given values and returns the result"
                 request {
-                    pathParameter("operation", String::class) {
+                    pathParameter<String>("operation") {
                         description = "the math operation to perform. Either 'add' or 'sub'"
                     }
-                    body(MathRequest::class) {
+                    body<MathRequest> {
                         example("First", MathRequest(13, 19)) {
                             description = "Either an addition of 13 and 19 or a subtraction of 19 from 13"
                         }
@@ -101,7 +101,7 @@ fun main() {
                 response {
                     HttpStatusCode.OK to {
                         description = "The operation was successful"
-                        body(MathResult::class) {
+                        body<MathResult> {
                             description = "The result of the operation"
                             example("First", MathResult(42)) {
                                 summary = "The first example"
@@ -131,7 +131,7 @@ fun main() {
             post("random/results", {
                 response {
                     HttpStatusCode.OK to {
-                        body(Array<MathResult>::class) {
+                        body<List<MathResult>> {
                             mediaType(ContentType.Application.Json)
                             mediaType(ContentType.Application.Xml)
                         }
@@ -144,7 +144,7 @@ fun main() {
             post("random/numbers", {
                 response {
                     HttpStatusCode.OK to {
-                        body(IntArray::class)
+                        body<List<Int>>()
                     }
                 }
             }) {
@@ -153,15 +153,25 @@ fun main() {
 
             post("echo/{color}", {
                 request {
-                    pathParameter("color", Color::class)
+                    pathParameter<Color>("color")
                 }
                 response {
                     HttpStatusCode.OK to {
-                        body(String::class)
+                        body<String>()
                     }
                 }
             }) {
                 call.respond(HttpStatusCode.OK, Color.valueOf(call.parameters["color"]!!).toString())
+            }
+
+            get("generics", {
+                response {
+                    HttpStatusCode.OK to {
+                        body<GenericResponse<SpecificResponseData>>()
+                    }
+                }
+            }) {
+                call.respond(HttpStatusCode.NotImplemented, "not-inplemented")
             }
 
             route("images", {
@@ -177,7 +187,7 @@ fun main() {
                                 mediaType(ContentType.Image.JPEG)
                                 mediaType(ContentType.Image.SVG)
                             }
-                            header(HttpHeaders.ContentLength, Long::class)
+                            header<Long>(HttpHeaders.ContentLength)
                         }
                     }
                 }) {
@@ -187,7 +197,7 @@ fun main() {
                 delete("{id}", {
                     description = "Delete the image with the given id."
                     request {
-                        pathParameter("id", String::class) {
+                        pathParameter<String>("id") {
                             description = "The id of the image to delete"
                         }
                     }
@@ -219,3 +229,12 @@ data class MathResult(
 enum class Color {
     RED, GREEN, BLUE
 }
+
+data class GenericResponse<T>(
+    val success: Boolean,
+    val data: T
+)
+
+data class SpecificResponseData(
+    val text: String
+)

@@ -19,7 +19,7 @@ class OApiParametersBuilder(
                     OpenApiRequestParameter.Location.PATH -> "path"
                 }
                 name = parameter.name
-                schema = schemaBuilder.build(parameter.schema, ComponentsContext.NOOP)
+                schema = schemaBuilder.build(parameter.type, ComponentsContext.NOOP)
                 description = parameter.description
                 required = parameter.required
                 deprecated = parameter.deprecated

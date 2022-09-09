@@ -1,5 +1,5 @@
 package io.github.smiley4.ktorswaggerui.dsl
-import kotlin.reflect.KClass
+import java.lang.reflect.Type
 
 @OpenApiDslMarker
 class OpenApiRequestParameter(
@@ -8,15 +8,9 @@ class OpenApiRequestParameter(
      */
     val name: String,
     /**
-     * The schema defining the type used for the parameter.
-     * Examples:
-     * - Int::class
-     * - UByte::class
-     * - BooleanArray::class
-     * - Array<String>::class
-     * - Array<MyClass>::class
+     * The type defining the schema used for the parameter.
      */
-    val schema: KClass<*>,
+    val type: Type,
     /**
      * Location of the parameter
      */

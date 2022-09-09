@@ -33,7 +33,7 @@ fun main() {
             get("pets", {
                 description = "Returns all pets from the system that the user has access to."
                 request {
-                    queryParameter("tags", Array<String>::class) {
+                    queryParameter<List<String>>("tags") {
                         description = "tags to filter by"
                         required = false
                     }
@@ -65,7 +65,7 @@ fun main() {
             post("pets", {
                 description = "Creates a new pet in the store. Duplicates are allowed."
                 request {
-                    body(NewPet::class) {
+                    body<NewPet> {
                         description = "Pet to add to the store"
                         required = true
                         mediaType(ContentType.Application.Json)
@@ -76,7 +76,7 @@ fun main() {
                 response {
                     HttpStatusCode.OK to {
                         description = "pet response"
-                        body(Array<Pet>::class) {
+                        body<List<Pet>> {
                             mediaType(ContentType.Application.Json)
                             mediaType(ContentType.Application.Xml)
                             example("example", Pet(3, "Max", "bird"))
@@ -91,7 +91,7 @@ fun main() {
             get("pets/{id}", {
                 description = "Returns a pet based on a single ID, if the user has access to the pet."
                 request {
-                    pathParameter("id", Int::class) {
+                    pathParameter<Int>("id") {
                         description = "ID of pet to fetch"
                         required = true
                     }
@@ -99,7 +99,7 @@ fun main() {
                 response {
                     HttpStatusCode.OK to {
                         description = "pet response"
-                        body(Pet::class) {
+                        body<Pet> {
                             mediaType(ContentType.Application.Json)
                             mediaType(ContentType.Application.Xml)
                             example("example", Pet(4, "Bella", "dog"))
@@ -114,7 +114,7 @@ fun main() {
             delete("pets/{id}", {
                 description = "deletes a single pet based on the ID supplied."
                 request {
-                    pathParameter("id", Int::class) {
+                    pathParameter<Int>("id") {
                         description = "ID of pet to delete"
                         required = true
                     }
