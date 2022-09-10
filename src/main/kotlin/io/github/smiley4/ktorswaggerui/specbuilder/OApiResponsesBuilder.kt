@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.ktor.client.utils.EmptyContent.headers
 import io.swagger.v3.oas.models.headers.Header
 import io.swagger.v3.oas.models.responses.ApiResponse
 
@@ -14,7 +15,7 @@ class OApiResponsesBuilder(
 
     fun build(responses: List<OpenApiResponse>, components: ComponentsContext): List<Pair<String, ApiResponse>> {
         return responses.map { responseCfg ->
-            responseCfg.statusCode.value.toString() to ApiResponse().apply {
+            responseCfg.statusCode to ApiResponse().apply {
                 description = responseCfg.description
                 responseCfg.getBody()?.let {
                     content = contentBuilder.build(responseCfg.getBody()!!, components)

@@ -75,9 +75,10 @@ class OApiPathBuilder(
     }
 
 
-    private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: OpenApiResponse?) =
-        defaultUnauthorizedResponses != null
+    private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: OpenApiResponse?): Boolean {
+        val unauthorizedCode = HttpStatusCode.Unauthorized.value.toString();
+        return defaultUnauthorizedResponses != null
                 && config.protected
-                && config.documentation.getResponses().getResponses().count { it.statusCode == HttpStatusCode.Unauthorized } == 0
-
+                && config.documentation.getResponses().getResponses().count { it.statusCode == unauthorizedCode } == 0
+    }
 }
