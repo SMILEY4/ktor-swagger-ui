@@ -15,6 +15,11 @@ class OpenApiBody(
 ) {
 
     /**
+     * url to a json-spec to use as schema for this body (alternative to 'type')
+     */
+    var externalSchemaUrl: String? = null
+
+    /**
      * A brief description of the request body
      */
     var description: String? = null

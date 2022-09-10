@@ -76,7 +76,8 @@ class OpenApiResponse(val statusCode: HttpStatusCode) {
      * The body returned with this response
      */
     @JvmName("bodyGenericType")
-    inline fun <reified TYPE> body(noinline block: OpenApiBody.() -> Unit) = body(object : TypeReference<TYPE>() {}.type, block)
+    inline fun <reified TYPE> body(noinline block: OpenApiBody.() -> Unit) =
+        body(object : TypeReference<TYPE>() {}.type, block)
 
 
     /**
@@ -97,6 +98,23 @@ class OpenApiResponse(val statusCode: HttpStatusCode) {
     fun body(block: OpenApiBody.() -> Unit) {
         body = OpenApiBody(null).apply(block)
     }
+
+
+    /**
+     * The body returned with this response
+     */
+    fun body(schemaUrl: String, block: OpenApiBody.() -> Unit) {
+        body = OpenApiBody(null).apply(block).apply {
+            externalSchemaUrl = schemaUrl
+        }
+    }
+
+
+    /**
+     * The body returned with this response
+     */
+    fun body(schemaUrl: String) = body(schemaUrl) {}
+
 
     fun getBody() = body
 

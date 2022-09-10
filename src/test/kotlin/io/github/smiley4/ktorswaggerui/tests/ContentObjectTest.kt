@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
+import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.examples.Example
@@ -99,6 +99,30 @@ class ContentObjectTest : StringSpec({
         }
     }
 
+    "test content object with external json-schema" {
+        val content = buildExternalContentObject("/my/test/schema")
+        content shouldBeContent {
+            addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
+                schema = Schema<Any>().apply {
+                    type = "object"
+                    `$ref` = "/my/test/schema"
+                }
+            })
+        }
+    }
+
+    "test content object with external json-schema and components-section enabled" {
+        val content = buildExternalContentObject("/my/test/schema", ComponentsContext(true, mutableMapOf(), true, mutableMapOf()))
+        content shouldBeContent {
+            addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
+                schema = Schema<Any>().apply {
+                    type = "object"
+                    `$ref` = "/my/test/schema"
+                }
+            })
+        }
+    }
+
 }) {
 
     companion object {
@@ -114,6 +138,13 @@ class ContentObjectTest : StringSpec({
             builder: OpenApiBody.() -> Unit
         ): Content {
             return getOApiContentBuilder().build(OpenApiBody(type?.java).apply(builder), componentCtx)
+        }
+
+        private fun buildExternalContentObject(
+            url: String,
+            componentCtx: ComponentsContext = ComponentsContext.NOOP,
+        ): Content {
+            return getOApiContentBuilder().build(OpenApiBody(null).apply { externalSchemaUrl = url }, componentCtx)
         }
 
         private data class SimpleBody(

@@ -65,18 +65,18 @@ fun assertPathOperation(actual: Operation, expected: Operation) {
         actual.security.flatMap { it.keys } shouldContainExactlyInAnyOrder expected.security.flatMap { it.keys }
     }
     actual.deprecated shouldBe expected.deprecated
-//    assertNullSafe(actual.responses, expected.responses) {
-//        actual.responses.keys shouldContainExactlyInAnyOrder expected.responses.keys
-//    }
-//    assertNullSafe(actual.security, expected.security) {
-//        expected.security.forEachIndexed { index, expectedElement ->
-//            val actualElement = actual.security[index]
-//            actualElement.shouldNotBeNull()
-//            assertMapEntries(actualElement, expectedElement) { _, actualEntry, expectedEntry ->
-//                actualEntry shouldContainExactlyInAnyOrder expectedEntry
-//            }
-//        }
-//    }
+    assertNullSafe(actual.responses, expected.responses) {
+        actual.responses.keys shouldContainExactlyInAnyOrder expected.responses.keys
+    }
+    assertNullSafe(actual.security, expected.security) {
+        expected.security.forEachIndexed { index, expectedElement ->
+            val actualElement = actual.security[index]
+            actualElement.shouldNotBeNull()
+            assertMapEntries(actualElement, expectedElement) { _, actualEntry, expectedEntry ->
+                actualEntry shouldContainExactlyInAnyOrder expectedEntry
+            }
+        }
+    }
 }
 
 

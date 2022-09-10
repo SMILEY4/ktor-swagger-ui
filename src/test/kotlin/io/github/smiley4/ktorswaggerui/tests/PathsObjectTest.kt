@@ -99,6 +99,24 @@ class PathsObjectTest : StringSpec({
         paths["/test/path"]!!.post.shouldNotBeNull()
     }
 
+    "test filter paths" {
+        val config = pluginConfig {
+            pathFilter = {_, url -> url.firstOrNull() == "test"}
+        }
+        val paths = buildPaths(
+            config, listOf(
+                HttpMethod.Get to "/different/path",
+                HttpMethod.Get to "/test/path",
+                HttpMethod.Post to "/test/path/2",
+            )
+        )
+        paths shouldHaveSize 2
+        paths.keys shouldContainExactlyInAnyOrder listOf(
+            "/test/path",
+            "/test/path/2",
+        )
+    }
+
 }) {
 
     companion object {
