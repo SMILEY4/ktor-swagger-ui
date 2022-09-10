@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-import kotlin.reflect.KClass
+import java.lang.reflect.Type
 
 
 @OpenApiDslMarker
@@ -15,7 +15,7 @@ class OpenApiHeader {
     /**
      * The schema of the header
      */
-    var schema: KClass<*>? = null
+    var type: Type? = null
 
 
     /**

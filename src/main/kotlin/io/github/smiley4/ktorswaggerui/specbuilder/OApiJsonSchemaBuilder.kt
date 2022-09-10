@@ -9,6 +9,8 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
 import io.swagger.v3.oas.models.media.Schema
+import io.swagger.v3.parser.util.SchemaTypeUtil.createSchema
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
 /**
@@ -16,11 +18,11 @@ import kotlin.reflect.KClass
  */
 class OApiJsonSchemaBuilder {
 
-    fun build(type: KClass<*>, components: ComponentsContext): Schema<Any> {
+    fun build(type: Type, components: ComponentsContext): Schema<Any> {
         if (components.schemasInComponents) {
             val schema = createSchema(type)
             if (schema.type == "array") {
-                return arrayRefSchema(components.addSchema(type.java.componentType.kotlin, schema.items))
+                return arrayRefSchema(components.addArraySchema(type, schema))
             } else {
                 return refSchema(components.addSchema(type, schema))
             }
@@ -30,31 +32,31 @@ class OApiJsonSchemaBuilder {
     }
 
 
-    private fun createSchema(type: KClass<*>): Schema<Any> {
-        return if (type.java.isArray) {
+    private fun createSchema(type: Type): Schema<Any> {
+        return if (type is Class<*> && type.isArray) {
             Schema<Any>().apply {
                 this.type = "array"
-                this.items = createObjectSchema(type.java.componentType.kotlin)
+                this.items = createObjectSchema(type.componentType)
             }
-        } else if (type.java.isEnum) {
+        } else if (type is Class<*> && type.isEnum) {
             Schema<Any>().apply {
                 this.type = "string"
-                this.enum = type.java.enumConstants.map { it.toString() }
+                this.enum = type.enumConstants.map { it.toString() }
             }
         } else {
-            createObjectSchema(type)
+            return createObjectSchema(type)
         }
     }
 
 
-    private fun createObjectSchema(type: KClass<*>): Schema<Any> {
-        return if (type.java.isEnum) {
+    private fun createObjectSchema(type: Type): Schema<Any> {
+        return if (type is Class<*> && type.isEnum) {
             Schema<Any>().apply {
                 this.type = "string"
-                this.enum = type.java.enumConstants.map { it.toString() }
+                this.enum = type.enumConstants.map { it.toString() }
             }
         } else {
-            toSchema(generateJsonSchema(type.java))
+            return toSchema(generateJsonSchema(type))
         }
     }
 
@@ -85,11 +87,12 @@ class OApiJsonSchemaBuilder {
     }
 
 
-    private fun <T> generateJsonSchema(type: Class<T>): ObjectNode {
+    private fun generateJsonSchema(type: Type): ObjectNode {
         val config = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
             .with(JacksonModule())
             .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
             .with(Option.INLINE_ALL_SCHEMAS)
+            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
             .with(Option.ALLOF_CLEANUP_AT_THE_END)
             .build()
         return SchemaGenerator(config).generateSchema(type)

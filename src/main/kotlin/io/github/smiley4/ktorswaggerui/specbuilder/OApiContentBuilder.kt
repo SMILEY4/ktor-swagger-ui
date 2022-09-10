@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.XML
-import kotlin.reflect.KClass
+import java.lang.reflect.Type
 
 /**
  * Generator for the OpenAPI Content Object (e.g. request and response bodies)
@@ -35,9 +35,9 @@ class OApiContentBuilder(
 
 
     private fun buildSchema(body: OpenApiBody, components: ComponentsContext): Schema<Any>? {
-        return body.schema
+        return body.type
             ?.let { schemaBuilder.build(it, components) }
-            ?.let { prepareForXml(body.schema, it) }
+            ?.let { prepareForXml(body.type, it) }
     }
 
 
@@ -64,12 +64,14 @@ class OApiContentBuilder(
     }
 
 
-    private fun prepareForXml(type: KClass<*>, schema: Schema<Any>): Schema<Any> {
+    private fun prepareForXml(type: Type, schema: Schema<Any>): Schema<Any> {
         schema.xml = XML().apply {
-            name = if (type.java.isArray) {
-                type.java.componentType.simpleName
-            } else {
-                type.simpleName
+            if (type is Class<*>) {
+                name = if (type.isArray) {
+                    type.componentType.simpleName
+                } else {
+                    type.simpleName
+                }
             }
         }
         return schema

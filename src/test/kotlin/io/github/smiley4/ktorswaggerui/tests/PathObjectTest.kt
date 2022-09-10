@@ -61,7 +61,7 @@ class PathObjectTest : StringSpec({
                 HttpStatusCode.OK to {
                     description = "Test OK-Response"
                     header("testHeader") {
-                        schema = String::class
+                        type = String::class.java
                         description = "Test Header"
                     }
                     body(String::class) {

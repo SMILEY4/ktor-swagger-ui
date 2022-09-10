@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
 import io.ktor.http.ContentType
-import kotlin.reflect.KClass
+import java.lang.reflect.Type
 
 /**
  * Describes a single request/response body.
@@ -9,15 +9,9 @@ import kotlin.reflect.KClass
 @OpenApiDslMarker
 class OpenApiBody(
     /**
-     * The schema defining the type used for the parameter.
-     * Examples:
-     * - Int::class.java
-     * - UByte::class.java
-     * - BooleanArray::class.java
-     * - Array<String>::class.java
-     * - Array<MyClass>::class.java
+     * The type defining the schema used for the body.
      */
-    val schema: KClass<*>?,
+    val type: Type?,
 ) {
 
     /**

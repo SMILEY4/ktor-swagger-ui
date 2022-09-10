@@ -2,7 +2,9 @@ package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.swagger.v3.oas.models.media.Schema
-import kotlin.reflect.KClass
+import java.lang.reflect.ParameterizedType
+import java.lang.reflect.Type
+import java.lang.reflect.WildcardType
 
 /**
  * Container holding and collecting information about the OpenApi "Components"-Object
@@ -20,15 +22,46 @@ data class ComponentsContext(
 
 
     /**
+     * Add the given schema for the given type to the components-section.
+     * The schema is an array, only the element type is added to the components-section
+     * @return the ref-string for the schema
+     */
+    fun addArraySchema(type: Type, schema: Schema<*>): String {
+        return when (type) {
+            is Class<*> -> addSchema(type.componentType, schema.items)
+            is ParameterizedType -> {
+                when (val actualTypeArgument = type.actualTypeArguments.firstOrNull()) {
+                    is Class<*> -> addSchema(actualTypeArgument, schema.items)
+                    is WildcardType -> {
+                        addSchema(actualTypeArgument.upperBounds.first(), schema.items)
+                    }
+                    else -> throw Exception("Could not add array-schema to components ($type)")
+                }
+            }
+            else -> throw Exception("Could not add array-schema to components ($type)")
+        }
+    }
+
+
+    /**
      * Add the given schema for the given type to the components-section
      * @return the ref-string for the schema
      */
-    fun addSchema(type: KClass<*>, schema: Schema<*>): String {
-        val key = type.qualifiedName ?: "?"
+    fun addSchema(type: Type, schema: Schema<*>): String {
+        val key = getIdentifyingName(type)
         if (!schemas.containsKey(key)) {
             schemas[key] = schema
         }
         return asSchemaRef(key)
+    }
+
+    private fun getIdentifyingName(type: Type): String {
+        return when (type) {
+            is Class<*> -> type.canonicalName
+            is ParameterizedType -> getIdentifyingName(type.rawType) + "<" + getIdentifyingName(type.actualTypeArguments.first()) + ">"
+            is WildcardType -> getIdentifyingName(type.upperBounds.first())
+            else -> throw Exception("Could not get identifying name from $type")
+        }
     }
 
 
