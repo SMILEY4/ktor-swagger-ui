@@ -24,6 +24,11 @@ class OApiPathsBuilder(
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/api.json") }
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/{filename}") }
                 .filter { !config.getSwaggerUI().forwardRoot || it.path != "/" }
+                .filter { path ->
+                    config.pathFilter
+                        ?.let { it(path.method, path.path.split("/").filter { it.isNotEmpty() }) }
+                        ?: true
+                }
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
                 .map {
                     pathBuilder.build(

@@ -35,9 +35,26 @@ class OApiContentBuilder(
 
 
     private fun buildSchema(body: OpenApiBody, components: ComponentsContext): Schema<Any>? {
-        return body.type
+        return if (body.externalSchemaUrl != null) {
+            buildSchemaFromExternal(body.externalSchemaUrl!!)
+        } else {
+            buildSchemaFromType(body.type, components)
+        }
+    }
+
+
+    private fun buildSchemaFromType(type: Type?, components: ComponentsContext): Schema<Any>? {
+        return type
             ?.let { schemaBuilder.build(it, components) }
-            ?.let { prepareForXml(body.type, it) }
+            ?.let { prepareForXml(type, it) }
+    }
+
+
+    private fun buildSchemaFromExternal(url: String): Schema<Any> {
+        return Schema<Any>().apply {
+            type = "object"
+            `$ref` = url
+        }
     }
 
 

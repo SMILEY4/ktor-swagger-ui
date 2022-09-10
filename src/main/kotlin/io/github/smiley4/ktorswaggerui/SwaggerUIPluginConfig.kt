@@ -7,6 +7,7 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
 import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
+import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 
 
@@ -54,6 +55,13 @@ class SwaggerUIPluginConfig {
      * Whether to put example objects in the component section and reference them or inline the examples at the actual place of usage.
      */
     var examplesInComponentSection: Boolean = false
+
+
+    /**
+     * Filter to apply to all routes. Return 'false' for routes to not include them in the OpenApi-Spec and Swagger-UI.
+     * The url of the paths are already split at '/'.
+     */
+    var pathFilter: ((method: HttpMethod, url: List<String>) -> Boolean)? = null
 
     private var swaggerUI = SwaggerUI()
 
