@@ -25,7 +25,7 @@ class SwaggerUIPluginConfig {
      * Generated response can be overwritten with custom response.
      */
     fun defaultUnauthorizedResponse(block: OpenApiResponse.() -> Unit) {
-        defaultUnauthorizedResponse = OpenApiResponse(HttpStatusCode.Unauthorized).apply(block)
+        defaultUnauthorizedResponse = OpenApiResponse(HttpStatusCode.Unauthorized.value.toString()).apply(block)
     }
 
 

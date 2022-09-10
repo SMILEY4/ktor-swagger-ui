@@ -312,7 +312,7 @@ class PathObjectTest : StringSpec({
         }
 
         private fun defaultUnauthorizedResponse(): OpenApiResponse {
-            return OpenApiResponse(HttpStatusCode.Unauthorized).apply {
+            return OpenApiResponse(HttpStatusCode.Unauthorized.value.toString()).apply {
                 description = "Authentication failed"
             }
         }

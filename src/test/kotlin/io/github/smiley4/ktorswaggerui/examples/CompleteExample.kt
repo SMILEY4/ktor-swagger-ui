@@ -71,12 +71,18 @@ fun main() {
                 description = "Hello World Endpoint"
                 operationId = "hello"
                 response {
+                    default {
+                        description = "Default Response"
+                    }
                     HttpStatusCode.OK to {
                         description = "Successful Request"
                         body<String> { description = "the response" }
                     }
                     HttpStatusCode.InternalServerError to {
                         description = "Something unexpected happened"
+                    }
+                    "Custom" to {
+                        description = "Custom Response"
                     }
                 }
             }) {

@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
 import com.fasterxml.jackson.core.type.TypeReference
-import io.ktor.http.HttpStatusCode
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 
@@ -10,7 +9,7 @@ import kotlin.reflect.KClass
  * A response code can only have one response object.
  */
 @OpenApiDslMarker
-class OpenApiResponse(val statusCode: HttpStatusCode) {
+class OpenApiResponse(val statusCode: String) {
 
     /**
      * A short description of the response
