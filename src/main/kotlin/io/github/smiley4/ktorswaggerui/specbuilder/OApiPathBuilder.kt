@@ -29,6 +29,7 @@ class OApiPathBuilder(
                 tags = buildTags(route, tagGenerator)
                 summary = route.documentation.summary
                 description = route.documentation.description
+                operationId = route.documentation.operationId
                 parameters = parametersBuilder.build(route.documentation.getRequest().getParameters())
                 route.documentation.getRequest().getBody()?.let {
                     requestBody = requestBodyBuilder.build(it, components)

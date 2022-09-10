@@ -33,6 +33,21 @@ class PathObjectTest : StringSpec({
         }
     }
 
+    "test route with operationId" {
+        val path = buildPath(HttpMethod.Get, "test/path") {
+            operationId = "testPath"
+        }
+        path.first shouldBe "test/path"
+        path.second shouldBePath {
+            get = Operation().apply {
+                tags = emptyList()
+                parameters = emptyList()
+                responses = ApiResponses()
+                operationId = "testPath"
+            }
+        }
+    }
+
     "test post-route" {
         val path = buildPath(HttpMethod.Post, "test/path") {}
         path.first shouldBe "test/path"
