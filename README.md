@@ -13,7 +13,8 @@ This library provides a Ktor plugin to document routes, generate an OpenApi Spec
 - supports most of the [OpenAPI 3.0.3 Specification](https://swagger.io/specification/)
 - Authentication (Basic, JWT, ...)
 - automatic json-schema generation from arbitrary types/classes for bodies and parameters
-- no annotations
+- external/custom json-schemas for bodies
+- protect Swagger-UI and OpenApi-Spec with custom authentication
 
 
 ## Documentation
@@ -68,7 +69,7 @@ get("hello", {
     response {
         HttpStatusCode.OK to {
             description = "Successful Request"
-            body(String::class) { description = "the response" }
+            body<String> { description = "the response" }
         }
         HttpStatusCode.InternalServerError to {
             description = "Something unexpected happened"
@@ -84,15 +85,15 @@ post("math/{operation}", {
     tags = listOf("test")
     description = "Performs the given operation on the given values and returns the result"
     request {
-        pathParameter("operation", String::class) {
+        pathParameter<String>("operation") {
             description = "the math operation to perform. Either 'add' or 'sub'"
         }
-        body(MathRequest::class)
+        body<MathRequest>()
     }
     response {
         HttpStatusCode.OK to {
             description = "The operation was successful"
-            body(MathResult::class) {
+            body<MathResult> {
                 description = "The result of the operation"
             }
         }
