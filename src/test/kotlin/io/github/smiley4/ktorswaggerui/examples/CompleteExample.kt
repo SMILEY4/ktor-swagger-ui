@@ -69,6 +69,7 @@ fun main() {
             get("hello", {
                 tags = listOf("test")
                 description = "Hello World Endpoint"
+                operationId = "hello"
                 response {
                     HttpStatusCode.OK to {
                         description = "Successful Request"
@@ -85,6 +86,7 @@ fun main() {
             post("math/{operation}", {
                 tags = listOf("test")
                 description = "Performs the given operation on the given values and returns the result"
+                operationId = "performMathOperation"
                 request {
                     pathParameter<String>("operation") {
                         description = "the math operation to perform. Either 'add' or 'sub'"
