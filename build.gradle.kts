@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.smiley4"
-version = "0.5.0"
+version = "0.5.1"
 
 repositories {
     mavenCentral()
@@ -34,6 +34,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    testImplementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
     testImplementation("io.ktor:ktor-server-auth:$ktorVersion")
     testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
