@@ -53,9 +53,6 @@ private fun getBuilder(): ApiSpecBuilder {
     return ApiSpecBuilder(
         OApiInfoBuilder(),
         OApiServersBuilder(),
-        OApiSecuritySchemesBuilder(
-            OApiOAuthFlowsBuilder()
-        ),
         OApiTagsBuilder(),
         OApiPathsBuilder(
             RouteCollector(),
@@ -87,7 +84,10 @@ private fun getBuilder(): ApiSpecBuilder {
             ),
         ),
         OApiComponentsBuilder(
-            OApiExampleBuilder()
+            OApiExampleBuilder(),
+            OApiSecuritySchemesBuilder(
+                OApiOAuthFlowsBuilder()
+            )
         ),
     )
 }
