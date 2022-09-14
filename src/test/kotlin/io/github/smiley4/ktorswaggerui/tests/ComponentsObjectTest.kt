@@ -201,7 +201,7 @@ class ComponentsObjectTest : StringSpec({
     companion object {
 
         private fun buildComponentsObject(context: ComponentsContext): Components {
-            return getOApiComponentsBuilder().build(context)
+            return getOApiComponentsBuilder().build(context, listOf())
         }
 
         private fun buildSchema(type: KClass<*>, context: ComponentsContext): Schema<*> {

@@ -12,7 +12,6 @@ import io.swagger.v3.oas.models.OpenAPI
 class ApiSpecBuilder(
     private val infoBuilder: OApiInfoBuilder,
     private val serversBuilder: OApiServersBuilder,
-    private val securitySchemesBuilder: OApiSecuritySchemesBuilder,
     private val tagsBuilder: OApiTagsBuilder,
     private val pathsBuilder: OApiPathsBuilder,
     private val componentsBuilder: OApiComponentsBuilder
@@ -26,14 +25,9 @@ class ApiSpecBuilder(
         val openAPI = OpenAPI().apply {
             info = infoBuilder.build(config.getInfo())
             servers = serversBuilder.build(config.getServers())
-            if (config.getSecuritySchemes().isNotEmpty()) {
-                components = Components().apply {
-                    securitySchemes = securitySchemesBuilder.build(config.getSecuritySchemes())
-                }
-            }
             tags = tagsBuilder.build(config.getTags())
             paths = pathsBuilder.build(config, application, componentCtx)
-            components = componentsBuilder.build(componentCtx)
+            components = componentsBuilder.build(componentCtx, config.getSecuritySchemes())
         }
         return Json.pretty(openAPI)
     }
