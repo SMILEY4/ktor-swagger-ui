@@ -3,6 +3,7 @@ package io.github.smiley4.ktorswaggerui
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
+import io.ktor.server.config.ApplicationConfig
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -17,6 +18,7 @@ class SwaggerRouting(
     private val swaggerUrl: String,
     private val forwardRoot: Boolean,
     private val authentication: String?,
+    appConfig: ApplicationConfig,
     swaggerWebjarVersion: String,
     jsonSpecProvider: () -> String
 ) {
@@ -25,9 +27,21 @@ class SwaggerRouting(
 
     private val controller = SwaggerController(
         swaggerWebjarVersion = swaggerWebjarVersion,
-        apiSpecUrl = "/" + (if (swaggerUrl.startsWith("/")) swaggerUrl.substring(1) else swaggerUrl) + "/api.json",
+        apiSpecUrl = getApiSpecUrl(appConfig),
         jsonSpecProvider = jsonSpecProvider
     )
+
+    private fun getApiSpecUrl(appConfig: ApplicationConfig): String {
+        val rootPath = appConfig.propertyOrNull("ktor.deployment.rootPath")?.getString()?.let { "/${dropSlashes(it)}" } ?: ""
+        return "$rootPath/${dropSlashes(swaggerUrl)}/api.json"
+    }
+
+    private fun dropSlashes(str: String): String {
+        var value = str
+        value = if (value.startsWith("/")) value.substring(1) else value
+        value = if (value.endsWith("/")) value.substring(0, value.length - 1) else value
+        return value
+    }
 
 
     /**
