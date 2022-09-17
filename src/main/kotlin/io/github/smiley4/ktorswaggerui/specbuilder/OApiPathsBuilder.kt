@@ -9,13 +9,10 @@ import mu.KotlinLogging
 /**
  * Builder for the OpenAPI Paths
  */
-class OApiPathsBuilder(
-    private val routeCollector: RouteCollector,
-    private val pathBuilder: OApiPathBuilder
-) {
+class OApiPathsBuilder(private val routeCollector: RouteCollector) {
 
+    private val pathBuilder = OApiPathBuilder()
     private val logger = KotlinLogging.logger {}
-
 
     fun build(config: SwaggerUIPluginConfig, application: Application, components: ComponentsContext): Paths {
         return Paths().apply {
@@ -31,13 +28,7 @@ class OApiPathsBuilder(
                 }
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
                 .map {
-                    pathBuilder.build(
-                        it,
-                        config.getDefaultUnauthorizedResponse(),
-                        config.defaultSecuritySchemeName,
-                        config.automaticTagGenerator,
-                        components
-                    )
+                    pathBuilder.build(it, components, config)
                 }
                 .forEach { addToPaths(this, it.first, it.second) }
         }

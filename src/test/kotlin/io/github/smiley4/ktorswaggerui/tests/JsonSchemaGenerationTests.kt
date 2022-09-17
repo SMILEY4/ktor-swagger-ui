@@ -3,6 +3,7 @@ package io.github.smiley4.ktorswaggerui.tests
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
@@ -11,14 +12,14 @@ import io.swagger.v3.oas.models.media.Schema
 class JsonSchemaGenerationTests : StringSpec({
 
     "generate schema for a simple enum" {
-        getOApiSchemaBuilder().build(SimpleEnum::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SimpleEnum::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "string"
             enum = SimpleEnum.values().map { it.name }
         }
     }
 
     "generate schema for a list of simple classes" {
-        getOApiSchemaBuilder().build(Array<SimpleDataClass>::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Array<SimpleDataClass>::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "array"
             items = Schema<Any>().apply {
                 type = "object"
@@ -35,7 +36,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a simple class" {
-        getOApiSchemaBuilder().build(SimpleDataClass::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SimpleDataClass::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "text" to Schema<Any>().apply {
@@ -49,7 +50,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a another class" {
-        getOApiSchemaBuilder().build(AnotherDataClass::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(AnotherDataClass::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "primitiveValue" to Schema<Any>().apply {
@@ -91,7 +92,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with inheritance" {
-        getOApiSchemaBuilder().build(SubClassA::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(SubClassA::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             allOf = listOf(
                 Schema<Any>().apply {
                     type = "object"
@@ -118,7 +119,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with sub-classes" {
-        getOApiSchemaBuilder().build(Superclass::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(Superclass::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             anyOf = listOf(
                 Schema<Any>().apply {
                     allOf = listOf(
@@ -173,7 +174,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with nested generic type" {
-        getOApiSchemaBuilder().build(WrapperForClassWithGenerics::class.java, ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(WrapperForClassWithGenerics::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "genericClass" to Schema<Any>().apply {
@@ -195,7 +196,7 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with generic types" {
-        getOApiSchemaBuilder().build(getType<ClassWithGenerics<SimpleDataClass>>(), ComponentsContext.NOOP) shouldBeSchema {
+        getOApiSchemaBuilder().build(getType<ClassWithGenerics<SimpleDataClass>>(), ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "genericField" to Schema<Any>().apply {

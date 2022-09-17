@@ -1,9 +1,10 @@
 package io.github.smiley4.ktorswaggerui.tests
 
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
@@ -269,10 +270,16 @@ class PathObjectTest : StringSpec({
         ): Pair<String, PathItem> {
             return getOApiPathBuilder().build(
                 routeMeta(method, path, builder),
-                defaultUnauthorizedResponse,
-                defaultSecuritySchemeName,
-                tagGenerator,
-                ComponentsContext.NOOP
+                ComponentsContext.NOOP,
+                SwaggerUIPluginConfig().apply {
+                    if (defaultUnauthorizedResponse != null) {
+                        this.defaultUnauthorizedResponse {
+                            description = defaultUnauthorizedResponse.description
+                        }
+                    }
+                    this.defaultSecuritySchemeName = defaultSecuritySchemeName
+                    this.automaticTagGenerator = tagGenerator
+                }
             )
         }
 
@@ -286,10 +293,16 @@ class PathObjectTest : StringSpec({
         ): Pair<String, PathItem> {
             return getOApiPathBuilder().build(
                 protectedRouteMeta(method, path, builder),
-                defaultUnauthorizedResponse,
-                defaultSecuritySchemeName,
-                tagGenerator,
-                ComponentsContext.NOOP
+                ComponentsContext.NOOP,
+                SwaggerUIPluginConfig().apply {
+                    if (defaultUnauthorizedResponse != null) {
+                        this.defaultUnauthorizedResponse {
+                            description = defaultUnauthorizedResponse.description
+                        }
+                    }
+                    this.defaultSecuritySchemeName = defaultSecuritySchemeName
+                    this.automaticTagGenerator = tagGenerator
+                }
             )
         }
 

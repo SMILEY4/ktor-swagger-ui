@@ -165,9 +165,9 @@ class OpenApiRequest {
     /**
      * The body returned with this response
      */
-    fun body(schemaUrl: String, block: OpenApiBody.() -> Unit) {
+    fun body(customSchemaId: String, block: OpenApiBody.() -> Unit) {
         body = OpenApiBody(null).apply(block).apply {
-            externalSchemaUrl = schemaUrl
+            this.customSchemaId = customSchemaId
         }
     }
 
@@ -175,7 +175,7 @@ class OpenApiRequest {
     /**
      * The body returned with this response
      */
-    fun body(schemaUrl: String) = body(schemaUrl) {}
+    fun body(customSchemaId: String) = body(customSchemaId) {}
 
 
     /**
