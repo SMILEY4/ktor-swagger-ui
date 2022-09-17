@@ -6,9 +6,9 @@ import io.swagger.v3.oas.models.parameters.RequestBody
 /**
  * Builder for the OpenAPI Request Body
  */
-class OApiRequestBodyBuilder(
-    private val contentBuilder: OApiContentBuilder
-) {
+class OApiRequestBodyBuilder {
+
+    private val contentBuilder = OApiContentBuilder()
 
     fun build(body: OpenApiBody, components: ComponentsContext): RequestBody {
         return RequestBody().apply {

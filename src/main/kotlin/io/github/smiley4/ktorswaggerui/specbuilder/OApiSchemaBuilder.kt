@@ -8,9 +8,10 @@ import kotlin.reflect.KClass
 /**
  * Builder for an OpenAPI Schema Object
  */
-class OApiSchemaBuilder(
-    private val jsonSchemaBuilder: OApiJsonSchemaBuilder
-) {
+class OApiSchemaBuilder {
+
+    private val jsonSchemaBuilder = OApiJsonSchemaBuilder()
+
 
     fun build(type: Type, components: ComponentsContext): Schema<Any> {
         return Schema<Any>().apply {

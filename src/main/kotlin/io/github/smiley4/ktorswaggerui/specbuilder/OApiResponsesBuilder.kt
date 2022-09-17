@@ -8,10 +8,11 @@ import io.swagger.v3.oas.models.responses.ApiResponse
 /**
  * Builder for the OpenAPI Responses
  */
-class OApiResponsesBuilder(
-    private val contentBuilder: OApiContentBuilder,
-    private val schemaBuilder: OApiSchemaBuilder
-) {
+class OApiResponsesBuilder {
+
+    private val contentBuilder = OApiContentBuilder()
+    private val schemaBuilder = OApiSchemaBuilder()
+
 
     fun build(responses: List<OpenApiResponse>, components: ComponentsContext): List<Pair<String, ApiResponse>> {
         return responses.map { responseCfg ->

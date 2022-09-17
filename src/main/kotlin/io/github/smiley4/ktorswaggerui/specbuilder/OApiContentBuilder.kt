@@ -10,12 +10,13 @@ import io.swagger.v3.oas.models.media.XML
 import java.lang.reflect.Type
 
 /**
- * Generator for the OpenAPI Content Object (e.g. request and response bodies)
+ * Builder for the OpenAPI Content Object (e.g. request and response bodies)
  */
-class OApiContentBuilder(
-    private val schemaBuilder: OApiSchemaBuilder,
-    private val exampleBuilder: OApiExampleBuilder
-) {
+class OApiContentBuilder {
+
+    private val schemaBuilder = OApiSchemaBuilder()
+    private val exampleBuilder = OApiExampleBuilder()
+
 
     fun build(body: OpenApiBody, components: ComponentsContext): Content {
         return Content().apply {

@@ -6,10 +6,10 @@ import io.swagger.v3.oas.models.Components
 /**
  * Builder for the OpenAPI Components Object
  */
-class OApiComponentsBuilder(
-    private val exampleBuilder: OApiExampleBuilder,
-    private val securitySchemesBuilder: OApiSecuritySchemesBuilder
-) {
+class OApiComponentsBuilder {
+
+    private val exampleBuilder = OApiExampleBuilder()
+    private val securitySchemesBuilder = OApiSecuritySchemesBuilder()
 
     fun build(ctx: ComponentsContext, securitySchemes: List<OpenApiSecurityScheme>): Components {
         return Components().apply {

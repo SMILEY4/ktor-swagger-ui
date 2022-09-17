@@ -13,9 +13,9 @@ import java.lang.reflect.Type
 /**
  * Builder for an OpenAPI Schema Object that describes a json-object (or array)
  */
-class OApiJsonSchemaBuilder(
-    private val jsonToSchemaConverter: JsonToOpenApiSchemaConverter
-) {
+class OApiJsonSchemaBuilder {
+
+    private val jsonToSchemaConverter = JsonToOpenApiSchemaConverter()
 
     fun build(type: Type, components: ComponentsContext): Schema<Any> {
         if (components.schemasInComponents) {

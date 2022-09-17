@@ -6,9 +6,10 @@ import io.swagger.v3.oas.models.parameters.Parameter
 /**
  * Builder for OpenAPI Parameters
  */
-class OApiParametersBuilder(
-    private val schemaBuilder: OApiSchemaBuilder
-) {
+class OApiParametersBuilder {
+
+    private val schemaBuilder = OApiSchemaBuilder()
+
 
     fun build(parameters: List<OpenApiRequestParameter>): List<Parameter> {
         return parameters.map { parameter ->

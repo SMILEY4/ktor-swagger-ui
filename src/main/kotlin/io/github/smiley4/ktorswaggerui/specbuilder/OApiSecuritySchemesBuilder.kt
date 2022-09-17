@@ -1,4 +1,5 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
+
 import io.github.smiley4.ktorswaggerui.dsl.AuthKeyLocation
 import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
 import io.github.smiley4.ktorswaggerui.dsl.AuthType
@@ -8,9 +9,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme
 /**
  * Builder for OpenAPI SecurityScheme-Objects
  */
-class OApiSecuritySchemesBuilder(
-    private val authFlowsBuilder: OApiOAuthFlowsBuilder
-) {
+class OApiSecuritySchemesBuilder {
+
+    private val authFlowsBuilder = OApiOAuthFlowsBuilder()
 
     fun build(securitySchemes: List<OpenApiSecurityScheme>): Map<String, SecurityScheme> {
         return mutableMapOf<String, SecurityScheme>().apply {
