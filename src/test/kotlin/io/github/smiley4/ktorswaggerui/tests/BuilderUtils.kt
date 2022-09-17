@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.specbuilder.ApiSpecBuilder
+import io.github.smiley4.ktorswaggerui.specbuilder.JsonToOpenApiSchemaConverter
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiComponentsBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiContentBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiExampleBuilder
@@ -28,13 +29,17 @@ fun getApiSpecBuilder(): ApiSpecBuilder {
             OApiPathBuilder(
                 OApiParametersBuilder(
                     OApiSchemaBuilder(
-                        OApiJsonSchemaBuilder()
+                        OApiJsonSchemaBuilder(
+                            JsonToOpenApiSchemaConverter()
+                        )
                     )
                 ),
                 OApiRequestBodyBuilder(
                     OApiContentBuilder(
                         OApiSchemaBuilder(
-                            OApiJsonSchemaBuilder()
+                            OApiJsonSchemaBuilder(
+                                JsonToOpenApiSchemaConverter()
+                            )
                         ),
                         OApiExampleBuilder()
                     )
@@ -42,12 +47,16 @@ fun getApiSpecBuilder(): ApiSpecBuilder {
                 OApiResponsesBuilder(
                     OApiContentBuilder(
                         OApiSchemaBuilder(
-                            OApiJsonSchemaBuilder()
+                            OApiJsonSchemaBuilder(
+                                JsonToOpenApiSchemaConverter()
+                            )
                         ),
                         OApiExampleBuilder()
                     ),
                     OApiSchemaBuilder(
-                        OApiJsonSchemaBuilder()
+                        OApiJsonSchemaBuilder(
+                            JsonToOpenApiSchemaConverter()
+                        )
                     )
                 ),
             ),
@@ -78,7 +87,9 @@ fun getOApiComponentsBuilder(): OApiComponentsBuilder {
 
 fun getOApiSchemaBuilder(): OApiSchemaBuilder {
     return OApiSchemaBuilder(
-        OApiJsonSchemaBuilder()
+        OApiJsonSchemaBuilder(
+            JsonToOpenApiSchemaConverter()
+        )
     )
 }
 
@@ -89,7 +100,9 @@ fun getOApiExampleBuilder(): OApiExampleBuilder {
 fun getOApiContentBuilder(): OApiContentBuilder {
     return OApiContentBuilder(
         OApiSchemaBuilder(
-            OApiJsonSchemaBuilder()
+            OApiJsonSchemaBuilder(
+                JsonToOpenApiSchemaConverter()
+            )
         ),
         OApiExampleBuilder()
     )
@@ -99,13 +112,17 @@ fun getOApiPathBuilder(): OApiPathBuilder {
     return OApiPathBuilder(
         OApiParametersBuilder(
             OApiSchemaBuilder(
-                OApiJsonSchemaBuilder()
+                OApiJsonSchemaBuilder(
+                    JsonToOpenApiSchemaConverter()
+                )
             )
         ),
         OApiRequestBodyBuilder(
             OApiContentBuilder(
                 OApiSchemaBuilder(
-                    OApiJsonSchemaBuilder()
+                    OApiJsonSchemaBuilder(
+                        JsonToOpenApiSchemaConverter()
+                    )
                 ),
                 OApiExampleBuilder()
             )
@@ -113,12 +130,16 @@ fun getOApiPathBuilder(): OApiPathBuilder {
         OApiResponsesBuilder(
             OApiContentBuilder(
                 OApiSchemaBuilder(
-                    OApiJsonSchemaBuilder()
+                    OApiJsonSchemaBuilder(
+                        JsonToOpenApiSchemaConverter()
+                    )
                 ),
                 OApiExampleBuilder()
             ),
             OApiSchemaBuilder(
-                OApiJsonSchemaBuilder()
+                OApiJsonSchemaBuilder(
+                    JsonToOpenApiSchemaConverter()
+                )
             )
         ),
     )
@@ -131,13 +152,17 @@ fun getOApiPathsBuilder(routeCollector: RouteCollector): OApiPathsBuilder {
         OApiPathBuilder(
             OApiParametersBuilder(
                 OApiSchemaBuilder(
-                    OApiJsonSchemaBuilder()
+                    OApiJsonSchemaBuilder(
+                        JsonToOpenApiSchemaConverter()
+                    )
                 )
             ),
             OApiRequestBodyBuilder(
                 OApiContentBuilder(
                     OApiSchemaBuilder(
-                        OApiJsonSchemaBuilder()
+                        OApiJsonSchemaBuilder(
+                            JsonToOpenApiSchemaConverter()
+                        )
                     ),
                     OApiExampleBuilder()
                 )
@@ -145,12 +170,16 @@ fun getOApiPathsBuilder(routeCollector: RouteCollector): OApiPathsBuilder {
             OApiResponsesBuilder(
                 OApiContentBuilder(
                     OApiSchemaBuilder(
-                        OApiJsonSchemaBuilder()
+                        OApiJsonSchemaBuilder(
+                            JsonToOpenApiSchemaConverter()
+                        )
                     ),
                     OApiExampleBuilder()
                 ),
                 OApiSchemaBuilder(
-                    OApiJsonSchemaBuilder()
+                    OApiJsonSchemaBuilder(
+                        JsonToOpenApiSchemaConverter()
+                    )
                 )
             ),
         ),

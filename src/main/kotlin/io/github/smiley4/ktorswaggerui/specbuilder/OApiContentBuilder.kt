@@ -35,8 +35,8 @@ class OApiContentBuilder(
 
 
     private fun buildSchema(body: OpenApiBody, components: ComponentsContext): Schema<Any>? {
-        return if (body.externalSchemaUrl != null) {
-            buildSchemaFromExternal(body.externalSchemaUrl!!)
+        return if (body.customSchemaId != null) {
+            buildSchemaFromExternal(body.customSchemaId!!)
         } else {
             buildSchemaFromType(body.type, components)
         }

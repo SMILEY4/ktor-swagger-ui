@@ -144,7 +144,7 @@ class ContentObjectTest : StringSpec({
             url: String,
             componentCtx: ComponentsContext = ComponentsContext.NOOP,
         ): Content {
-            return getOApiContentBuilder().build(OpenApiBody(null).apply { externalSchemaUrl = url }, componentCtx)
+            return getOApiContentBuilder().build(OpenApiBody(null).apply { customSchemaId = url }, componentCtx)
         }
 
         private data class SimpleBody(

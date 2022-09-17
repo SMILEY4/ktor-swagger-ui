@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui
 
 import io.github.smiley4.ktorswaggerui.specbuilder.ApiSpecBuilder
+import io.github.smiley4.ktorswaggerui.specbuilder.JsonToOpenApiSchemaConverter
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiComponentsBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiContentBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiExampleBuilder
@@ -60,13 +61,17 @@ private fun getBuilder(): ApiSpecBuilder {
             OApiPathBuilder(
                 OApiParametersBuilder(
                     OApiSchemaBuilder(
-                        OApiJsonSchemaBuilder()
+                        OApiJsonSchemaBuilder(
+                            JsonToOpenApiSchemaConverter()
+                        )
                     )
                 ),
                 OApiRequestBodyBuilder(
                     OApiContentBuilder(
                         OApiSchemaBuilder(
-                            OApiJsonSchemaBuilder()
+                            OApiJsonSchemaBuilder(
+                                JsonToOpenApiSchemaConverter()
+                            )
                         ),
                         OApiExampleBuilder()
                     )
@@ -74,12 +79,16 @@ private fun getBuilder(): ApiSpecBuilder {
                 OApiResponsesBuilder(
                     OApiContentBuilder(
                         OApiSchemaBuilder(
-                            OApiJsonSchemaBuilder()
+                            OApiJsonSchemaBuilder(
+                                JsonToOpenApiSchemaConverter()
+                            )
                         ),
                         OApiExampleBuilder()
                     ),
                     OApiSchemaBuilder(
-                        OApiJsonSchemaBuilder()
+                        OApiJsonSchemaBuilder(
+                            JsonToOpenApiSchemaConverter()
+                        )
                     )
                 ),
             ),
