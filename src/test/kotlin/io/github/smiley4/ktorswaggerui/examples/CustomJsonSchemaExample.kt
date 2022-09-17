@@ -11,19 +11,34 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
+import io.swagger.v3.oas.models.media.Schema
 
 /**
  * An example for defining custom json-schemas
  */
 fun main() {
+
+    data class MyRequestData(
+        val someText: String,
+        val someBoolean: Boolean
+    )
+
+
+    data class MyResponseData(
+        val someText: String,
+        val someNumber: Long
+    )
+
+
     embeddedServer(Netty, port = 8080, host = "localhost") {
 
         install(SwaggerUI) {
             // don't show the test-routes providing json-schemas
             pathFilter = { _, url -> url.firstOrNull() != "schema" }
-            customSchemas {
+            schemasInComponentSection
+            schemas {
                 // specify a custom json-schema with the id 'myRequestData'
-                customJson("myRequestData") {
+                json("myRequestData") {
                     """
                         {
                             "type": "object",
@@ -84,14 +99,3 @@ fun main() {
 
     }.start(wait = true)
 }
-
-data class MyRequestData(
-    val someText: String,
-    val someBoolean: Boolean
-)
-
-
-data class MyResponseData(
-    val someText: String,
-    val someNumber: Long
-)

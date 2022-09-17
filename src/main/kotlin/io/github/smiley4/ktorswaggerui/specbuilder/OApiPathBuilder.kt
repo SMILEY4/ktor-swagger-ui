@@ -26,7 +26,7 @@ class OApiPathBuilder {
                 summary = route.documentation.summary
                 description = route.documentation.description
                 operationId = route.documentation.operationId
-                parameters = parametersBuilder.build(route.documentation.getRequest().getParameters())
+                parameters = parametersBuilder.build(route.documentation.getRequest().getParameters(), config)
                 route.documentation.getRequest().getBody()?.let {
                     requestBody = requestBodyBuilder.build(it, components, config)
                 }

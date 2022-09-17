@@ -1,25 +1,52 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
 import io.swagger.v3.oas.models.media.Schema
+import java.lang.reflect.Type
 
 @OpenApiDslMarker
 class CustomSchemas {
 
-    private val externalSchemas = mutableMapOf<String, BaseCustomSchema>()
+    private var jsonSchemaBuilder: ((type: Type) -> String?)? = null
 
-    fun customJson(id: String, provider: () -> String) {
-        externalSchemas[id] = CustomJsonSchema(provider)
+
+    /**
+     * Custom builder for building json-schemas from a given type. Return null to not use this builder for the given type.
+     */
+    fun jsonSchemaBuilder(builder: (type: Type) -> String?) {
+        jsonSchemaBuilder = builder
     }
 
-    fun customOpenApi(id: String, provider: () -> Schema<Any>) {
-        externalSchemas[id] = CustomOpenApiSchema(provider)
+    fun getJsonSchemaBuilder() = jsonSchemaBuilder
+
+
+    private val customSchemas = mutableMapOf<String, BaseCustomSchema>()
+
+
+    /**
+     * Define the json-schema for an object/body with the given id
+     */
+    fun json(id: String, provider: () -> String) {
+        customSchemas[id] = CustomJsonSchema(provider)
     }
 
+
+    /**
+     * Define the [Schema] for an object/body with the given id
+     */
+    fun openApi(id: String, provider: () -> Schema<Any>) {
+        customSchemas[id] = CustomOpenApiSchema(provider)
+    }
+
+
+    /**
+     * Define the external url for an object/body with the given id
+     */
     fun remote(id: String, url: String) {
-        externalSchemas[id] = RemoteSchema(url)
+        customSchemas[id] = RemoteSchema(url)
     }
 
-    fun get(id: String): BaseCustomSchema? = externalSchemas[id]
+    fun getSchema(id: String): BaseCustomSchema? = customSchemas[id]
+
 
 }
 

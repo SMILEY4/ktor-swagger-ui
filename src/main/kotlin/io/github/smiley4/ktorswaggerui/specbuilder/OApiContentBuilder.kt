@@ -45,20 +45,20 @@ class OApiContentBuilder {
         return if (body.customSchemaId != null) {
             buildSchemaFromCustom(body.customSchemaId!!, components, config.getCustomSchemas())
         } else {
-            buildSchemaFromType(body.type, components)
+            buildSchemaFromType(body.type, components, config)
         }
     }
 
 
-    private fun buildSchemaFromType(type: Type?, components: ComponentsContext): Schema<Any>? {
+    private fun buildSchemaFromType(type: Type?, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any>? {
         return type
-            ?.let { schemaBuilder.build(it, components) }
+            ?.let { schemaBuilder.build(it, components, config) }
             ?.let { prepareForXml(type, it) }
     }
 
 
     private fun buildSchemaFromCustom(customSchemaId: String, components: ComponentsContext, customSchemas: CustomSchemas): Schema<Any> {
-        val custom = customSchemas.get(customSchemaId)
+        val custom = customSchemas.getSchema(customSchemaId)
         if (custom == null) {
             return Schema<Any>()
         } else {

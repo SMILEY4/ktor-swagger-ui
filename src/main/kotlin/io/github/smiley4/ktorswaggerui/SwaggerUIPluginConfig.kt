@@ -136,7 +136,7 @@ class SwaggerUIPluginConfig {
 
     private var customSchemas = CustomSchemas()
 
-    fun customSchemas(block: CustomSchemas.() -> Unit) {
+    fun schemas(block: CustomSchemas.() -> Unit) {
         this.customSchemas = CustomSchemas().apply(block)
     }
 

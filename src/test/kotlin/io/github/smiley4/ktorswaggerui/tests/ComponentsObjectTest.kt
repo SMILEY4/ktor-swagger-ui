@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests
 
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
@@ -205,7 +206,7 @@ class ComponentsObjectTest : StringSpec({
         }
 
         private fun buildSchema(type: KClass<*>, context: ComponentsContext): Schema<*> {
-            return getOApiSchemaBuilder().build(type.java, context)
+            return getOApiSchemaBuilder().build(type.java, context, SwaggerUIPluginConfig())
         }
 
         private fun buildExample(name: String, example: Any, context: ComponentsContext): Example {

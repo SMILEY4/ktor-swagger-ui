@@ -159,9 +159,9 @@ class ContentObjectTest : StringSpec({
     companion object {
 
         private fun pluginConfig() = SwaggerUIPluginConfig().apply {
-            customSchemas {
+            schemas {
                 remote("remote", "/my/test/schema")
-                customOpenApi("custom") {
+                json("custom") {
                     """
                         {
                             "type": "object",

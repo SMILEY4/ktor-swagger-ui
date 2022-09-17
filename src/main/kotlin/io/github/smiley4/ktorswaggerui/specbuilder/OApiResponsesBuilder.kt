@@ -27,7 +27,7 @@ class OApiResponsesBuilder {
                         description = it.value.description
                         required = it.value.required
                         deprecated = it.value.deprecated
-                        schema = it.value.type?.let { t -> schemaBuilder.build(t, ComponentsContext.NOOP) }
+                        schema = it.value.type?.let { t -> schemaBuilder.build(t, ComponentsContext.NOOP, config) }
                     }
                 }
             }
