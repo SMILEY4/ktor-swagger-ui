@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -11,41 +12,36 @@ import io.swagger.v3.oas.models.security.SecurityRequirement
 /**
  * Builder for a single OpenAPI Path
  */
-class OApiPathBuilder(
-    private val parametersBuilder: OApiParametersBuilder,
-    private val requestBodyBuilder: OApiRequestBodyBuilder,
-    private val responsesBuilder: OApiResponsesBuilder
-) {
+class OApiPathBuilder {
 
-    fun build(
-        route: RouteMeta,
-        defaultUnauthorizedResponse: OpenApiResponse?,
-        defaultSecurityScheme: String?,
-        tagGenerator: ((url: List<String>) -> String?)?,
-        components: ComponentsContext
-    ): Pair<String, PathItem> {
+    private val parametersBuilder = OApiParametersBuilder()
+    private val requestBodyBuilder = OApiRequestBodyBuilder()
+    private val responsesBuilder = OApiResponsesBuilder()
+
+
+    fun build(route: RouteMeta, components: ComponentsContext, config: SwaggerUIPluginConfig): Pair<String, PathItem> {
         return route.path to PathItem().apply {
             val operation = Operation().apply {
-                tags = buildTags(route, tagGenerator)
+                tags = buildTags(route, config.automaticTagGenerator)
                 summary = route.documentation.summary
                 description = route.documentation.description
                 operationId = route.documentation.operationId
-                parameters = parametersBuilder.build(route.documentation.getRequest().getParameters())
+                parameters = parametersBuilder.build(route.documentation.getRequest().getParameters(), config)
                 route.documentation.getRequest().getBody()?.let {
-                    requestBody = requestBodyBuilder.build(it, components)
+                    requestBody = requestBodyBuilder.build(it, components, config)
                 }
                 responses = ApiResponses().apply {
-                    responsesBuilder.build(route.documentation.getResponses().getResponses(), components).forEach {
+                    responsesBuilder.build(route.documentation.getResponses().getResponses(), components, config).forEach {
                         addApiResponse(it.first, it.second)
                     }
-                    if (shouldAddUnauthorized(route, defaultUnauthorizedResponse)) {
-                        responsesBuilder.build(listOf(defaultUnauthorizedResponse!!), components).forEach {
+                    if (shouldAddUnauthorized(route, config.getDefaultUnauthorizedResponse())) {
+                        responsesBuilder.build(listOf(config.getDefaultUnauthorizedResponse()!!), components, config).forEach {
                             addApiResponse(it.first, it.second)
                         }
                     }
                 }
                 if (route.protected) {
-                    (route.documentation.securitySchemeName ?: defaultSecurityScheme)?.let { schemeName ->
+                    (route.documentation.securitySchemeName ?: config.defaultSecuritySchemeName)?.let { schemeName ->
                         security = mutableListOf(
                             SecurityRequirement().apply {
                                 addList(schemeName, emptyList())

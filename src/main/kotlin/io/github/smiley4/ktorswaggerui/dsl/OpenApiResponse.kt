@@ -104,7 +104,7 @@ class OpenApiResponse(val statusCode: String) {
      */
     fun body(schemaUrl: String, block: OpenApiBody.() -> Unit) {
         body = OpenApiBody(null).apply(block).apply {
-            externalSchemaUrl = schemaUrl
+            customSchemaId = schemaUrl
         }
     }
 

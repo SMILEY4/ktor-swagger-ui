@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
@@ -131,5 +132,14 @@ class SwaggerUIPluginConfig {
 
 
     fun getTags(): List<OpenApiTag> = tags
+
+
+    private var customSchemas = CustomSchemas()
+
+    fun schemas(block: CustomSchemas.() -> Unit) {
+        this.customSchemas = CustomSchemas().apply(block)
+    }
+
+    fun getCustomSchemas() = customSchemas
 
 }

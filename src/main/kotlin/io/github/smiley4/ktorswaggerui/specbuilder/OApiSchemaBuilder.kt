@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.swagger.v3.oas.models.media.Schema
 import java.lang.reflect.Type
 import java.math.BigDecimal
@@ -8,11 +9,12 @@ import kotlin.reflect.KClass
 /**
  * Builder for an OpenAPI Schema Object
  */
-class OApiSchemaBuilder(
-    private val jsonSchemaBuilder: OApiJsonSchemaBuilder
-) {
+class OApiSchemaBuilder {
 
-    fun build(type: Type, components: ComponentsContext): Schema<Any> {
+    private val jsonSchemaBuilder = OApiJsonSchemaBuilder()
+
+
+    fun build(type: Type, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any> {
         return Schema<Any>().apply {
             when (type) {
                 Byte::class.java -> {
@@ -168,7 +170,7 @@ class OApiSchemaBuilder(
                     }
                 }
                 else -> {
-                    return jsonSchemaBuilder.build(type, components)
+                    return jsonSchemaBuilder.build(type, components, config)
                 }
             }
         }

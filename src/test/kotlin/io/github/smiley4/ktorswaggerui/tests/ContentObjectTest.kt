@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests
 
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
@@ -99,8 +100,8 @@ class ContentObjectTest : StringSpec({
         }
     }
 
-    "test content object with external json-schema" {
-        val content = buildExternalContentObject("/my/test/schema")
+    "test content object with custom (remote) json-schema" {
+        val content = buildCustomContentObject("remote")
         content shouldBeContent {
             addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
                 schema = Schema<Any>().apply {
@@ -111,13 +112,43 @@ class ContentObjectTest : StringSpec({
         }
     }
 
-    "test content object with external json-schema and components-section enabled" {
-        val content = buildExternalContentObject("/my/test/schema", ComponentsContext(true, mutableMapOf(), true, mutableMapOf()))
+    "test content object with custom (remote) json-schema and components-section enabled" {
+        val content = buildCustomContentObject("remote", ComponentsContext(true, mutableMapOf(), true, mutableMapOf()))
         content shouldBeContent {
             addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
                 schema = Schema<Any>().apply {
                     type = "object"
                     `$ref` = "/my/test/schema"
+                }
+            })
+        }
+    }
+
+    "test content object with custom json-schema" {
+        val content = buildCustomContentObject("custom")
+        content shouldBeContent {
+            addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
+                schema = Schema<Any>().apply {
+                    type = "object"
+                    properties = mapOf(
+                        "someBoolean" to Schema<Any>().apply {
+                            type = "boolean"
+                        },
+                        "someText" to Schema<Any>().apply {
+                            type = "string"
+                        }
+                    )
+                }
+            })
+        }
+    }
+
+    "test content object with custom json-schema and components-section enabled" {
+        val content = buildCustomContentObject("custom", ComponentsContext(true, mutableMapOf(), true, mutableMapOf()))
+        content shouldBeContent {
+            addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
+                schema = Schema<Any>().apply {
+                    `$ref` = "#/components/schemas/custom"
                 }
             })
         }
@@ -126,6 +157,27 @@ class ContentObjectTest : StringSpec({
 }) {
 
     companion object {
+
+        private fun pluginConfig() = SwaggerUIPluginConfig().apply {
+            schemas {
+                remote("remote", "/my/test/schema")
+                json("custom") {
+                    """
+                        {
+                            "type": "object",
+                            "properties": {
+                                "someBoolean": {
+                                    "type": "boolean"
+                                },
+                                "someText": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    """.trimIndent()
+                }
+            }
+        }
 
         private fun buildContentObject(schema: KClass<*>?, builder: OpenApiBody.() -> Unit): Content {
             return buildContentObject(ComponentsContext.NOOP, schema, builder)
@@ -137,14 +189,11 @@ class ContentObjectTest : StringSpec({
             type: KClass<*>?,
             builder: OpenApiBody.() -> Unit
         ): Content {
-            return getOApiContentBuilder().build(OpenApiBody(type?.java).apply(builder), componentCtx)
+            return getOApiContentBuilder().build(OpenApiBody(type?.java).apply(builder), componentCtx, pluginConfig())
         }
 
-        private fun buildExternalContentObject(
-            url: String,
-            componentCtx: ComponentsContext = ComponentsContext.NOOP,
-        ): Content {
-            return getOApiContentBuilder().build(OpenApiBody(null).apply { externalSchemaUrl = url }, componentCtx)
+        private fun buildCustomContentObject(schemaId: String, componentCtx: ComponentsContext = ComponentsContext.NOOP): Content {
+            return getOApiContentBuilder().build(OpenApiBody(null).apply { customSchemaId = schemaId }, componentCtx, pluginConfig())
         }
 
         private data class SimpleBody(
