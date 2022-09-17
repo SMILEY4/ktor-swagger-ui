@@ -9,6 +9,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
+import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 
 /**
@@ -18,8 +19,11 @@ fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost") {
 
         install(SwaggerUI) {
+            // don't show the test-routes providing json-schemas
+            pathFilter = { _, url -> url.firstOrNull() != "schema" }
             customSchemas {
-                custom("myRequestData") {
+                // specify a custom json-schema with the id 'myRequestData'
+                customJson("myRequestData") {
                     """
                         {
                             "type": "object",
@@ -33,9 +37,33 @@ fun main() {
                             }
                         }
                     """.trimIndent()
-
                 }
-                custom("myResponseData") {
+                // specify a remote json-schema with the id 'myRequestData'
+                remote("myResponseData", "http://localhost:8080/schema/myResponseData")
+            }
+        }
+
+        routing {
+
+            get("something", {
+                request {
+                    // body referencing the custom schema with id 'myRequestData'
+                    body("myRequestData")
+                }
+                response {
+                    HttpStatusCode.OK to {
+                        // body referencing the custom schema with id 'myResponseData'
+                        body("myResponseData")
+                    }
+                }
+            }) {
+                val text = call.receive<MyRequestData>().someText
+                call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+            }
+
+            // route providing a json-schema
+            get("schema/myResponseData") {
+                call.respondText(
                     """
                         {
                             "type": "object",
@@ -50,35 +78,18 @@ fun main() {
                             }
                         }
                     """.trimIndent()
-                }
+                )
             }
-        }
-
-        routing {
-            get("something", {
-                request {
-                    body("myRequestData")
-                }
-                response {
-                    HttpStatusCode.OK to {
-                        body("myResponseData")
-                    }
-                }
-            }) {
-                val text = call.receive<MyRequestData>().someText
-                call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
-            }
-
         }
 
     }.start(wait = true)
 }
 
-
 data class MyRequestData(
     val someText: String,
     val someBoolean: Boolean
 )
+
 
 data class MyResponseData(
     val someText: String,

@@ -28,14 +28,14 @@ class OApiPathBuilder {
                 operationId = route.documentation.operationId
                 parameters = parametersBuilder.build(route.documentation.getRequest().getParameters())
                 route.documentation.getRequest().getBody()?.let {
-                    requestBody = requestBodyBuilder.build(it, components)
+                    requestBody = requestBodyBuilder.build(it, components, config)
                 }
                 responses = ApiResponses().apply {
-                    responsesBuilder.build(route.documentation.getResponses().getResponses(), components).forEach {
+                    responsesBuilder.build(route.documentation.getResponses().getResponses(), components, config).forEach {
                         addApiResponse(it.first, it.second)
                     }
                     if (shouldAddUnauthorized(route, config.getDefaultUnauthorizedResponse())) {
-                        responsesBuilder.build(listOf(config.getDefaultUnauthorizedResponse()!!), components).forEach {
+                        responsesBuilder.build(listOf(config.getDefaultUnauthorizedResponse()!!), components, config).forEach {
                             addApiResponse(it.first, it.second)
                         }
                     }

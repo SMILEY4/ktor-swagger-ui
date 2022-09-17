@@ -1,7 +1,12 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
+import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.MediaType
@@ -16,11 +21,12 @@ class OApiContentBuilder {
 
     private val schemaBuilder = OApiSchemaBuilder()
     private val exampleBuilder = OApiExampleBuilder()
+    private val jsonToSchemaConverter = JsonToOpenApiSchemaConverter()
 
 
-    fun build(body: OpenApiBody, components: ComponentsContext): Content {
+    fun build(body: OpenApiBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
         return Content().apply {
-            val maybeSchemaObj = buildSchema(body, components)
+            val maybeSchemaObj = buildSchema(body, components, config)
             body.getMediaTypes().forEach { mediaType ->
                 if (maybeSchemaObj == null) {
                     addMediaType(mediaType.toString(), MediaType())
@@ -35,9 +41,9 @@ class OApiContentBuilder {
     }
 
 
-    private fun buildSchema(body: OpenApiBody, components: ComponentsContext): Schema<Any>? {
+    private fun buildSchema(body: OpenApiBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any>? {
         return if (body.customSchemaId != null) {
-            buildSchemaFromExternal(body.customSchemaId!!)
+            buildSchemaFromCustom(body.customSchemaId!!, components, config.getCustomSchemas())
         } else {
             buildSchemaFromType(body.type, components)
         }
@@ -51,10 +57,26 @@ class OApiContentBuilder {
     }
 
 
-    private fun buildSchemaFromExternal(url: String): Schema<Any> {
-        return Schema<Any>().apply {
-            type = "object"
-            `$ref` = url
+    private fun buildSchemaFromCustom(customSchemaId: String, components: ComponentsContext, customSchemas: CustomSchemas): Schema<Any> {
+        val custom = customSchemas.get(customSchemaId)
+        if (custom == null) {
+            return Schema<Any>()
+        } else {
+            return when (custom) {
+                is CustomJsonSchema -> {
+                    val schema = jsonToSchemaConverter.toSchema(custom.provider())
+                    components.addSchema(customSchemaId, schema)
+                }
+                is CustomOpenApiSchema -> {
+                    components.addSchema(customSchemaId, custom.provider())
+                }
+                is RemoteSchema -> {
+                    Schema<Any>().apply {
+                        type = "object"
+                        `$ref` = custom.url
+                    }
+                }
+            }
         }
     }
 
@@ -77,6 +99,7 @@ class OApiContentBuilder {
             "string" -> ContentType.Text.Plain
             "object" -> ContentType.Application.Json
             "array" -> ContentType.Application.Json
+            null -> ContentType.Application.Json
             else -> ContentType.Text.Plain
         }
     }

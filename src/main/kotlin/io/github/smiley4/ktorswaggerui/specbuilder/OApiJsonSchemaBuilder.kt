@@ -21,9 +21,9 @@ class OApiJsonSchemaBuilder {
         if (components.schemasInComponents) {
             val schema = createSchema(type)
             if (schema.type == "array") {
-                return arrayRefSchema(components.addArraySchema(type, schema))
+                return components.addArraySchema(type, schema)
             } else {
-                return refSchema(components.addSchema(type, schema))
+                return components.addSchema(type, schema)
             }
         } else {
             return createSchema(type)
@@ -59,6 +59,7 @@ class OApiJsonSchemaBuilder {
         }
     }
 
+
     private fun generateJsonSchema(type: Type): ObjectNode {
         val config = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
             .with(JacksonModule())
@@ -68,23 +69,6 @@ class OApiJsonSchemaBuilder {
             .with(Option.ALLOF_CLEANUP_AT_THE_END)
             .build()
         return SchemaGenerator(config).generateSchema(type)
-    }
-
-
-    private fun refSchema(key: String): Schema<Any> {
-        return Schema<Any>().apply {
-            `$ref` = key
-        }
-    }
-
-
-    private fun arrayRefSchema(key: String): Schema<Any> {
-        return Schema<Any>().apply {
-            type = "array"
-            items = Schema<Any>().apply {
-                `$ref` = key
-            }
-        }
     }
 
 }
