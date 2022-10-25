@@ -1,5 +1,7 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSort
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.content.OutgoingContent
@@ -12,7 +14,8 @@ import java.net.URL
 class SwaggerController(
     private val swaggerWebjarVersion: String,
     private val apiSpecUrl: String,
-    private val jsonSpecProvider: () -> String
+    private val jsonSpecProvider: () -> String,
+    private val swaggerUiConfig: SwaggerUI
 ) {
 
     suspend fun serveOpenApiSpec(call: ApplicationCall) {
@@ -27,6 +30,12 @@ class SwaggerController(
     }
 
     private suspend fun serveSwaggerInitializer(call: ApplicationCall) {
+        val propValidatorUrl = swaggerUiConfig.getSpecValidatorUrl()?.let { "validatorUrl: \"$it\"" } ?: "validatorUrl: false"
+        val propDisplayOperationId = "displayOperationId: ${swaggerUiConfig.displayOperationId}"
+        val propFilter = "filter: ${swaggerUiConfig.showTagFilterInput}"
+        val propSort = "operationsSorter: " + if (swaggerUiConfig.sort == SwaggerUiSort.NONE) "undefined" else swaggerUiConfig.sort.value
+        val propSyntaxHighlight = "syntaxHighlight: { theme: \"${swaggerUiConfig.syntaxHighlight.value}\" }"
+        // see https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md for reference
         val content = """
 			window.onload = function() {
 			  //<editor-fold desc="Changeable Configuration Block">
@@ -41,7 +50,12 @@ class SwaggerController(
 				plugins: [
 				  SwaggerUIBundle.plugins.DownloadUrl
 				],
-				layout: "StandaloneLayout"
+				layout: "StandaloneLayout",
+				$propValidatorUrl,
+  				$propDisplayOperationId,
+    		    $propFilter,
+    		    $propSort,
+				$propSyntaxHighlight
 			  });
 			  //</editor-fold>
 			};

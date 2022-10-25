@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
@@ -15,9 +16,7 @@ import mu.KotlinLogging
  * Registers and handles routes required for the swagger-ui
  */
 class SwaggerRouting(
-    private val swaggerUrl: String,
-    private val forwardRoot: Boolean,
-    private val authentication: String?,
+    private val swaggerUiConfig: SwaggerUI,
     appConfig: ApplicationConfig,
     swaggerWebjarVersion: String,
     jsonSpecProvider: () -> String
@@ -28,12 +27,13 @@ class SwaggerRouting(
     private val controller = SwaggerController(
         swaggerWebjarVersion = swaggerWebjarVersion,
         apiSpecUrl = getApiSpecUrl(appConfig),
-        jsonSpecProvider = jsonSpecProvider
+        jsonSpecProvider = jsonSpecProvider,
+        swaggerUiConfig = swaggerUiConfig
     )
 
     private fun getApiSpecUrl(appConfig: ApplicationConfig): String {
         val rootPath = appConfig.propertyOrNull("ktor.deployment.rootPath")?.getString()?.let { "/${dropSlashes(it)}" } ?: ""
-        return "$rootPath/${dropSlashes(swaggerUrl)}/api.json"
+        return "$rootPath/${dropSlashes(swaggerUiConfig.swaggerUrl)}/api.json"
     }
 
     private fun dropSlashes(str: String): String {
@@ -43,11 +43,13 @@ class SwaggerRouting(
         return value
     }
 
-
     /**
      * registers the required routes
      */
     fun setup(app: Application) {
+        val swaggerUrl = swaggerUiConfig.swaggerUrl
+        val forwardRoot = swaggerUiConfig.forwardRoot
+        val authentication = swaggerUiConfig.authentication
         logger.info("Registering routes for swagger-ui: $swaggerUrl (forwardRoot=$forwardRoot)")
         app.routing {
             if (forwardRoot) {
@@ -66,6 +68,7 @@ class SwaggerRouting(
     }
 
     private fun Route.setupSwaggerRoutes() {
+        val swaggerUrl = swaggerUiConfig.swaggerUrl
         route(swaggerUrl) {
             get {
                 call.respondRedirect("$swaggerUrl/index.html")
