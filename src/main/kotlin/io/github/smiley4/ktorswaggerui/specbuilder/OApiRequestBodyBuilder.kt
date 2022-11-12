@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
 import io.swagger.v3.oas.models.parameters.RequestBody
 
 /**
@@ -11,7 +11,7 @@ class OApiRequestBodyBuilder {
 
     private val contentBuilder = OApiContentBuilder()
 
-    fun build(body: OpenApiBody, components: ComponentsContext, config: SwaggerUIPluginConfig): RequestBody {
+    fun build(body: OpenApiBaseBody, components: ComponentsContext, config: SwaggerUIPluginConfig): RequestBody {
         return RequestBody().apply {
             description = body.description
             required = body.required

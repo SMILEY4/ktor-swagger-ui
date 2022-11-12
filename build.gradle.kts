@@ -25,7 +25,7 @@ dependencies {
     testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
-    val swaggerUiVersion = "4.14.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
+    val swaggerUiVersion = "4.15.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
     implementation("org.webjars:swagger-ui:$swaggerUiVersion")
 
     val swaggerParserVersion = "2.1.8"

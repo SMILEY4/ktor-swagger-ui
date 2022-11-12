@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
 import io.ktor.http.ContentType
@@ -179,7 +179,7 @@ class ContentObjectTest : StringSpec({
             }
         }
 
-        private fun buildContentObject(schema: KClass<*>?, builder: OpenApiBody.() -> Unit): Content {
+        private fun buildContentObject(schema: KClass<*>?, builder: OpenApiSimpleBody.() -> Unit): Content {
             return buildContentObject(ComponentsContext.NOOP, schema, builder)
         }
 
@@ -187,13 +187,13 @@ class ContentObjectTest : StringSpec({
         private fun buildContentObject(
             componentCtx: ComponentsContext,
             type: KClass<*>?,
-            builder: OpenApiBody.() -> Unit
+            builder: OpenApiSimpleBody.() -> Unit
         ): Content {
-            return getOApiContentBuilder().build(OpenApiBody(type?.java).apply(builder), componentCtx, pluginConfig())
+            return getOApiContentBuilder().build(OpenApiSimpleBody(type?.java).apply(builder), componentCtx, pluginConfig())
         }
 
         private fun buildCustomContentObject(schemaId: String, componentCtx: ComponentsContext = ComponentsContext.NOOP): Content {
-            return getOApiContentBuilder().build(OpenApiBody(null).apply { customSchemaId = schemaId }, componentCtx, pluginConfig())
+            return getOApiContentBuilder().build(OpenApiSimpleBody(null).apply { customSchemaId = schemaId }, componentCtx, pluginConfig())
         }
 
         private data class SimpleBody(

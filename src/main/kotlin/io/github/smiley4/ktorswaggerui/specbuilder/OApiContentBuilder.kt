@@ -4,11 +4,15 @@ import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
 import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.ktor.http.ContentType
+import io.swagger.v3.oas.models.headers.Header
 import io.swagger.v3.oas.models.media.Content
+import io.swagger.v3.oas.models.media.Encoding
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.XML
@@ -24,7 +28,14 @@ class OApiContentBuilder {
     private val jsonToSchemaConverter = JsonToOpenApiSchemaConverter()
 
 
-    fun build(body: OpenApiBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
+    fun build(body: OpenApiBaseBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
+        return when (body) {
+            is OpenApiSimpleBody -> buildSimpleBody(body, components, config)
+            is OpenApiMultipartBody -> buildMultipartBody(body, components, config)
+        }
+    }
+
+    private fun buildSimpleBody(body: OpenApiSimpleBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
         return Content().apply {
             val maybeSchemaObj = buildSchema(body, components, config)
             body.getMediaTypes().forEach { mediaType ->
@@ -40,8 +51,56 @@ class OApiContentBuilder {
         }
     }
 
+    private fun buildMultipartBody(body: OpenApiMultipartBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
+        val mediaTypes = body.getMediaTypes().ifEmpty { setOf(ContentType.MultiPart.Mixed) }
+        return Content().apply {
+            mediaTypes.forEach { mediaType ->
+                addMediaType(mediaType.toString(), MediaType().apply {
+                    schema = buildMultipartSchema(body, components, config)
+                    encoding = buildMultipartEncoding(body, config)
+                })
+            }
+        }
+    }
 
-    private fun buildSchema(body: OpenApiBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any>? {
+    private fun buildMultipartSchema(
+        body: OpenApiMultipartBody,
+        components: ComponentsContext,
+        config: SwaggerUIPluginConfig
+    ): Schema<Any> {
+        return Schema<Any>().apply {
+            type = "object"
+            properties = mutableMapOf<String?, Schema<*>?>().also { props ->
+                body.getParts().forEach { part ->
+                    props[part.name] = buildSchemaFromType(part.type, components, config)
+                }
+            }
+        }
+    }
+
+    private fun buildMultipartEncoding(body: OpenApiMultipartBody, config: SwaggerUIPluginConfig): MutableMap<String, Encoding>? {
+        if (body.getParts().flatMap { it.mediaTypes }.isEmpty()) {
+            return null
+        } else {
+            return mutableMapOf<String, Encoding>().also {
+                body.getParts().forEach { part ->
+                    it[part.name] = Encoding().apply {
+                        contentType = part.mediaTypes.joinToString(", ") { it.toString() }
+                        headers = part.getHeaders().mapValues {
+                            Header().apply {
+                                description = it.value.description
+                                required = it.value.required
+                                deprecated = it.value.deprecated
+                                schema = it.value.type?.let { t -> schemaBuilder.build(t, ComponentsContext.NOOP, config) }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun buildSchema(body: OpenApiSimpleBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any>? {
         return if (body.customSchemaId != null) {
             buildSchemaFromCustom(body.customSchemaId!!, components, config.getCustomSchemas())
         } else {
@@ -67,9 +126,11 @@ class OApiContentBuilder {
                     val schema = jsonToSchemaConverter.toSchema(custom.provider())
                     components.addSchema(customSchemaId, schema)
                 }
+
                 is CustomOpenApiSchema -> {
                     components.addSchema(customSchemaId, custom.provider())
                 }
+
                 is RemoteSchema -> {
                     Schema<Any>().apply {
                         type = "object"
