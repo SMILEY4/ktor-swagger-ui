@@ -16,8 +16,13 @@ class OpenapiMultipartPart(
      */
     val name: String,
 
-    val type: Type
+    val type: Type?
 ) {
+
+    /**
+     * id of a custom schema (alternative to 'type')
+     */
+    var customSchemaId: String? = null
 
     /**
      * Set a specific content type for this part

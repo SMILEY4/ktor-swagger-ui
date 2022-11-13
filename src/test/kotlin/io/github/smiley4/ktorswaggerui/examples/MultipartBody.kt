@@ -3,7 +3,6 @@ package io.github.smiley4.ktorswaggerui.examples
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -21,11 +20,9 @@ fun main() {
         install(SwaggerUI)
 
         routing {
-            post("test", {
-                description = "Simple multipart-upload"
+            post("example", {
                 request {
                     multipartBody {
-                        mediaType(ContentType.MultiPart.Mixed)
                         mediaType(ContentType.MultiPart.FormData)
                         part<File>("image") {
                             mediaTypes = setOf(
@@ -34,19 +31,9 @@ fun main() {
                                 ContentType.Image.GIF
                             )
                         }
-                        part<IntArray>("someNumbers") {
-                            header<Int>("sum") {
-                                description = "the sum of the given values"
-                            }
-                        }
                         part<Metadata>("metadata") {
                             mediaTypes = setOf(ContentType.Application.Json)
                         }
-                    }
-                }
-                response {
-                    HttpStatusCode.OK to {
-                        description = "Successful Response"
                     }
                 }
             }) {

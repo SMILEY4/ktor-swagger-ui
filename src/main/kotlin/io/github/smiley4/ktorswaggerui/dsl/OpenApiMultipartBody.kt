@@ -35,6 +35,20 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     inline fun <reified TYPE> part(name: String, noinline block: OpenapiMultipartPart.() -> Unit) =
         part(name, object : TypeReference<TYPE>() {}.type, block)
 
+    /**
+     * One part of a multipart-body
+     */
+    fun part(name: String, customSchemaId: String, block: OpenapiMultipartPart.() -> Unit) {
+        parts.add(OpenapiMultipartPart(name, null).apply(block).apply {
+            this.customSchemaId = customSchemaId
+        })
+    }
+
+    /**
+     * One part of a multipart-body
+     */
+    fun part(name: String, customSchemaId: String) = part(name, customSchemaId) {}
+
     fun getParts(): List<OpenapiMultipartPart> = parts
 
 }

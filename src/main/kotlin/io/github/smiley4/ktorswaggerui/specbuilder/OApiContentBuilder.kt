@@ -10,7 +10,6 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.ktor.http.ContentType
-import io.swagger.v3.oas.models.headers.Header
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.Encoding
 import io.swagger.v3.oas.models.media.MediaType
@@ -25,6 +24,7 @@ class OApiContentBuilder {
 
     private val schemaBuilder = OApiSchemaBuilder()
     private val exampleBuilder = OApiExampleBuilder()
+    private val headerBuilder = OApiHeaderBuilder()
     private val jsonToSchemaConverter = JsonToOpenApiSchemaConverter()
 
 
@@ -52,7 +52,7 @@ class OApiContentBuilder {
     }
 
     private fun buildMultipartBody(body: OpenApiMultipartBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
-        val mediaTypes = body.getMediaTypes().ifEmpty { setOf(ContentType.MultiPart.Mixed) }
+        val mediaTypes = body.getMediaTypes().ifEmpty { setOf(ContentType.MultiPart.FormData) }
         return Content().apply {
             mediaTypes.forEach { mediaType ->
                 addMediaType(mediaType.toString(), MediaType().apply {
@@ -72,7 +72,11 @@ class OApiContentBuilder {
             type = "object"
             properties = mutableMapOf<String?, Schema<*>?>().also { props ->
                 body.getParts().forEach { part ->
-                    props[part.name] = buildSchemaFromType(part.type, components, config)
+                    if (part.customSchemaId != null) {
+                        buildSchemaFromCustom(part.customSchemaId!!, components, config.getCustomSchemas())
+                    } else {
+                        props[part.name] = buildSchemaFromType(part.type, components, config)
+                    }
                 }
             }
         }
@@ -86,14 +90,7 @@ class OApiContentBuilder {
                 body.getParts().forEach { part ->
                     it[part.name] = Encoding().apply {
                         contentType = part.mediaTypes.joinToString(", ") { it.toString() }
-                        headers = part.getHeaders().mapValues {
-                            Header().apply {
-                                description = it.value.description
-                                required = it.value.required
-                                deprecated = it.value.deprecated
-                                schema = it.value.type?.let { t -> schemaBuilder.build(t, ComponentsContext.NOOP, config) }
-                            }
-                        }
+                        headers = part.getHeaders().mapValues { headerBuilder.build(it.value, config) }
                     }
                 }
             }
