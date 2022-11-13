@@ -11,7 +11,7 @@ import io.ktor.server.webjars.Webjars
 /**
  * This version must match the version of the gradle dependency
  */
-internal const val SWAGGER_UI_WEBJARS_VERSION = "4.14.0"
+internal const val SWAGGER_UI_WEBJARS_VERSION = "4.15.0"
 
 val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::SwaggerUIPluginConfig) {
 

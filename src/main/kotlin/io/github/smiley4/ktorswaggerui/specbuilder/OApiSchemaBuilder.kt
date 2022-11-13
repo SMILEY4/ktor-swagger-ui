@@ -2,6 +2,7 @@ package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.swagger.v3.oas.models.media.Schema
+import java.io.File
 import java.lang.reflect.Type
 import java.math.BigDecimal
 import kotlin.reflect.KClass
@@ -167,6 +168,17 @@ class OApiSchemaBuilder {
                     this.type = "array"
                     items = Schema<String>().apply {
                         this.type = "string"
+                    }
+                }
+                File::class.java -> {
+                    this.type = "string"
+                    format = "binary"
+                }
+                Array<File>::class.java -> {
+                    this.type = "array"
+                    items = Schema<String>().apply {
+                        this.type = "string"
+                        format = "binary"
                     }
                 }
                 else -> {
