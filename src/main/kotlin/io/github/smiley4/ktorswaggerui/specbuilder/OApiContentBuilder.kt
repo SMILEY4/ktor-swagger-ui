@@ -87,12 +87,14 @@ class OApiContentBuilder {
             return null
         } else {
             return mutableMapOf<String, Encoding>().also {
-                body.getParts().forEach { part ->
-                    it[part.name] = Encoding().apply {
-                        contentType = part.mediaTypes.joinToString(", ") { it.toString() }
-                        headers = part.getHeaders().mapValues { headerBuilder.build(it.value, config) }
+                body.getParts()
+                    .filter { it.mediaTypes.isNotEmpty() || it.getHeaders().isNotEmpty() }
+                    .forEach { part ->
+                        it[part.name] = Encoding().apply {
+                            contentType = part.mediaTypes.joinToString(", ") { it.toString() }
+                            headers = part.getHeaders().mapValues { headerBuilder.build(it.value, config) }
+                        }
                     }
-                }
             }
         }
     }

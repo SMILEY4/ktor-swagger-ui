@@ -1,15 +1,18 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.media.Content
+import io.swagger.v3.oas.models.media.Encoding
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.XML
+import java.io.File
 import kotlin.reflect.KClass
 
 class ContentObjectTest : StringSpec({
@@ -154,6 +157,40 @@ class ContentObjectTest : StringSpec({
         }
     }
 
+    "test multipart content object" {
+        val content = buildMultipartContentObject {
+            description = "Test Description"
+            part<File>("myFile") {
+                mediaTypes = setOf(ContentType.Image.JPEG, ContentType.Image.PNG)
+            }
+            part<SimpleBody>("myData")
+        }
+        content shouldBeContent {
+            addMediaType(ContentType.MultiPart.FormData.toString(), MediaType().apply {
+                schema = Schema<Any>().apply {
+                    type = "object"
+                    properties = mapOf(
+                        "myFile" to Schema<Any>().apply {
+                            type = "string"
+                            format = "binary"
+                            xml = XML().apply { name = "File" }
+                        },
+                        "myData" to Schema<Any>().apply {
+                            type = "object"
+                            xml = XML().apply { name = "SimpleBody" }
+                            properties = mapOf(
+                                "someText" to Schema<Any>().apply {
+                                    type = "string"
+                                }
+                            )
+                        }
+                    )
+                }
+                addEncoding("myFile", Encoding().contentType("image/png, image/jpeg"))
+            })
+        }
+    }
+
 }) {
 
     companion object {
@@ -194,6 +231,10 @@ class ContentObjectTest : StringSpec({
 
         private fun buildCustomContentObject(schemaId: String, componentCtx: ComponentsContext = ComponentsContext.NOOP): Content {
             return getOApiContentBuilder().build(OpenApiSimpleBody(null).apply { customSchemaId = schemaId }, componentCtx, pluginConfig())
+        }
+
+        private fun buildMultipartContentObject(builder: OpenApiMultipartBody.() -> Unit): Content {
+            return getOApiContentBuilder().build(OpenApiMultipartBody().apply(builder), ComponentsContext.NOOP, pluginConfig())
         }
 
         private data class SimpleBody(

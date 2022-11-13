@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.media.Schema
 
@@ -93,7 +92,25 @@ class JsonSchemaGenerationTests : StringSpec({
 
     "generate schema for a class with inheritance" {
         getOApiSchemaBuilder().build(SubClassA::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
-            allOf = listOf(
+            type = "object"
+            properties = mapOf(
+                "superField" to Schema<Any>().apply {
+                    type = "string"
+                },
+                "subFieldA" to Schema<Any>().apply {
+                    type = "integer"
+                },
+                "_type" to Schema<Any>().apply {
+                    setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassA")
+                },
+            )
+            required = listOf("_type")
+        }
+    }
+
+    "generate schema for a class with sub-classes" {
+        getOApiSchemaBuilder().build(Superclass::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
+            anyOf = listOf(
                 Schema<Any>().apply {
                     type = "object"
                     properties = mapOf(
@@ -102,79 +119,38 @@ class JsonSchemaGenerationTests : StringSpec({
                         },
                         "subFieldA" to Schema<Any>().apply {
                             type = "integer"
+                        },
+                        "_type" to Schema<Any>().apply {
+                            setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassA")
                         }
                     )
+                    required = listOf("_type")
                 },
                 Schema<Any>().apply {
                     type = "object"
                     properties = mapOf(
-                        "_type" to Schema<Any>().apply {
-                            setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassA")
+                        "superField" to Schema<Any>().apply {
+                            type = "string"
                         },
+                        "subFieldB" to Schema<Any>().apply {
+                            type = "boolean"
+                        },
+                        "_type" to Schema<Any>().apply {
+                            setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassB")
+                        }
                     )
                     required = listOf("_type")
-                },
-            )
-        }
-    }
-
-    "generate schema for a class with sub-classes" {
-        getOApiSchemaBuilder().build(Superclass::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
-            anyOf = listOf(
-                Schema<Any>().apply {
-                    allOf = listOf(
-                        Schema<Any>().apply {
-                            type = "object"
-                            properties = mapOf(
-                                "superField" to Schema<Any>().apply {
-                                    type = "string"
-                                },
-                                "subFieldA" to Schema<Any>().apply {
-                                    type = "integer"
-                                }
-                            )
-                        },
-                        Schema<Any>().apply {
-                            type = "object"
-                            properties = mapOf(
-                                "_type" to Schema<Any>().apply {
-                                    setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassA")
-                                },
-                            )
-                            required = listOf("_type")
-                        },
-                    )
-                },
-                Schema<Any>().apply {
-                    allOf = listOf(
-                        Schema<Any>().apply {
-                            type = "object"
-                            properties = mapOf(
-                                "superField" to Schema<Any>().apply {
-                                    type = "string"
-                                },
-                                "subFieldB" to Schema<Any>().apply {
-                                    type = "boolean"
-                                }
-                            )
-                        },
-                        Schema<Any>().apply {
-                            type = "object"
-                            properties = mapOf(
-                                "_type" to Schema<Any>().apply {
-                                    setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassB")
-                                },
-                            )
-                            required = listOf("_type")
-                        },
-                    )
-                },
+                }
             )
         }
     }
 
     "generate schema for a class with nested generic type" {
-        getOApiSchemaBuilder().build(WrapperForClassWithGenerics::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
+        getOApiSchemaBuilder().build(
+            WrapperForClassWithGenerics::class.java,
+            ComponentsContext.NOOP,
+            SwaggerUIPluginConfig()
+        ) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "genericClass" to Schema<Any>().apply {
@@ -196,7 +172,11 @@ class JsonSchemaGenerationTests : StringSpec({
     }
 
     "generate schema for a class with generic types" {
-        getOApiSchemaBuilder().build(getType<ClassWithGenerics<SimpleDataClass>>(), ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
+        getOApiSchemaBuilder().build(
+            getType<ClassWithGenerics<SimpleDataClass>>(),
+            ComponentsContext.NOOP,
+            SwaggerUIPluginConfig()
+        ) shouldBeSchema {
             type = "object"
             properties = mapOf(
                 "genericField" to Schema<Any>().apply {
@@ -249,7 +229,6 @@ class JsonSchemaGenerationTests : StringSpec({
             val nestedClass: SimpleDataClass,
             val nestedClassList: List<SimpleDataClass>
         )
-
 
         @JsonTypeInfo(
             use = JsonTypeInfo.Id.CLASS,
