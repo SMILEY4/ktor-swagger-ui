@@ -18,96 +18,83 @@ class OpenApiResponse(val statusCode: String) {
 
     private val headers = mutableMapOf<String, OpenApiHeader>()
 
-
     /**
      * Possible headers returned with this response
      */
-    fun header(name: String, block: OpenApiHeader.() -> Unit) {
-        headers[name] = OpenApiHeader().apply(block)
-    }
-
-
-    /**
-     * Possible headers returned with this response
-     */
-    fun header(name: String, type: Type) {
-        headers[name] = OpenApiHeader().apply {
+    fun header(name: String, type: Type, block: OpenApiHeader.() -> Unit) {
+        headers[name] = OpenApiHeader().apply(block).apply {
             this.type = type
         }
     }
 
+    /**
+     * Possible headers returned with this response
+     */
+    fun header(name: String, type: KClass<*>) = header(name, type.java) {}
+
 
     /**
      * Possible headers returned with this response
      */
-    fun header(name: String, type: KClass<*>) = header(name, type.java)
-
+    inline fun <reified TYPE> header(name: String) = header(name, object : TypeReference<TYPE>() {}.type) {}
 
     /**
      * Possible headers returned with this response
      */
-    inline fun <reified TYPE> header(name: String) = header(name, object : TypeReference<TYPE>() {}.type)
-
+    inline fun <reified TYPE> header(name: String, noinline block: OpenApiHeader.() -> Unit) =
+        header(name, object : TypeReference<TYPE>() {}.type, block)
 
     fun getHeaders(): Map<String, OpenApiHeader> = headers
 
 
-    private var body: OpenApiBody? = null
-
-
-    /**
-     * The body returned with this response
-     */
-    fun body(type: Type, block: OpenApiBody.() -> Unit) {
-        body = OpenApiBody(type).apply(block)
-    }
-
+    private var body: OpenApiBaseBody? = null
 
     /**
      * The body returned with this response
      */
-    fun body(type: KClass<*>, block: OpenApiBody.() -> Unit) {
-        body = OpenApiBody(type.java).apply(block)
+    fun body(type: Type, block: OpenApiSimpleBody.() -> Unit) {
+        body = OpenApiSimpleBody(type).apply(block)
     }
 
+    /**
+     * The body returned with this response
+     */
+    fun body(type: KClass<*>, block: OpenApiSimpleBody.() -> Unit) {
+        body = OpenApiSimpleBody(type.java).apply(block)
+    }
 
     /**
      * The body returned with this response
      */
     @JvmName("bodyGenericType")
-    inline fun <reified TYPE> body(noinline block: OpenApiBody.() -> Unit) =
+    inline fun <reified TYPE> body(noinline block: OpenApiSimpleBody.() -> Unit) =
         body(object : TypeReference<TYPE>() {}.type, block)
-
 
     /**
      * The body returned with this response
      */
     fun body(type: KClass<*>) = body(type.java) {}
 
-
     /**
      * The body returned with this response
      */
     inline fun <reified TYPE> body() = body(object : TypeReference<TYPE>() {}.type) {}
 
-
     /**
      * The body returned with this response
      */
-    fun body(block: OpenApiBody.() -> Unit) {
-        body = OpenApiBody(null).apply(block)
+    fun body(block: OpenApiSimpleBody.() -> Unit) {
+        body = OpenApiSimpleBody(null).apply(block)
     }
 
-
     /**
      * The body returned with this response
      */
-    fun body(schemaUrl: String, block: OpenApiBody.() -> Unit) {
-        body = OpenApiBody(null).apply(block).apply {
+    fun body(schemaUrl: String, block: OpenApiSimpleBody.() -> Unit) {
+        body = OpenApiSimpleBody(null).apply(block).apply {
             customSchemaId = schemaUrl
         }
     }
-
 
     /**
      * The body returned with this response
