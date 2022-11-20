@@ -18,6 +18,7 @@ class JsonToOpenApiSchemaConverter {
             node["allOf"]?.let { this.allOf = it.collectElements().map { prop -> toSchema(prop) } }
             node["anyOf"]?.let { this.anyOf = it.collectElements().map { prop -> toSchema(prop) } }
             node["required"]?.let { this.required = it.collectElements().map { prop -> prop.asText() } }
+            node["enum"]?.let { this.enum = it.collectElements().map { prop -> prop.asText() } }
             node["const"]?.let { this.setConst(it.asText()) }
             node["\$defs"]?.let { throw UnsupportedOperationException("'\"defs' in json-schema are not supported") }
             node["\$ref"]?.let { throw UnsupportedOperationException("'\"refs' in json-schema are not supported") }
