@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm") version "1.7.21"
     `maven-publish`
 }
 
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
 
-    val ktorVersion = "2.1.3"
+    val ktorVersion = "2.2.1"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
@@ -48,7 +48,7 @@ dependencies {
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
 
-    val versionKotlinTest = "1.7.20"
+    val versionKotlinTest = "1.7.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
 }

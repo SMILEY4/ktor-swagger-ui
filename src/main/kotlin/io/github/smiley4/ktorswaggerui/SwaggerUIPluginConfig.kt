@@ -147,6 +147,9 @@ class SwaggerUIPluginConfig {
 
     fun getCustomSchemas() = customSchemas
 
+    /**
+     * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
+     */
     var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
         .with(JacksonModule())
         .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
