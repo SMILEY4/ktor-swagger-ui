@@ -2,12 +2,7 @@ package io.github.smiley4.ktorswaggerui.specbuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
-import com.github.victools.jsonschema.generator.Option
-import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
-import com.github.victools.jsonschema.generator.SchemaVersion
-import com.github.victools.jsonschema.module.jackson.JacksonModule
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.swagger.v3.oas.models.media.Schema
 import java.lang.reflect.Type
@@ -69,18 +64,12 @@ class OApiJsonSchemaBuilder {
                 return ObjectMapper().readTree(jsonSchema) as ObjectNode
             }
         }
-        return generateJsonSchema(type)
+        return generateJsonSchema(type, config)
     }
 
-    private fun generateJsonSchema(type: Type): ObjectNode {
-        val config = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-            .with(JacksonModule())
-            .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-            .with(Option.INLINE_ALL_SCHEMAS)
-            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-            .with(Option.ALLOF_CLEANUP_AT_THE_END)
-            .build()
-        return SchemaGenerator(config).generateSchema(type)
+    private fun generateJsonSchema(type: Type, config: SwaggerUIPluginConfig): ObjectNode {
+        val generatorConfig = config.schemaGeneratorConfigBuilder.build()
+        return SchemaGenerator(generatorConfig).generateSchema(type)
     }
 
 }
