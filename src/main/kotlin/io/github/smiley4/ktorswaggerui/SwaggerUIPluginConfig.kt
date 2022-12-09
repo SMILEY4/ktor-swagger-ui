@@ -1,5 +1,10 @@
 package io.github.smiley4.ktorswaggerui
 
+import com.github.victools.jsonschema.generator.Option
+import com.github.victools.jsonschema.generator.OptionPreset
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
+import com.github.victools.jsonschema.generator.SchemaVersion
+import com.github.victools.jsonschema.module.jackson.JacksonModule
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
@@ -141,5 +146,15 @@ class SwaggerUIPluginConfig {
     }
 
     fun getCustomSchemas() = customSchemas
+
+    /**
+     * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
+     */
+    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
+        .with(JacksonModule())
+        .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
+        .with(Option.INLINE_ALL_SCHEMAS)
+        .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+        .with(Option.ALLOF_CLEANUP_AT_THE_END)
 
 }
