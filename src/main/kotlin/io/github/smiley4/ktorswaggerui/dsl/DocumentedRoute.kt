@@ -9,18 +9,28 @@ import io.ktor.server.routing.RoutingResolveContext
 import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.head
+import io.ktor.server.routing.method
 import io.ktor.server.routing.options
 import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
-import io.ktor.server.routing.method
 import io.ktor.util.KtorDsl
 import io.ktor.util.pipeline.PipelineContext
 import io.ktor.util.pipeline.PipelineInterceptor
 
 class DocumentedRouteSelector(val documentation: OpenApiRoute) : RouteSelector() {
+
+    companion object {
+        private var includeDocumentedRouteInRouteToString = false
+        fun setIncludeDocumentedRouteInRouteToString(include: Boolean) {
+            includeDocumentedRouteInRouteToString = include
+        }
+    }
+
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int) = RouteSelectorEvaluation.Transparent
+
+    override fun toString() = if (includeDocumentedRouteInRouteToString) super.toString() else ""
 }
 
 fun Route.documentation(
@@ -92,7 +102,6 @@ fun Route.post(
     return documentation(builder) { post(path, body) }
 }
 
-
 @JvmName("postTyped")
 inline fun <reified R : Any> Route.post(
     noinline builder: OpenApiRoute.() -> Unit = { },
@@ -100,7 +109,6 @@ inline fun <reified R : Any> Route.post(
 ): Route {
     return documentation(builder) { post(body) }
 }
-
 
 @JvmName("postTypedPath")
 inline fun <reified R : Any> Route.post(
@@ -138,7 +146,6 @@ fun Route.put(
     return documentation(builder) { put(body) }
 }
 
-
 @JvmName("putTyped")
 inline fun <reified R : Any> Route.put(
     noinline builder: OpenApiRoute.() -> Unit = { },
@@ -146,7 +153,6 @@ inline fun <reified R : Any> Route.put(
 ): Route {
     return documentation(builder) { put(body) }
 }
-
 
 @JvmName("putTypedPath")
 inline fun <reified R : Any> Route.put(
@@ -189,7 +195,6 @@ fun Route.patch(
     return documentation(builder) { patch(path, body) }
 }
 
-
 @KtorDsl
 fun Route.patch(
     builder: OpenApiRoute.() -> Unit = { },
@@ -197,7 +202,6 @@ fun Route.patch(
 ): Route {
     return documentation(builder) { patch(body) }
 }
-
 
 @JvmName("patchTyped")
 inline fun <reified R : Any> Route.patch(
@@ -207,7 +211,6 @@ inline fun <reified R : Any> Route.patch(
     return documentation(builder) { patch(body) }
 
 }
-
 
 @JvmName("patchTypedPath")
 inline fun <reified R : Any> Route.patch(

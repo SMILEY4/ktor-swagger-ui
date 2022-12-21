@@ -25,7 +25,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
     }
 
     SwaggerRouting(
-        pluginConfig.getSwaggerUI() ,
+        pluginConfig.getSwaggerUI(),
         application.environment.config,
         SWAGGER_UI_WEBJARS_VERSION,
     ) { apiSpecJson }.setup(application)
