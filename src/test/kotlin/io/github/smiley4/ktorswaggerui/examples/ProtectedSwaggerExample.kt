@@ -7,13 +7,11 @@ import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.UserIdPrincipal
-import io.ktor.server.auth.authenticate
 import io.ktor.server.auth.basic
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
-import org.apache.http.impl.auth.BasicScheme.authenticate
 
 /**
  * An example demonstrating a swagger protected by custom authentication

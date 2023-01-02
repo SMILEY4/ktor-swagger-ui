@@ -11,7 +11,6 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
-import io.swagger.v3.oas.models.media.Schema
 
 /**
  * An example for defining custom json-schemas
