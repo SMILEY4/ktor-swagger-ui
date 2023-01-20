@@ -13,8 +13,10 @@ class JsonToOpenApiSchemaConverter {
         return Schema<Any>().apply {
             node["\$schema"]?.let { this.`$schema` = it.asText() }
             node["type"]?.let { this.type = it.asText() }
+            node["format"]?.let { this.format = it.asText() }
             node["items"]?.let { this.items = toSchema(it) }
             node["properties"]?.let { this.properties = it.collectFields().associate { prop -> prop.key to toSchema(prop.value) } }
+            node["additionalProperties"]?.let { this.additionalProperties = toSchema(it) }
             node["allOf"]?.let { this.allOf = it.collectElements().map { prop -> toSchema(prop) } }
             node["anyOf"]?.let { this.anyOf = it.collectElements().map { prop -> toSchema(prop) } }
             node["required"]?.let { this.required = it.collectElements().map { prop -> prop.asText() } }
