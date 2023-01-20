@@ -156,5 +156,6 @@ class SwaggerUIPluginConfig {
         .with(Option.INLINE_ALL_SCHEMAS)
         .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
         .with(Option.ALLOF_CLEANUP_AT_THE_END)
+        .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
 
 }

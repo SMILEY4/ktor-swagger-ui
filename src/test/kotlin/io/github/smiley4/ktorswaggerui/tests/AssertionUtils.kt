@@ -269,7 +269,9 @@ infix fun Schema<*>.shouldBeSchema(expected: Schema<*>?) {
             this.properties[key]!! shouldBeSchema expected.properties[key]
         }
     }
-    this.additionalProperties shouldBe expected.additionalProperties
+    assertNullSafe(this.additionalProperties, expected.additionalProperties) {
+        (this.additionalProperties as Schema<Any>) shouldBeSchema  (expected.additionalProperties as Schema<Any>)
+    }
     this.description shouldBe expected.description
     this.`$ref` shouldBe expected.`$ref`
     this.nullable shouldBe expected.nullable
