@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.tests
 
-import io.github.smiley4.ktorswaggerui.specbuilder.ApiSpecBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiComponentsBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiContentBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.OApiExampleBuilder

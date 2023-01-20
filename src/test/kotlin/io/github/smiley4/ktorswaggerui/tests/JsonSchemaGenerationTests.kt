@@ -3,6 +3,7 @@ package io.github.smiley4.ktorswaggerui.tests
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
+import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec
@@ -17,6 +18,27 @@ class JsonSchemaGenerationTests : StringSpec({
         }
     }
 
+    "generate schema for maps" {
+        getOApiSchemaBuilder().build(DataClassWithMaps::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
+            type = "object"
+            properties = mapOf(
+                "mapStringValues" to Schema<Any>().apply {
+                    type = "object"
+                    additionalProperties = Schema<Any>().apply {
+                        type = "string"
+                    }
+                },
+                "mapLongValues" to Schema<Any>().apply {
+                    type = "object"
+                    additionalProperties = Schema<Any>().apply {
+                        type = "integer"
+                        format = "int64"
+                    }
+                },
+            )
+        }
+    }
+
     "generate schema for a list of simple classes" {
         getOApiSchemaBuilder().build(Array<SimpleDataClass>::class.java, ComponentsContext.NOOP, SwaggerUIPluginConfig()) shouldBeSchema {
             type = "array"
@@ -28,6 +50,7 @@ class JsonSchemaGenerationTests : StringSpec({
                     },
                     "value" to Schema<Any>().apply {
                         type = "number"
+                        format = "float"
                     }
                 )
             }
@@ -43,6 +66,7 @@ class JsonSchemaGenerationTests : StringSpec({
                 },
                 "value" to Schema<Any>().apply {
                     type = "number"
+                    format = "float"
                 }
             )
         }
@@ -54,11 +78,13 @@ class JsonSchemaGenerationTests : StringSpec({
             properties = mapOf(
                 "primitiveValue" to Schema<Any>().apply {
                     type = "integer"
+                    format = "int32"
                 },
                 "primitiveList" to Schema<Any>().apply {
                     type = "array"
                     items = Schema<Any>().apply {
                         type = "integer"
+                        format = "int32"
                     }
                 },
                 "nestedClass" to Schema<Any>().apply {
@@ -69,6 +95,7 @@ class JsonSchemaGenerationTests : StringSpec({
                         },
                         "value" to Schema<Any>().apply {
                             type = "number"
+                            format = "float"
                         }
                     )
                 },
@@ -82,6 +109,7 @@ class JsonSchemaGenerationTests : StringSpec({
                             },
                             "value" to Schema<Any>().apply {
                                 type = "number"
+                                format = "float"
                             }
                         )
                     }
@@ -99,6 +127,7 @@ class JsonSchemaGenerationTests : StringSpec({
                 },
                 "subFieldA" to Schema<Any>().apply {
                     type = "integer"
+                    format = "int32"
                 },
                 "_type" to Schema<Any>().apply {
                     setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassA")
@@ -119,6 +148,7 @@ class JsonSchemaGenerationTests : StringSpec({
                         },
                         "subFieldA" to Schema<Any>().apply {
                             type = "integer"
+                            format = "int32"
                         },
                         "_type" to Schema<Any>().apply {
                             setConst("io.github.smiley4.ktorswaggerui.tests.JsonSchemaGenerationTests\$Companion\$SubClassA")
@@ -187,6 +217,7 @@ class JsonSchemaGenerationTests : StringSpec({
                         },
                         "value" to Schema<Any>().apply {
                             type = "number"
+                            format = "float"
                         }
                     )
                 },
@@ -200,6 +231,7 @@ class JsonSchemaGenerationTests : StringSpec({
                             },
                             "value" to Schema<Any>().apply {
                                 type = "number"
+                                format = "float"
                             }
                         )
                     }
@@ -220,6 +252,11 @@ class JsonSchemaGenerationTests : StringSpec({
         data class SimpleDataClass(
             val text: String,
             val value: Float
+        )
+
+        data class DataClassWithMaps(
+            val mapStringValues: Map<String, String>,
+            val mapLongValues: Map<String, Long>
         )
 
         data class AnotherDataClass(
