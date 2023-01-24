@@ -33,7 +33,8 @@ class SwaggerController(
         val propValidatorUrl = swaggerUiConfig.getSpecValidatorUrl()?.let { "validatorUrl: \"$it\"" } ?: "validatorUrl: false"
         val propDisplayOperationId = "displayOperationId: ${swaggerUiConfig.displayOperationId}"
         val propFilter = "filter: ${swaggerUiConfig.showTagFilterInput}"
-        val propSort = "operationsSorter: " + if (swaggerUiConfig.sort == SwaggerUiSort.NONE) "undefined" else swaggerUiConfig.sort.value
+        val propSort = "operationsSorter: " + if (swaggerUiConfig.sort == SwaggerUiSort.NONE) "undefined" else
+            "\"${swaggerUiConfig.sort.value}\""
         val propSyntaxHighlight = "syntaxHighlight: { theme: \"${swaggerUiConfig.syntaxHighlight.value}\" }"
         // see https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md for reference
         val content = """

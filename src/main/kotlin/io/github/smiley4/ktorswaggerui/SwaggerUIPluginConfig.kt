@@ -154,12 +154,12 @@ class SwaggerUIPluginConfig {
     /**
      * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
      */
-    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder =
-        SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-            .with(JacksonModule())
-            .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-            .with(Option.INLINE_ALL_SCHEMAS)
-            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-            .with(Option.ALLOF_CLEANUP_AT_THE_END)
+    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
+        .with(JacksonModule())
+        .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
+        .with(Option.INLINE_ALL_SCHEMAS)
+        .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+        .with(Option.ALLOF_CLEANUP_AT_THE_END)
+        .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
 
 }

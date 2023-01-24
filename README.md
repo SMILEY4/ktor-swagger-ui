@@ -19,21 +19,18 @@ This library provides a Ktor plugin to document routes, generate an OpenApi Spec
 
 ## Documentation
 
-A wiki with a short documentation is available [here](https://github.com/SMILEY4/ktor-swagger-ui/wiki)
+A wiki with a short documentation is available [here](https://github.com/SMILEY4/ktor-swagger-ui/wiki).
 
 
 ## Installation
 
-Step 1. Add the JitPack repository
-
+1. Add the JitPack repository
 ```kotlin
 repositories {
     maven { url "https://jitpack.io" }
 }
 ```
-
-Step 2. Add the dependency
-
+2. Add the dependency
 ```kotlin
 dependencies {
     implementation 'io.github.smiley4:ktor-swagger-ui:<VERSION>'
@@ -42,9 +39,8 @@ dependencies {
 
 
 ## Example
-
-Full examples can be found in `src/test/kotlin/io/github/smiley4/swaggerui/examples`.
-
+Full examples can be found in [src/test/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/develop/src/test/kotlin/io/github/smiley4/ktorswaggerui/examples).
+### Configuration
 ```kotlin
 install(SwaggerUI) {
     swagger {
@@ -62,7 +58,7 @@ install(SwaggerUI) {
     }
 }
 ```
-
+### Routes
 ```kotlin
 get("hello", {
     description = "Hello World Endpoint."
