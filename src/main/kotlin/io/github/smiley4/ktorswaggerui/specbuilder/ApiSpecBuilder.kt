@@ -20,7 +20,8 @@ class ApiSpecBuilder {
     fun build(application: Application, config: SwaggerUIPluginConfig): String {
         val componentCtx = ComponentsContext(
             config.schemasInComponentSection, mutableMapOf(),
-            config.examplesInComponentSection, mutableMapOf()
+            config.examplesInComponentSection, mutableMapOf(),
+            config.simpleNameObjectRefs
         )
         val openAPI = OpenAPI().apply {
             info = infoBuilder.build(config.getInfo())

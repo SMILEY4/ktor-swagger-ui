@@ -17,7 +17,7 @@ import kotlin.reflect.KClass
 class ComponentsObjectTest : StringSpec({
 
     "test nothing in components section" {
-        val context = ComponentsContext(false, mutableMapOf(), false, mutableMapOf())
+        val context = ComponentsContext(false, mutableMapOf(), false, mutableMapOf(), false)
 
         buildSchema(ComponentsTestClass1::class, context).let {
             it.type shouldBe "object"
@@ -69,7 +69,7 @@ class ComponentsObjectTest : StringSpec({
     }
 
     "test schemas in components section" {
-        val context = ComponentsContext(true, mutableMapOf(), false, mutableMapOf())
+        val context = ComponentsContext(true, mutableMapOf(), false, mutableMapOf(), false)
 
         buildSchema(ComponentsTestClass1::class, context).let {
             it.type.shouldBeNull()
@@ -136,7 +136,7 @@ class ComponentsObjectTest : StringSpec({
     }
 
     "test examples in components section" {
-        val context = ComponentsContext(false, mutableMapOf(), true, mutableMapOf())
+        val context = ComponentsContext(false, mutableMapOf(), true, mutableMapOf(), false)
 
         buildSchema(ComponentsTestClass1::class, context).let {
             it.type shouldBe "object"
@@ -194,6 +194,14 @@ class ComponentsObjectTest : StringSpec({
             it.links.shouldBeNull()
             it.callbacks.shouldBeNull()
             it.extensions.shouldBeNull()
+        }
+    }
+
+    "test schemas in component section using simple name object refs" {
+        val context = ComponentsContext(true, mutableMapOf(), false, mutableMapOf(), true)
+
+        buildSchema(ComponentsTestClass1::class, context).let {
+            it.`$ref` shouldBe "#/components/schemas/ComponentsTestClass1"
         }
     }
 

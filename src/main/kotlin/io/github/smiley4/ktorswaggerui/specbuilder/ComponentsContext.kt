@@ -13,11 +13,12 @@ data class ComponentsContext(
     val schemasInComponents: Boolean,
     val schemas: MutableMap<String, Schema<*>>,
     val examplesInComponents: Boolean,
-    val examples: MutableMap<String, OpenApiExample>
+    val examples: MutableMap<String, OpenApiExample>,
+    val simpleNameObjectRefs: Boolean
 ) {
 
     companion object {
-        val NOOP = ComponentsContext(false, mutableMapOf(), false, mutableMapOf())
+        val NOOP = ComponentsContext(false, mutableMapOf(), false, mutableMapOf(), false)
     }
 
 
@@ -36,9 +37,11 @@ data class ComponentsContext(
                         is WildcardType -> {
                             addSchema(actualTypeArgument.upperBounds.first(), schema.items)
                         }
+
                         else -> throw Exception("Could not add array-schema to components ($type)")
                     }
                 }
+
                 else -> throw Exception("Could not add array-schema to components ($type)")
             }
             return Schema<Any>().apply {
@@ -84,7 +87,7 @@ data class ComponentsContext(
 
     private fun getIdentifyingName(type: Type): String {
         return when (type) {
-            is Class<*> -> type.canonicalName
+            is Class<*> -> if (simpleNameObjectRefs) type.simpleName else type.canonicalName
             is ParameterizedType -> getIdentifyingName(type.rawType) + "<" + getIdentifyingName(type.actualTypeArguments.first()) + ">"
             is WildcardType -> getIdentifyingName(type.upperBounds.first())
             else -> throw Exception("Could not get identifying name from $type")
