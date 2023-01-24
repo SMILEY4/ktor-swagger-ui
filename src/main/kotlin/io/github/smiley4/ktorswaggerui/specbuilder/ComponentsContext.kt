@@ -14,7 +14,7 @@ data class ComponentsContext(
     val schemas: MutableMap<String, Schema<*>>,
     val examplesInComponents: Boolean,
     val examples: MutableMap<String, OpenApiExample>,
-    val simpleNameObjectRefs: Boolean
+    val canonicalNameObjectRefs: Boolean
 ) {
 
     companion object {
@@ -87,7 +87,7 @@ data class ComponentsContext(
 
     private fun getIdentifyingName(type: Type): String {
         return when (type) {
-            is Class<*> -> if (simpleNameObjectRefs) type.simpleName else type.canonicalName
+            is Class<*> -> if (canonicalNameObjectRefs) type.canonicalName else type.simpleName
             is ParameterizedType -> getIdentifyingName(type.rawType) + "<" + getIdentifyingName(type.actualTypeArguments.first()) + ">"
             is WildcardType -> getIdentifyingName(type.upperBounds.first())
             else -> throw Exception("Could not get identifying name from $type")

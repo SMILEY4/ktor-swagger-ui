@@ -21,7 +21,7 @@ class ApiSpecBuilder {
         val componentCtx = ComponentsContext(
             config.schemasInComponentSection, mutableMapOf(),
             config.examplesInComponentSection, mutableMapOf(),
-            config.simpleNameObjectRefs
+            config.canonicalNameObjectRefs
         )
         val openAPI = OpenAPI().apply {
             info = infoBuilder.build(config.getInfo())

@@ -74,13 +74,13 @@ class ComponentsObjectTest : StringSpec({
         buildSchema(ComponentsTestClass1::class, context).let {
             it.type.shouldBeNull()
             it.properties.shouldBeNull()
-            it.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass1"
+            it.`$ref` shouldBe "#/components/schemas/ComponentsTestClass1"
         }
 
         buildSchema(ComponentsTestClass2::class, context).let {
             it.type.shouldBeNull()
             it.properties.shouldBeNull()
-            it.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass2"
+            it.`$ref` shouldBe "#/components/schemas/ComponentsTestClass2"
         }
 
         buildSchema(Array<ComponentsTestClass2>::class, context).let {
@@ -89,7 +89,7 @@ class ComponentsObjectTest : StringSpec({
             it.`$ref`.shouldBeNull()
             it.items.shouldNotBeNull()
             it.items.type.shouldBeNull()
-            it.items.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass2"
+            it.items.`$ref` shouldBe "#/components/schemas/ComponentsTestClass2"
         }
 
         buildExample("Example1", ComponentsTestClass1("test1", true), context).let {
@@ -110,15 +110,15 @@ class ComponentsObjectTest : StringSpec({
         buildComponentsObject(context).let {
             it.schemas shouldHaveSize 2
             it.schemas.keys shouldContainExactlyInAnyOrder listOf(
-                "io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass1",
-                "io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass2"
+                "ComponentsTestClass1",
+                "ComponentsTestClass2"
             )
-            it.schemas["io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass1"]!!.let { schema ->
+            it.schemas["ComponentsTestClass1"]!!.let { schema ->
                 schema.type shouldBe "object"
                 schema.properties shouldHaveSize 2
                 schema.`$ref`.shouldBeNull()
             }
-            it.schemas["io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass2"]!!.let { schema ->
+            it.schemas["ComponentsTestClass2"]!!.let { schema ->
                 schema.type shouldBe "object"
                 schema.properties shouldHaveSize 2
                 schema.`$ref`.shouldBeNull()
@@ -197,11 +197,11 @@ class ComponentsObjectTest : StringSpec({
         }
     }
 
-    "test schemas in component section using simple name object refs" {
+    "test schemas in component section using canonical name object refs" {
         val context = ComponentsContext(true, mutableMapOf(), false, mutableMapOf(), true)
 
         buildSchema(ComponentsTestClass1::class, context).let {
-            it.`$ref` shouldBe "#/components/schemas/ComponentsTestClass1"
+            it.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.tests.ComponentsObjectTest.Companion.ComponentsTestClass1"
         }
     }
 
