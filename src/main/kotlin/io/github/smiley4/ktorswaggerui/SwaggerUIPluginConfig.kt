@@ -71,6 +71,10 @@ class SwaggerUIPluginConfig {
 
     private var swaggerUI = SwaggerUI()
 
+    /**
+     * Whether to use canonical instead of simple name for component object references
+     */
+    val canonicalNameObjectRefs: Boolean = false
 
     /**
      * Swagger-UI configuration

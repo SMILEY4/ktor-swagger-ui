@@ -116,7 +116,7 @@ class ContentObjectTest : StringSpec({
     }
 
     "test content object with custom (remote) json-schema and components-section enabled" {
-        val content = buildCustomContentObject("remote", ComponentsContext(true, mutableMapOf(), true, mutableMapOf()))
+        val content = buildCustomContentObject("remote", ComponentsContext(true, mutableMapOf(), true, mutableMapOf(), false))
         content shouldBeContent {
             addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
                 schema = Schema<Any>().apply {
@@ -147,7 +147,7 @@ class ContentObjectTest : StringSpec({
     }
 
     "test content object with custom json-schema and components-section enabled" {
-        val content = buildCustomContentObject("custom", ComponentsContext(true, mutableMapOf(), true, mutableMapOf()))
+        val content = buildCustomContentObject("custom", ComponentsContext(true, mutableMapOf(), true, mutableMapOf(), false))
         content shouldBeContent {
             addMediaType(ContentType.Application.Json.toString(), MediaType().apply {
                 schema = Schema<Any>().apply {
