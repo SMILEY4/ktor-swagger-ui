@@ -29,7 +29,7 @@ class ExampleObjectTest : StringSpec({
     }
 
     "test referencing example in components" {
-        val componentsContext = ComponentsContext(false, mutableMapOf(), true, mutableMapOf())
+        val componentsContext = ComponentsContext(false, mutableMapOf(), true, mutableMapOf(), false)
         val exampleValue = ExampleTestClass("TestText", true)
         val example = buildExampleObject("TestExample", exampleValue, componentsContext) {
             summary = "Test Summary"
