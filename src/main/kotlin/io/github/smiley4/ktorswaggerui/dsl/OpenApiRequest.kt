@@ -141,7 +141,7 @@ class OpenApiRequest {
     }
 
     /**
-     * The body returned with this response
+     * The body returned with this request
      */
     fun body(customSchemaId: String, block: OpenApiSimpleBody.() -> Unit) {
         body = OpenApiSimpleBody(null).apply(block).apply {
@@ -150,12 +150,12 @@ class OpenApiRequest {
     }
 
     /**
-     * The body returned with this response
+     * The body returned with this request
      */
     fun body(customSchemaId: String) = body(customSchemaId) {}
 
     /**
-     * The multipart-body returned with this response
+     * The multipart-body returned with this request
      */
     fun multipartBody(block: OpenApiMultipartBody.() -> Unit) {
         body = OpenApiMultipartBody().apply(block)

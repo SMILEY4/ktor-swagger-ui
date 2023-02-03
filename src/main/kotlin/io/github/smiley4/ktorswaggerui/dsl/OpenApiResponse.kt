@@ -101,6 +101,19 @@ class OpenApiResponse(val statusCode: String) {
      */
     fun body(schemaUrl: String) = body(schemaUrl) {}
 
+    /**
+     * The multipart-body returned with this response
+     */
+    fun multipartBody(block: OpenApiMultipartBody.() -> Unit) {
+        body = OpenApiMultipartBody().apply(block)
+    }
+
+    /**
+     * Set the body of this response. Intended for internal use.
+     */
+    fun setBody(body: OpenApiBaseBody?) {
+        this.body = body
+    }
 
     fun getBody() = body
 
