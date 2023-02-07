@@ -84,6 +84,7 @@ class RouteCollector {
             description = a.description ?: b.description
             operationId = a.operationId ?: b.operationId
             securitySchemeName = a.securitySchemeName ?: b.securitySchemeName
+            deprecated = a.deprecated || b.deprecated
             request {
                 (getParameters() as MutableList).also {
                     it.addAll(a.getRequest().getParameters())
