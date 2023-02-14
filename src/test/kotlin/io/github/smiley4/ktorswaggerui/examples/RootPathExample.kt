@@ -6,14 +6,18 @@ import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.EngineMain
+import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
 
 
-fun main(args: Array<String>): Unit = EngineMain.main(args)
+fun main() {
+    embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
+}
 
-fun Application.module() {
+private fun Application.myModule() {
 
     install(SwaggerUI) {
         swagger {
@@ -44,4 +48,3 @@ fun Application.module() {
         }
     }
 }
-
