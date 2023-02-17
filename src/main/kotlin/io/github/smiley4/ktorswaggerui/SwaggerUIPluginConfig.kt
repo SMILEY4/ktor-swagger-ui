@@ -15,7 +15,9 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
 import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
-
+import io.ktor.server.routing.RouteSelector
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
 
 /**
  * Main-Configuration of the "SwaggerUI"-Plugin
@@ -33,7 +35,6 @@ class SwaggerUIPluginConfig {
     fun defaultUnauthorizedResponse(block: OpenApiResponse.() -> Unit) {
         defaultUnauthorizedResponse = OpenApiResponse(HttpStatusCode.Unauthorized.value.toString()).apply(block)
     }
-
 
     fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
 
@@ -71,10 +72,12 @@ class SwaggerUIPluginConfig {
 
     private var swaggerUI = SwaggerUI()
 
+
     /**
      * Whether to use canonical instead of simple name for component object references
      */
     val canonicalNameObjectRefs: Boolean = false
+
 
     /**
      * Swagger-UI configuration
@@ -83,9 +86,7 @@ class SwaggerUIPluginConfig {
         swaggerUI = SwaggerUI().apply(block)
     }
 
-
     fun getSwaggerUI() = swaggerUI
-
 
     private var info = OpenApiInfo()
 
@@ -97,9 +98,7 @@ class SwaggerUIPluginConfig {
         info = OpenApiInfo().apply(block)
     }
 
-
     fun getInfo() = info
-
 
     private val servers = mutableListOf<OpenApiServer>()
 
@@ -111,9 +110,7 @@ class SwaggerUIPluginConfig {
         servers.add(OpenApiServer().apply(block))
     }
 
-
     fun getServers(): List<OpenApiServer> = servers
-
 
     private val securitySchemes = mutableListOf<OpenApiSecurityScheme>()
 
@@ -125,9 +122,7 @@ class SwaggerUIPluginConfig {
         securitySchemes.add(OpenApiSecurityScheme(name).apply(block))
     }
 
-
     fun getSecuritySchemes(): List<OpenApiSecurityScheme> = securitySchemes
-
 
     private val tags = mutableListOf<OpenApiTag>()
 
@@ -139,9 +134,7 @@ class SwaggerUIPluginConfig {
         tags.add(OpenApiTag(name).apply(block))
     }
 
-
     fun getTags(): List<OpenApiTag> = tags
-
 
     private var customSchemas = CustomSchemas()
 
@@ -151,15 +144,23 @@ class SwaggerUIPluginConfig {
 
     fun getCustomSchemas() = customSchemas
 
+
     /**
      * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
      */
-    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-        .with(JacksonModule())
-        .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-        .with(Option.INLINE_ALL_SCHEMAS)
-        .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-        .with(Option.ALLOF_CLEANUP_AT_THE_END)
-        .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
+    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder =
+        SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
+            .with(JacksonModule())
+            .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
+            .with(Option.INLINE_ALL_SCHEMAS)
+            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+            .with(Option.ALLOF_CLEANUP_AT_THE_END)
+            .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
+
+
+    /**
+     * List of all [RouteSelector] types in that should be ignored in the resulting url of any route.
+     */
+    var ignoredRouteSelectors: List<KClass<*>> = listOf()
 
 }
