@@ -20,9 +20,9 @@ class OpenapiMultipartPart(
 ) {
 
     /**
-     * id of a custom schema (alternative to 'type')
+     * reference to a custom schema (alternative to 'type')
      */
-    var customSchemaId: String? = null
+    var customSchema: CustomSchemaRef? = null
 
     /**
      * Set a specific content type for this part
