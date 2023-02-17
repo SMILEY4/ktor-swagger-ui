@@ -14,9 +14,9 @@ class OpenApiSimpleBody(
 ) : OpenApiBaseBody() {
 
     /**
-     * id of a custom schema (alternative to 'type')
+     * reference to a custom schema (alternative to 'type')
      */
-    var customSchemaId: String? = null
+    var customSchema: CustomSchemaRef? = null
 
     /**
      * Examples for this body

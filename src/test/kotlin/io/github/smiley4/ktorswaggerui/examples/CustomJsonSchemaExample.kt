@@ -1,7 +1,9 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.array
 import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -63,12 +65,28 @@ private fun Application.myModule() {
 		get("something", {
 			request {
 				// body referencing the custom schema with id 'myRequestData'
-				body("myRequestData")
+				body(obj("myRequestData"))
 			}
 			response {
 				HttpStatusCode.OK to {
 					// body referencing the custom schema with id 'myResponseData'
-					body("myResponseData")
+					body(obj("myResponseData"))
+				}
+			}
+		}) {
+			val text = call.receive<MyRequestData>().someText
+			call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+		}
+
+		get("something/many", {
+			request {
+				// body referencing the custom schema with id 'myRequestData'
+				body(array("myRequestData"))
+			}
+			response {
+				HttpStatusCode.OK to {
+					// body referencing the custom schema with id 'myResponseData'
+					body(array("myResponseData"))
 				}
 			}
 		}) {
