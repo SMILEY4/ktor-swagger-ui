@@ -1,8 +1,11 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.array
 import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -11,35 +14,34 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
-import io.swagger.v3.oas.models.media.Schema
 
 /**
  * An example for defining custom json-schemas
  */
 fun main() {
+	embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
+}
 
-    data class MyRequestData(
-        val someText: String,
-        val someBoolean: Boolean
-    )
+private fun Application.myModule() {
 
+	data class MyRequestData(
+		val someText: String,
+		val someBoolean: Boolean
+	)
 
-    data class MyResponseData(
-        val someText: String,
-        val someNumber: Long
-    )
+	data class MyResponseData(
+		val someText: String,
+		val someNumber: Long
+	)
 
-
-    embeddedServer(Netty, port = 8080, host = "localhost") {
-
-        install(SwaggerUI) {
-            // don't show the test-routes providing json-schemas
-            pathFilter = { _, url -> url.firstOrNull() != "schema" }
-            schemasInComponentSection
-            schemas {
-                // specify a custom json-schema with the id 'myRequestData'
-                json("myRequestData") {
-                    """
+	install(SwaggerUI) {
+		// don't show the test-routes providing json-schemas
+		pathFilter = { _, url -> url.firstOrNull() != "schema" }
+		schemasInComponentSection
+		schemas {
+			// specify a custom json-schema with the id 'myRequestData'
+			json("myRequestData") {
+				"""
                         {
                             "type": "object",
                             "properties": {
@@ -52,34 +54,50 @@ fun main() {
                             }
                         }
                     """.trimIndent()
-                }
-                // specify a remote json-schema with the id 'myRequestData'
-                remote("myResponseData", "http://localhost:8080/schema/myResponseData")
-            }
-        }
+			}
+			// specify a remote json-schema with the id 'myRequestData'
+			remote("myResponseData", "http://localhost:8080/schema/myResponseData")
+		}
+	}
 
-        routing {
+	routing {
 
-            get("something", {
-                request {
-                    // body referencing the custom schema with id 'myRequestData'
-                    body("myRequestData")
-                }
-                response {
-                    HttpStatusCode.OK to {
-                        // body referencing the custom schema with id 'myResponseData'
-                        body("myResponseData")
-                    }
-                }
-            }) {
-                val text = call.receive<MyRequestData>().someText
-                call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
-            }
+		get("something", {
+			request {
+				// body referencing the custom schema with id 'myRequestData'
+				body(obj("myRequestData"))
+			}
+			response {
+				HttpStatusCode.OK to {
+					// body referencing the custom schema with id 'myResponseData'
+					body(obj("myResponseData"))
+				}
+			}
+		}) {
+			val text = call.receive<MyRequestData>().someText
+			call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+		}
 
-            // route providing a json-schema
-            get("schema/myResponseData") {
-                call.respondText(
-                    """
+		get("something/many", {
+			request {
+				// body referencing the custom schema with id 'myRequestData'
+				body(array("myRequestData"))
+			}
+			response {
+				HttpStatusCode.OK to {
+					// body referencing the custom schema with id 'myResponseData'
+					body(array("myResponseData"))
+				}
+			}
+		}) {
+			val text = call.receive<MyRequestData>().someText
+			call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+		}
+
+		// route providing a json-schema
+		get("schema/myResponseData") {
+			call.respondText(
+				"""
                         {
                             "type": "object",
                             "properties": {
@@ -93,9 +111,7 @@ fun main() {
                             }
                         }
                     """.trimIndent()
-                )
-            }
-        }
-
-    }.start(wait = true)
+			)
+		}
+	}
 }

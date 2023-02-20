@@ -1,8 +1,11 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomObjectSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
@@ -26,7 +29,6 @@ class OApiContentBuilder {
     private val exampleBuilder = OApiExampleBuilder()
     private val headerBuilder = OApiHeaderBuilder()
     private val jsonToSchemaConverter = JsonToOpenApiSchemaConverter()
-
 
     fun build(body: OpenApiBaseBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Content {
         return when (body) {
@@ -72,8 +74,8 @@ class OApiContentBuilder {
             type = "object"
             properties = mutableMapOf<String?, Schema<*>?>().also { props ->
                 body.getParts().forEach { part ->
-                    if (part.customSchemaId != null) {
-                        buildSchemaFromCustom(part.customSchemaId!!, components, config.getCustomSchemas())
+                    if (part.customSchema != null) {
+                        buildSchemaFromCustom(part.customSchema!!, components, config.getCustomSchemas())
                     } else {
                         props[part.name] = buildSchemaFromType(part.type, components, config)
                     }
@@ -100,13 +102,12 @@ class OApiContentBuilder {
     }
 
     private fun buildSchema(body: OpenApiSimpleBody, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any>? {
-        return if (body.customSchemaId != null) {
-            buildSchemaFromCustom(body.customSchemaId!!, components, config.getCustomSchemas())
+        return if (body.customSchema != null) {
+            buildSchemaFromCustom(body.customSchema!!, components, config.getCustomSchemas())
         } else {
             buildSchemaFromType(body.type, components, config)
         }
     }
-
 
     private fun buildSchemaFromType(type: Type?, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any>? {
         return type
@@ -114,32 +115,40 @@ class OApiContentBuilder {
             ?.let { prepareForXml(type, it) }
     }
 
-
-    private fun buildSchemaFromCustom(customSchemaId: String, components: ComponentsContext, customSchemas: CustomSchemas): Schema<Any> {
-        val custom = customSchemas.getSchema(customSchemaId)
+    private fun buildSchemaFromCustom(
+        customSchema: CustomSchemaRef,
+        components: ComponentsContext,
+        customSchemas: CustomSchemas
+    ): Schema<Any> {
+        val custom = customSchemas.getSchema(customSchema.schemaId)
         if (custom == null) {
             return Schema<Any>()
         } else {
             return when (custom) {
                 is CustomJsonSchema -> {
                     val schema = jsonToSchemaConverter.toSchema(custom.provider())
-                    components.addSchema(customSchemaId, schema)
+                    components.addSchema(customSchema.schemaId, schema)
                 }
-
                 is CustomOpenApiSchema -> {
-                    components.addSchema(customSchemaId, custom.provider())
+                    components.addSchema(customSchema.schemaId, custom.provider())
                 }
-
                 is RemoteSchema -> {
                     Schema<Any>().apply {
                         type = "object"
                         `$ref` = custom.url
                     }
                 }
+            }.let { schema ->
+                when (customSchema) {
+                    is CustomObjectSchemaRef -> schema
+                    is CustomArraySchemaRef -> Schema<Any>().apply {
+                        this.type = "array"
+                        this.items = schema
+                    }
+                }
             }
         }
     }
-
 
     private fun buildMediaType(examples: Map<String, OpenApiExample>, schema: Schema<*>, components: ComponentsContext): MediaType {
         return MediaType().apply {
@@ -149,7 +158,6 @@ class OApiContentBuilder {
             }
         }
     }
-
 
     private fun chooseMediaType(schema: Schema<*>): ContentType {
         return when (schema.type) {
@@ -163,7 +171,6 @@ class OApiContentBuilder {
             else -> ContentType.Text.Plain
         }
     }
-
 
     private fun prepareForXml(type: Type, schema: Schema<Any>): Schema<Any> {
         schema.xml = XML().apply {

@@ -132,7 +132,7 @@ class PathsObjectTest : StringSpec({
         private fun application() = mockk<Application>()
 
         private fun routeCollector(routes: List<Pair<HttpMethod, String>>) = mockk<RouteCollector>().also {
-            every { it.collectRoutes(any()) } returns routes
+            every { it.collectRoutes(any(), any()) } returns routes
                 .map {
                     RouteMeta(
                         method = it.first,

@@ -27,6 +27,7 @@ class OApiPathBuilder {
                 description = route.documentation.description
                 operationId = route.documentation.operationId
                 parameters = parametersBuilder.build(route.documentation.getRequest().getParameters(), config)
+                deprecated = route.documentation.deprecated
                 route.documentation.getRequest().getBody()?.let {
                     requestBody = requestBodyBuilder.build(it, components, config)
                 }

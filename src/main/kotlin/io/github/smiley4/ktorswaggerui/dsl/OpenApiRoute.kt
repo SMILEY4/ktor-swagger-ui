@@ -27,6 +27,10 @@ class OpenApiRoute {
      */
     var operationId: String? = null
 
+    /**
+     * Whether this route is deprecated
+     */
+    var deprecated: Boolean = false
 
     /**
      * A declaration of which security mechanism can be used for this operation.

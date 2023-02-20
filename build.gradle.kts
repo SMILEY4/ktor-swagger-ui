@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.smiley4"
-version = "1.1.1"
+version = "1.2.0"
 
 repositories {
     mavenCentral()
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
 
-    val ktorVersion = "2.2.2"
+    val ktorVersion = "2.2.3"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")

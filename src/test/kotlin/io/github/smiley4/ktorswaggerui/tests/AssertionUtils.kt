@@ -64,7 +64,7 @@ fun assertPathOperation(actual: Operation, expected: Operation) {
         actual.security shouldHaveSize expected.security.size
         actual.security.flatMap { it.keys } shouldContainExactlyInAnyOrder expected.security.flatMap { it.keys }
     }
-    actual.deprecated shouldBe expected.deprecated
+    actual.deprecated shouldBe if(expected.deprecated == null) false else expected.deprecated
     assertNullSafe(actual.responses, expected.responses) {
         actual.responses.keys shouldContainExactlyInAnyOrder expected.responses.keys
     }
