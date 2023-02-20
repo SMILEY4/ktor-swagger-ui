@@ -16,7 +16,7 @@ class OApiPathsBuilder(private val routeCollector: RouteCollector) {
 
     fun build(config: SwaggerUIPluginConfig, application: Application, components: ComponentsContext): Paths {
         return Paths().apply {
-            routeCollector.collectRoutes(application)
+            routeCollector.collectRoutes(application, config)
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash(config.getSwaggerUI().swaggerUrl) }
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/api.json") }
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/{filename}") }
