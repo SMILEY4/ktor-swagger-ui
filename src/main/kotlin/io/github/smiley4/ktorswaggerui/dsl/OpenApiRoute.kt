@@ -27,16 +27,25 @@ class OpenApiRoute {
      */
     var operationId: String? = null
 
+
     /**
      * Whether this route is deprecated
      */
     var deprecated: Boolean = false
 
+
     /**
      * A declaration of which security mechanism can be used for this operation.
-     * If not specified, defaultSecuritySchemeName (global plugin config) will be used
+     * If not specified (and none specified with [securitySchemeNames]), defaultSecuritySchemeName (global plugin config) will be used
      */
     var securitySchemeName: String? = null
+
+
+    /**
+     * A declaration of which security mechanisms can be used for this operation (i.e. any of the specified ones).
+     * If none specified (and none with [securitySchemeName]), defaultSecuritySchemeName (global plugin config) will be used.
+     */
+    var securitySchemeNames: Collection<String>? = null
 
     private val request = OpenApiRequest()
 
@@ -48,9 +57,7 @@ class OpenApiRoute {
         request.apply(block)
     }
 
-
     fun getRequest() = request
-
 
     private val responses = OpenApiResponses()
 
@@ -61,7 +68,6 @@ class OpenApiRoute {
     fun response(block: OpenApiResponses.() -> Unit) {
         responses.apply(block)
     }
-
 
     fun getResponses() = responses
 

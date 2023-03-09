@@ -18,7 +18,6 @@ class OApiPathBuilder {
     private val requestBodyBuilder = OApiRequestBodyBuilder()
     private val responsesBuilder = OApiResponsesBuilder()
 
-
     fun build(route: RouteMeta, components: ComponentsContext, config: SwaggerUIPluginConfig): Pair<String, PathItem> {
         return route.path to PathItem().apply {
             val operation = Operation().apply {
@@ -42,12 +41,20 @@ class OApiPathBuilder {
                     }
                 }
                 if (route.protected) {
-                    (route.documentation.securitySchemeName ?: config.defaultSecuritySchemeName)?.let { schemeName ->
-                        security = mutableListOf(
+                    val securitySchemes = mutableSetOf<String>().also { schemes ->
+                        route.documentation.securitySchemeName?.also { schemes.add(it) }
+                        route.documentation.securitySchemeNames?.also { schemes.addAll(it) }
+                    }
+                    if (securitySchemes.isEmpty()) {
+                        config.defaultSecuritySchemeName?.also { securitySchemes.add(it) }
+                        config.defaultSecuritySchemeNames?.also { securitySchemes.addAll(it) }
+                    }
+                    if (securitySchemes.isNotEmpty()) {
+                        security = securitySchemes.map {
                             SecurityRequirement().apply {
-                                addList(schemeName, emptyList())
+                                addList(it, emptyList())
                             }
-                        )
+                        }
                     }
                 }
             }
@@ -63,14 +70,12 @@ class OApiPathBuilder {
         }
     }
 
-
     private fun buildTags(route: RouteMeta, tagGenerator: ((url: List<String>) -> String?)?): List<String> {
         val generatedTags = tagGenerator?.let {
             it(route.path.split("/").filter { it.isNotEmpty() })
         }
         return (route.documentation.tags + generatedTags).filterNotNull()
     }
-
 
     private fun shouldAddUnauthorized(config: RouteMeta, defaultUnauthorizedResponses: OpenApiResponse?): Boolean {
         val unauthorizedCode = HttpStatusCode.Unauthorized.value.toString();
