@@ -17,7 +17,6 @@ import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.routing.RouteSelector
 import kotlin.reflect.KClass
-import kotlin.reflect.KType
 
 /**
  * Main-Configuration of the "SwaggerUI"-Plugin
@@ -43,6 +42,12 @@ class SwaggerUIPluginConfig {
      * The name of the security scheme to use for the protected paths
      */
     var defaultSecuritySchemeName: String? = null
+
+
+    /**
+     * The names of the security schemes available for use for the protected paths
+     */
+    var defaultSecuritySchemeNames: Collection<String>? = null
 
 
     /**

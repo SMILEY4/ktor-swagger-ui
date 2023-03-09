@@ -55,6 +55,11 @@ private fun Application.myModule() {
 			type = AuthType.HTTP
 			scheme = AuthScheme.BASIC
 		}
+		// specify another security scheme
+		securityScheme("MyOtherSecurityScheme") {
+			type = AuthType.HTTP
+			scheme = AuthScheme.BASIC
+		}
 	}
 
 	// configure routes
@@ -62,8 +67,8 @@ private fun Application.myModule() {
 		authenticate {
 			// route is in an "authenticate"-block ->  default security scheme will be used (see plugin-config "defaultSecuritySchemeName")
 			get("hello", {
-				// Set the security scheme to be used by this route (here redundant, since already specified by 'defaultSecuritySchemeName')
-				securitySchemeName = "MySecurityScheme"
+				// Set the security schemes to be used by this route
+				securitySchemeNames = setOf("MyOtherSecurityScheme", "MySecurityScheme")
 				description = "Protected 'Hello World'-Route"
 				response {
 					HttpStatusCode.OK to {
