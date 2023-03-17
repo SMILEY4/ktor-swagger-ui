@@ -1,4 +1,5 @@
 package io.github.smiley4.ktorswaggerui.dsl
+
 import java.lang.reflect.Type
 
 @OpenApiDslMarker
@@ -21,10 +22,17 @@ class OpenApiRequestParameter(
         QUERY, HEADER, PATH
     }
 
+
     /**
      * A brief description of the parameter
      */
     var description: String? = null
+
+
+    /**
+     * An example value for this parameter
+     */
+    var example: Any? = null
 
 
     /**

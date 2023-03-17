@@ -26,7 +26,8 @@ class OApiParametersBuilder {
                 required = parameter.required
                 deprecated = parameter.deprecated
                 allowEmptyValue = parameter.allowEmptyValue
-                example = parameter.explode
+                explode = parameter.explode
+                example = parameter.example
                 allowReserved = parameter.allowReserved
             }
         }
