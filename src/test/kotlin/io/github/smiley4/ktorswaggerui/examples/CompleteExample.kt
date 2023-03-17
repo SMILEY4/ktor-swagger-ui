@@ -122,6 +122,7 @@ private fun Application.myModule() {
             request {
                 pathParameter<String>("operation") {
                     description = "the math operation to perform. Either 'add' or 'sub'"
+                    example = "add"
                 }
                 body<MathRequest> {
                     example("First", MathRequest(13, 19)) {
@@ -187,7 +188,9 @@ private fun Application.myModule() {
 
         post("echo/{color}", {
             request {
-                pathParameter<Color>("color")
+                pathParameter<Color>("color") {
+                    example = Color.BLUE
+                }
             }
             response {
                 HttpStatusCode.OK to {
