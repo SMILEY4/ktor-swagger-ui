@@ -1,23 +1,83 @@
 package io.github.smiley4.ktorswaggerui.specbuilder
 
+import com.fasterxml.jackson.core.type.TypeReference
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.swagger.v3.oas.models.media.Schema
 import java.io.File
 import java.lang.reflect.Type
 import java.math.BigDecimal
-import kotlin.reflect.KClass
 
 /**
  * Builder for an OpenAPI Schema Object
  */
 class OApiSchemaBuilder {
 
-    private val jsonSchemaBuilder = OApiJsonSchemaBuilder()
+    private companion object {
 
+        private val BYTE: Type = (object : TypeReference<Byte>() {}.type)
+        private val SHORT: Type = (object : TypeReference<Short>() {}.type)
+        private val INT: Type = (object : TypeReference<Int>() {}.type)
+        private val LONG: Type = (object : TypeReference<Long>() {}.type)
+        private val UBYTE: Type = (object : TypeReference<UByte>() {}.type)
+        private val USHORT: Type = (object : TypeReference<UShort>() {}.type)
+        private val UINT: Type = (object : TypeReference<UInt>() {}.type)
+        private val ULONG: Type = (object : TypeReference<ULong>() {}.type)
+        private val FLOAT: Type = (object : TypeReference<Float>() {}.type)
+        private val DOUBLE: Type = (object : TypeReference<Double>() {}.type)
+        private val BOOLEAN: Type = (object : TypeReference<Boolean>() {}.type)
+        private val CHAR: Type = (object : TypeReference<Char>() {}.type)
+        private val STRING: Type = (object : TypeReference<String>() {}.type)
+        private val ARRAY_BYTE: Type = (object : TypeReference<Array<Byte>>() {}.type)
+        private val ARRAY_SHORT: Type = (object : TypeReference<Array<Short>>() {}.type)
+        private val ARRAY_INT: Type = (object : TypeReference<Array<Int>>() {}.type)
+        private val ARRAY_LONG: Type = (object : TypeReference<Array<Long>>() {}.type)
+        private val ARRAY_UBYTE: Type = (object : TypeReference<Array<UByte>>() {}.type)
+        private val ARRAY_USHORT: Type = (object : TypeReference<Array<UShort>>() {}.type)
+        private val ARRAY_UINT: Type = (object : TypeReference<Array<UInt>>() {}.type)
+        private val ARRAY_ULONG: Type = (object : TypeReference<Array<ULong>>() {}.type)
+        private val ARRAY_FLOAT: Type = (object : TypeReference<Array<Float>>() {}.type)
+        private val ARRAY_DOUBLE: Type = (object : TypeReference<Array<Double>>() {}.type)
+        private val ARRAY_CHAR: Type = (object : TypeReference<Array<Char>>() {}.type)
+        private val ARRAY_STRING: Type = (object : TypeReference<Array<String>>() {}.type)
+        private val FILE: Type = (object : TypeReference<File>() {}.type)
+
+        fun typeRefToJavaType(type: Type): Type = when (type) {
+            BYTE -> Byte::class.java
+            SHORT -> Short::class.java
+            INT -> Int::class.java
+            LONG -> Long::class.java
+            UBYTE -> UByte::class.java
+            USHORT -> UShort::class.java
+            UINT -> UInt::class.java
+            ULONG -> ULong::class.java
+            FLOAT -> Float::class.java
+            DOUBLE -> Double::class.java
+            BOOLEAN -> Boolean::class.java
+            CHAR -> Char::class.java
+            STRING -> String::class.java
+            ARRAY_BYTE -> Array<Byte>::class.java
+            ARRAY_SHORT -> Array<Short>::class.java
+            ARRAY_INT -> Array<Int>::class.java
+            ARRAY_LONG -> Array<Long>::class.java
+            ARRAY_UBYTE -> Array<UByte>::class.java
+            ARRAY_USHORT -> Array<UShort>::class.java
+            ARRAY_UINT -> Array<UInt>::class.java
+            ARRAY_ULONG -> Array<ULong>::class.java
+            ARRAY_FLOAT -> Array<Float>::class.java
+            ARRAY_DOUBLE -> Array<Double>::class.java
+            ARRAY_CHAR -> Array<Char>::class.java
+            ARRAY_STRING -> Array<String>::class.java
+            FILE -> File::class.java
+            else -> type
+        }
+
+    }
+
+    private val jsonSchemaBuilder = OApiJsonSchemaBuilder()
 
     fun build(type: Type, components: ComponentsContext, config: SwaggerUIPluginConfig): Schema<Any> {
         return Schema<Any>().apply {
-            when (type) {
+            when (typeRefToJavaType(type)) {
                 Byte::class.java -> {
                     this.type = "integer"
                     minimum = BigDecimal.valueOf(Byte.MIN_VALUE.toLong())
