@@ -5,6 +5,7 @@ import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
+import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
@@ -156,6 +157,7 @@ class SwaggerUIPluginConfig {
     var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder =
         SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
             .with(JacksonModule())
+            .with(Swagger2Module())
             .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
             .with(Option.INLINE_ALL_SCHEMAS)
             .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)

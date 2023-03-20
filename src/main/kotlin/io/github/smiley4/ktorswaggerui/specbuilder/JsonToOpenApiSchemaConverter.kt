@@ -2,17 +2,25 @@ package io.github.smiley4.ktorswaggerui.specbuilder
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
 import io.swagger.v3.oas.models.media.Schema
 
 class JsonToOpenApiSchemaConverter {
 
     fun toSchema(json: String) = toSchema(ObjectMapper().readTree(json))
 
-
     fun toSchema(node: JsonNode): Schema<Any> {
         return Schema<Any>().apply {
             node["\$schema"]?.let { this.`$schema` = it.asText() }
-            node["type"]?.let { this.type = it.asText() }
+            node["description"]?.let { this.description = it.asText() }
+            node["title"]?.let { this.title = it.asText() }
+            node["type"]?.let {
+                val types = if (it is ArrayNode) it.collectElements().map { e -> e.asText() } else listOf(it.asText())
+                this.type = types.firstOrNull { e -> e != "null" }
+                if (types.contains("null")) {
+                    this.nullable = true
+                }
+            }
             node["format"]?.let { this.format = it.asText() }
             node["items"]?.let { this.items = toSchema(it) }
             node["properties"]?.let { this.properties = it.collectFields().associate { prop -> prop.key to toSchema(prop.value) } }
@@ -27,11 +35,9 @@ class JsonToOpenApiSchemaConverter {
         }
     }
 
-
     private fun JsonNode.collectFields(): List<MutableMap.MutableEntry<String, JsonNode>> {
         return this.fields().asSequence().toList()
     }
-
 
     private fun JsonNode.collectElements(): List<JsonNode> {
         return this.elements().asSequence().toList()
