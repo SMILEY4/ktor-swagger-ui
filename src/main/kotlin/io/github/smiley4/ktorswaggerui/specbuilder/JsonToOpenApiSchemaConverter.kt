@@ -11,6 +11,7 @@ class JsonToOpenApiSchemaConverter {
 
     fun toSchema(node: JsonNode): Schema<Any> {
         return Schema<Any>().apply {
+            node["description"]?.let { this.description = it.asText() }
             node["\$schema"]?.let { this.`$schema` = it.asText() }
             node["type"]?.let { this.type = it.asText() }
             node["format"]?.let { this.format = it.asText() }

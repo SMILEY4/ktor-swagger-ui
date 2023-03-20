@@ -5,6 +5,7 @@ import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
+import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
@@ -161,6 +162,7 @@ class SwaggerUIPluginConfig {
             .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
             .with(Option.ALLOF_CLEANUP_AT_THE_END)
             .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
+            .with(Swagger2Module())
 
 
     /**
