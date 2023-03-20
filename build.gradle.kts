@@ -34,6 +34,7 @@ dependencies {
     val jsonSchemaGeneratorVersion = "4.28.0"
     implementation("com.github.victools:jsonschema-generator:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
+    implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
 
     val kotlinLoggingVersion = "2.1.23"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
