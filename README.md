@@ -27,13 +27,14 @@ A wiki with a short documentation is available [here](https://github.com/SMILEY4
 1. Add the JitPack repository
 ```kotlin
 repositories {
-    maven { url "https://jitpack.io" }
+    maven { url = uri("https://jitpack.io") }
 }
 ```
+
 2. Add the dependency
 ```kotlin
 dependencies {
-    implementation 'io.github.smiley4:ktor-swagger-ui:<VERSION>'
+    implementation "io.github.smiley4:ktor-swagger-ui:<VERSION>"
 }
 ```
 
