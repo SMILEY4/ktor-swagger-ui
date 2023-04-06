@@ -21,6 +21,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import java.util.Random
 
@@ -247,6 +248,13 @@ private fun Application.myModule() {
                 call.respond(HttpStatusCode.NotImplemented, "todo")
             }
 
+        }
+
+        get("hidden", {
+            hidden = true
+            description = "This route is hidden and not visible in swagger"
+        }){
+            call.respond(HttpStatusCode.NotImplemented, "todo")
         }
 
     }

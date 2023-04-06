@@ -35,6 +35,12 @@ class OpenApiRoute {
 
 
     /**
+     * Whether this route is hidden.
+     */
+    var hidden: Boolean = false
+
+
+    /**
      * A declaration of which security mechanism can be used for this operation.
      * If not specified (and none specified with [securitySchemeNames]), defaultSecuritySchemeName (global plugin config) will be used
      */

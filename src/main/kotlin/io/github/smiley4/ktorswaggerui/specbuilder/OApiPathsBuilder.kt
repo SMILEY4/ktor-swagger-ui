@@ -21,15 +21,14 @@ class OApiPathsBuilder(private val routeCollector: RouteCollector) {
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/api.json") }
                 .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/{filename}") }
                 .filter { !config.getSwaggerUI().forwardRoot || it.path != "/" }
+                .filter { !it.documentation.hidden }
                 .filter { path ->
                     config.pathFilter
                         ?.let { it(path.method, path.path.split("/").filter { it.isNotEmpty() }) }
                         ?: true
                 }
                 .onEach { logger.debug("Configure path: ${it.method.value} ${it.path}") }
-                .map {
-                    pathBuilder.build(it, components, config)
-                }
+                .map { pathBuilder.build(it, components, config) }
                 .forEach { addToPaths(this, it.first, it.second) }
         }
     }
