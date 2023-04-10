@@ -14,6 +14,7 @@ class JsonToOpenApiSchemaConverter {
             node["\$schema"]?.let { this.`$schema` = it.asText() }
             node["description"]?.let { this.description = it.asText() }
             node["title"]?.let { this.title = it.asText() }
+            node["example"]?.let { this.example(it.asText()) }
             node["type"]?.let {
                 val types = if (it is ArrayNode) it.collectElements().map { e -> e.asText() } else listOf(it.asText())
                 this.type = types.firstOrNull { e -> e != "null" }

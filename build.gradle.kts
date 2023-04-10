@@ -39,7 +39,7 @@ dependencies {
     val kotlinLoggingVersion = "2.1.23"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
-    val logbackVersion = "1.2.11"
+    val logbackVersion = "1.4.5"
     testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     val versionMockk = "1.12.7"
