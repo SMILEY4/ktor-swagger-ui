@@ -22,6 +22,7 @@ import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.routing.RouteSelector
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlin.reflect.KClass
 
 /**
@@ -172,6 +173,11 @@ class SwaggerUIPluginConfig {
                 it.forTypesInGeneral()
                     .withTypeAttributeOverride { objectNode: ObjectNode, typeScope: TypeScope, _: SchemaGenerationContext ->
                         if (typeScope is FieldScope) {
+                            typeScope.getAnnotation(Schema::class.java)?.also { annotation ->
+                                if (annotation.example != "") {
+                                    objectNode.put("example", annotation.example)
+                                }
+                            }
                             typeScope.getAnnotation(Example::class.java)?.also { annotation ->
                                 objectNode.put("example", annotation.value)
                             }

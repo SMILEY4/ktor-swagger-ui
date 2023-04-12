@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import io.swagger.v3.oas.models.media.Schema
+import java.math.BigDecimal
 
 class JsonToOpenApiSchemaConverter {
 
@@ -22,6 +23,14 @@ class JsonToOpenApiSchemaConverter {
                     this.nullable = true
                 }
             }
+            node["deprecated"]?.let { this.deprecated = it.asBoolean() }
+            node["minLength"]?.let { this.minLength = it.asInt() }
+            node["maxLength"]?.let { this.maxLength = it.asInt() }
+            node["minimum"]?.let { this.minimum = BigDecimal(it.asText()) }
+            node["maximum"]?.let { this.maximum = BigDecimal(it.asText()) }
+            node["maxItems"]?.let { this.maxItems = it.asInt() }
+            node["minItems"]?.let { this.minItems = it.asInt() }
+            node["uniqueItems"]?.let { this.uniqueItems = it.asBoolean() }
             node["format"]?.let { this.format = it.asText() }
             node["items"]?.let { this.items = toSchema(it) }
             node["properties"]?.let { this.properties = it.collectFields().associate { prop -> prop.key to toSchema(prop.value) } }
