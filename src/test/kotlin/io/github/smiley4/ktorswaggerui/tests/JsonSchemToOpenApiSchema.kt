@@ -18,15 +18,15 @@ import java.lang.reflect.Type
 
 class JsonSchemToOpenApiSchema : StringSpec({
 
-    "test" {
-        val jsonSchema = generateJsonSchema<X>()
-        val oapiSchema = generateOpenApiSchema<X>()
-        println(jsonSchema)
-        println(oapiSchema)
+
+    "test 1" {
+        val type: Type = object : TypeReference<JsonSchemaGenerationTests.Companion.Superclass>() {}.type
+        val schema = SchemaBuilder().build(type)
+        println(schema)
     }
 
     "test 2" {
-        val type: Type = object : TypeReference<JsonSchemaGenerationTests.Companion.Superclass>() {}.type
+        val type: Type = object : TypeReference<X>() {}.type
         val schema = SchemaBuilder().build(type)
         println(schema)
     }

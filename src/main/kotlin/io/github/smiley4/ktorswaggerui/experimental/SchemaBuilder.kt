@@ -20,9 +20,14 @@ class SchemaBuilder {
 
     companion object {
 
-        private data class JsonSchema(
+        data class JsonSchema(
             val rootSchema: String,
             val schemas: Map<String, JsonNode>
+        )
+
+        data class OpenApiSchema(
+            val rootSchema: String,
+            val schemas: Map<String, Schema<*>>
         )
 
     }
@@ -44,7 +49,7 @@ class SchemaBuilder {
             .build()
     )
 
-    fun build(type: Type): Schema<*> {
+    fun build(type: Type): OpenApiSchema {
         return type
             .let { buildJsonSchema(it) }
             .let { processJsonSchema(it) }
@@ -87,10 +92,15 @@ class SchemaBuilder {
         }
     }
 
-    private fun buildOpenApiSchema(json: JsonSchema): Schema<*> {
-        // TODO: handle multiple schema-definitions
-        return ObjectMapper().readValue(json.schemas[json.rootSchema].toString(), Schema::class.java)
+    private fun buildOpenApiSchema(json: JsonSchema): OpenApiSchema {
+        return OpenApiSchema(
+            rootSchema = json.rootSchema,
+            schemas = json.schemas.mapValues { (_, schema) -> buildOpenApiSchema(schema) }
+        )
     }
 
+    private fun buildOpenApiSchema(json: JsonNode): Schema<*> {
+        return ObjectMapper().readValue(json.toString(), Schema::class.java)
+    }
 
 }
