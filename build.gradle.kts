@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.smiley4"
-version = "1.5.0"
+version = "1.6.0"
 
 repositories {
     mavenCentral()
@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
 
-    val ktorVersion = "2.2.3"
+    val ktorVersion = "2.2.4"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
@@ -39,7 +39,7 @@ dependencies {
     val kotlinLoggingVersion = "2.1.23"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
-    val logbackVersion = "1.2.11"
+    val logbackVersion = "1.4.5"
     testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     val versionMockk = "1.12.7"
