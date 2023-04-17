@@ -2,7 +2,6 @@ package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiPathsBuilder
 import io.github.smiley4.ktorswaggerui.specbuilder.RouteCollector
 import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute

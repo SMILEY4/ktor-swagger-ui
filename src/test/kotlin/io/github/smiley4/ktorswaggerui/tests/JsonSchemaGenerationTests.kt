@@ -3,7 +3,6 @@ package io.github.smiley4.ktorswaggerui.tests
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
-import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
 import io.kotest.core.spec.style.StringSpec

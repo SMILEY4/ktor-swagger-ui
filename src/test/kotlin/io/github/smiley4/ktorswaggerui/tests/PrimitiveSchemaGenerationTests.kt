@@ -2,7 +2,6 @@ package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
 import java.math.BigDecimal
 

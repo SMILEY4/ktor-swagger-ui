@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiServersBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.swagger.v3.oas.models.servers.Server

@@ -4,7 +4,6 @@ import io.github.smiley4.ktorswaggerui.dsl.AuthKeyLocation
 import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
 import io.github.smiley4.ktorswaggerui.dsl.AuthType
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
-import io.github.smiley4.ktorswaggerui.specbuilder.OApiSecuritySchemesBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
