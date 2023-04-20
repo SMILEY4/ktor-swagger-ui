@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") version "1.7.21"
     `maven-publish`
+    id("org.owasp.dependencycheck") version "8.2.1"
 }
 
 group = "io.github.smiley4"
@@ -28,7 +29,7 @@ dependencies {
     val swaggerUiVersion = "4.15.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
     implementation("org.webjars:swagger-ui:$swaggerUiVersion")
 
-    val swaggerParserVersion = "2.1.8"
+    val swaggerParserVersion = "2.1.13"
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
 
     val jsonSchemaGeneratorVersion = "4.28.0"
@@ -74,7 +75,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set("Ktor Swagger-UI")
-                description.set("Ktor plugin to document routes and enable Swagger UI ")
+                description.set("Ktor plugin to document routes and provide Swagger UI ")
                 url.set("https://github.com/SMILEY4/ktor-swagger-ui")
             }
         }
