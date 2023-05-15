@@ -11,7 +11,7 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
-import io.github.smiley4.ktorswaggerui.experimental.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.swagger.v3.oas.models.media.Schema
 import java.lang.reflect.Type
@@ -21,13 +21,13 @@ class JsonSchemToOpenApiSchema : StringSpec({
 
     "test 1" {
         val type: Type = object : TypeReference<JsonSchemaGenerationTests.Companion.Superclass>() {}.type
-        val schema = SchemaBuilder().build(type)
+        val schema = JsonSchemaBuilder().build(type)
         println(schema)
     }
 
     "test 2" {
         val type: Type = object : TypeReference<X>() {}.type
-        val schema = SchemaBuilder().build(type)
+        val schema = JsonSchemaBuilder().build(type)
         println(schema)
     }
 

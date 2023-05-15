@@ -1,31 +1,27 @@
-package io.github.smiley4.ktorswaggerui.experimental
+package io.github.smiley4.ktorswaggerui.spec.schema
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import com.github.victools.jsonschema.generator.Option
-import com.github.victools.jsonschema.generator.OptionPreset
-import com.github.victools.jsonschema.generator.SchemaGenerator
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
-import com.github.victools.jsonschema.generator.SchemaVersion
+import com.github.victools.jsonschema.generator.*
 import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.swagger.v3.oas.models.media.Schema
 import java.lang.reflect.Type
 
 
-class SchemaBuilder {
+class JsonSchemaBuilder {
 
     companion object {
 
-        data class JsonSchema(
+        data class JsonSchemaInfo(
             val rootSchema: String,
             val schemas: Map<String, JsonNode>
         )
 
-        data class OpenApiSchema(
+        data class OpenApiSchemaInfo(
             val rootSchema: String,
             val schemas: Map<String, Schema<*>>
         )
@@ -36,22 +32,23 @@ class SchemaBuilder {
         SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
             .with(JacksonModule())
             .with(Swagger2Module())
-            .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-            .with(Option.INLINE_ALL_SCHEMAS)
             .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
             .with(Option.ALLOF_CLEANUP_AT_THE_END)
             .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
-
             .with(Option.DEFINITIONS_FOR_ALL_OBJECTS)
             .with(Option.DEFINITION_FOR_MAIN_SCHEMA)
             .without(Option.INLINE_ALL_SCHEMAS)
-
             .build()
     )
 
-    fun build(type: Type): OpenApiSchema {
+    fun build(type: Type): OpenApiSchemaInfo {
         return type
             .let { buildJsonSchema(it) }
+            .let { build(it) }
+    }
+
+    fun build(schema: JsonNode): OpenApiSchemaInfo {
+        return schema
             .let { processJsonSchema(it) }
             .let { buildOpenApiSchema(it) }
     }
@@ -60,17 +57,17 @@ class SchemaBuilder {
         return generator.generateSchema(type)
     }
 
-    private fun processJsonSchema(json: JsonNode): JsonSchema {
+    private fun processJsonSchema(json: JsonNode): JsonSchemaInfo {
         if (json is ObjectNode && json.get("\$defs") != null) {
             val mainDefinition = json.get("\$ref").asText().replace("#/\$defs/", "")
             val definitions = json.get("\$defs").fields().asSequence().map { it.key to it.value }.toList()
             definitions.forEach { cleanupRefPaths(it.second) }
-            return JsonSchema(
+            return JsonSchemaInfo(
                 rootSchema = mainDefinition,
                 schemas = definitions.associate { it }
             )
         } else {
-            return JsonSchema(
+            return JsonSchemaInfo(
                 rootSchema = "root",
                 schemas = mapOf("root" to json)
             )
@@ -86,14 +83,15 @@ class SchemaBuilder {
                 }
                 node.elements().asSequence().forEach { cleanupRefPaths(it) }
             }
+
             is ArrayNode -> {
                 node.elements().asSequence().forEach { cleanupRefPaths(it) }
             }
         }
     }
 
-    private fun buildOpenApiSchema(json: JsonSchema): OpenApiSchema {
-        return OpenApiSchema(
+    private fun buildOpenApiSchema(json: JsonSchemaInfo): OpenApiSchemaInfo {
+        return OpenApiSchemaInfo(
             rootSchema = json.rootSchema,
             schemas = json.schemas.mapValues { (_, schema) -> buildOpenApiSchema(schema) }
         )

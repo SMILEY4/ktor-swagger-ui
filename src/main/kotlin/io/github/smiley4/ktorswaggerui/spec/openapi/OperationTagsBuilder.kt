@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.specbuilder.RouteMeta
+import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 
 class OperationTagsBuilder(
     private val config: SwaggerUIPluginConfig

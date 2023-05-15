@@ -1,11 +1,11 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
-import io.github.smiley4.ktorswaggerui.specbuilder.ComponentsContext
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.swagger.v3.oas.models.parameters.Parameter
 
 class ParameterBuilder(
-    private val schemaBuilder: SchemaBuilder
+    private val schemaContext: SchemaContext
 ) {
 
     fun build(parameter: OpenApiRequestParameter): Parameter =
@@ -23,7 +23,7 @@ class ParameterBuilder(
             it.explode = parameter.explode
             it.example = parameter.example
             it.allowReserved = parameter.allowReserved
-            it.schema = schemaBuilder.build(parameter.type)
+            it.schema = schemaContext.getSchema(parameter.type)
         }
 
 }
