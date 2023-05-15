@@ -190,7 +190,7 @@ class SchemaContext(
         }
     }
 
-    
+
     private fun isPrimitive(schema: Schema<*>): Boolean {
         return schema.type != "object" && schema.type != "array"
     }

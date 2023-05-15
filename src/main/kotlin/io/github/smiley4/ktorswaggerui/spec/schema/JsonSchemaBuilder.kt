@@ -9,6 +9,7 @@ import com.github.victools.jsonschema.generator.*
 import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.swagger.v3.oas.models.media.Schema
+import io.swagger.v3.oas.models.media.XML
 import java.lang.reflect.Type
 
 
@@ -83,12 +84,16 @@ class JsonSchemaBuilder(
     private fun buildOpenApiSchema(json: JsonSchemaInfo): OpenApiSchemaInfo {
         return OpenApiSchemaInfo(
             rootSchema = json.rootSchema,
-            schemas = json.schemas.mapValues { (_, schema) -> buildOpenApiSchema(schema) }
+            schemas = json.schemas.mapValues { (name, schema) -> buildOpenApiSchema(schema, name) }
         )
     }
 
-    private fun buildOpenApiSchema(json: JsonNode): Schema<*> {
-        return ObjectMapper().readValue(json.toString(), Schema::class.java)
+    private fun buildOpenApiSchema(json: JsonNode, name: String): Schema<*> {
+        return ObjectMapper().readValue(json.toString(), Schema::class.java).also { schema ->
+            schema.xml = XML().also {
+                it.name = name
+            }
+        }
     }
 
 }
