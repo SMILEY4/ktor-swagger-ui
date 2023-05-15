@@ -12,7 +12,9 @@ import io.swagger.v3.oas.models.media.Schema
 import java.lang.reflect.Type
 
 
-class JsonSchemaBuilder {
+class JsonSchemaBuilder(
+    schemaGeneratorConfig: SchemaGeneratorConfig
+) {
 
     companion object {
 
@@ -28,18 +30,7 @@ class JsonSchemaBuilder {
 
     }
 
-    private val generator = SchemaGenerator(
-        SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-            .with(JacksonModule())
-            .with(Swagger2Module())
-            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-            .with(Option.ALLOF_CLEANUP_AT_THE_END)
-            .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
-            .with(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-            .with(Option.DEFINITION_FOR_MAIN_SCHEMA)
-            .without(Option.INLINE_ALL_SCHEMAS)
-            .build()
-    )
+    private val generator = SchemaGenerator(schemaGeneratorConfig)
 
     fun build(type: Type): OpenApiSchemaInfo {
         return type
@@ -78,7 +69,6 @@ class JsonSchemaBuilder {
         when (node) {
             is ObjectNode -> {
                 node.get("\$ref")?.also {
-                    println(it)
                     node.set<ObjectNode>("\$ref", TextNode(it.asText().replace("#/\$defs/", "")))
                 }
                 node.elements().asSequence().forEach { cleanupRefPaths(it) }

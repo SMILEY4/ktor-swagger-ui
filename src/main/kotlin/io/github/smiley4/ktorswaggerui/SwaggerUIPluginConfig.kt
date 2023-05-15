@@ -164,11 +164,12 @@ class SwaggerUIPluginConfig {
         SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
             .with(JacksonModule())
             .with(Swagger2Module())
-            .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-            .with(Option.INLINE_ALL_SCHEMAS)
             .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
             .with(Option.ALLOF_CLEANUP_AT_THE_END)
             .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
+            .with(Option.DEFINITIONS_FOR_ALL_OBJECTS)
+            .with(Option.DEFINITION_FOR_MAIN_SCHEMA)
+            .without(Option.INLINE_ALL_SCHEMAS)
             .also {
                 it.forTypesInGeneral()
                     .withTypeAttributeOverride { objectNode: ObjectNode, typeScope: TypeScope, _: SchemaGenerationContext ->

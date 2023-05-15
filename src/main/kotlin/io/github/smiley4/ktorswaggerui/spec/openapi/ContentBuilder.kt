@@ -1,12 +1,31 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenapiMultipartPart
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
-import io.ktor.http.*
+import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.Encoding
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
+import kotlin.collections.Map
+import kotlin.collections.MutableMap
+import kotlin.collections.associateWith
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.filter
+import kotlin.collections.flatMap
+import kotlin.collections.forEach
+import kotlin.collections.ifEmpty
+import kotlin.collections.isNotEmpty
+import kotlin.collections.joinToString
+import kotlin.collections.mapValues
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
+import kotlin.collections.setOf
 
 class ContentBuilder(
     private val schemaContext: SchemaContext,
@@ -35,12 +54,12 @@ class ContentBuilder(
         }
     }
 
-    private fun buildSimpleMediaTypes(body: OpenApiSimpleBody, schema: Schema<*>): Map<ContentType, MediaType> {
-        val mediaTypes = body.getMediaTypes().ifEmpty { setOf(chooseMediaType(schema)) }
+    private fun buildSimpleMediaTypes(body: OpenApiSimpleBody, schema: Schema<*>?): Map<ContentType, MediaType> {
+        val mediaTypes = body.getMediaTypes().ifEmpty { schema?.let { setOf(chooseMediaType(schema)) } ?: setOf() }
         return mediaTypes.associateWith { buildSimpleMediaType(schema, body.getExamples()) }
     }
 
-    private fun buildSimpleMediaType(schema: Schema<*>, examples: Map<String, OpenApiExample>): MediaType {
+    private fun buildSimpleMediaType(schema: Schema<*>?, examples: Map<String, OpenApiExample>): MediaType {
         return MediaType().also {
             it.schema = schema
             examples.forEach { (name, obj) ->
@@ -60,7 +79,9 @@ class ContentBuilder(
                 schema.type = "object"
                 schema.properties = mutableMapOf<String?, Schema<*>?>().also { props ->
                     body.getParts().forEach { part ->
-                        props[part.name] = getSchema(part)
+                        getSchema(part)?.also {
+                            props[part.name] = getSchema(part)
+                        }
                     }
                 }
             }
@@ -85,19 +106,23 @@ class ContentBuilder(
         }
     }
 
-    private fun getSchema(body: OpenApiSimpleBody): Schema<*> {
+    private fun getSchema(body: OpenApiSimpleBody): Schema<*>? {
         return if (body.customSchema != null) {
             schemaContext.getSchema(body.customSchema!!)
+        } else if (body.type != null) {
+            schemaContext.getSchema(body.type)
         } else {
-            schemaContext.getSchema(body.type!!)
+            null
         }
     }
 
-    private fun getSchema(part: OpenapiMultipartPart): Schema<*> {
+    private fun getSchema(part: OpenapiMultipartPart): Schema<*>? {
         return if (part.customSchema != null) {
             schemaContext.getSchema(part.customSchema!!)
+        } else if (part.type != null) {
+            schemaContext.getSchema(part.type)
         } else {
-            schemaContext.getSchema(part.type!!)
+            null
         }
     }
 

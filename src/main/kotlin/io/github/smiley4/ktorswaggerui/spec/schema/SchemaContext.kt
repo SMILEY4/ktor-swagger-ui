@@ -14,7 +14,7 @@ class SchemaContext(
 ) {
 
     private val schemas = mutableMapOf<String, OpenApiSchemaInfo>()
-    private val customSchemas = mutableMapOf<CustomSchemaRef, Schema<*>>()
+    private val customSchemas = mutableMapOf<String, Schema<*>>()
 
 
     fun initialize(routes: Collection<RouteMeta>) {
@@ -82,17 +82,17 @@ class SchemaContext(
 
 
     private fun createSchema(customSchemaRef: CustomSchemaRef) {
-        if(customSchemas.containsKey(customSchemaRef)) {
+        if(customSchemas.containsKey(customSchemaRef.schemaId)) {
             return
         }
         val customSchema = config.getCustomSchemas().getSchema(customSchemaRef.schemaId)
         if (customSchema == null) {
-            customSchemas[customSchemaRef] = Schema<Any>()
+            customSchemas[customSchemaRef.schemaId] = Schema<Any>()
         } else {
             when (customSchema) {
                 is CustomJsonSchema -> {
                     jsonSchemaBuilder.build(ObjectMapper().readTree(customSchema.provider())).let {
-                        it.schemas[it.rootSchema]
+                        it.schemas[it.rootSchema]!!
                     }
                 }
                 is CustomOpenApiSchema -> {
@@ -112,6 +112,8 @@ class SchemaContext(
                         this.items = schema
                     }
                 }
+            }.also {
+                customSchemas[customSchemaRef.schemaId] = it
             }
         }
     }
@@ -119,13 +121,16 @@ class SchemaContext(
 
     fun getComponentSection(): Map<String, Schema<*>> {
         val componentSection = mutableMapOf<String, Schema<*>>()
-        schemas.forEach { (schemaId, schemaInfo) ->
+        schemas.forEach { (_, schemaInfo) ->
             val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
             if(schemaInfo.schemas.size == 1 && (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema))) {
                 // skip
             } else {
                 componentSection.putAll(schemaInfo.schemas)
             }
+        }
+        customSchemas.forEach { (schemaId, schema) ->
+            componentSection[schemaId] = schema
         }
         return componentSection
     }
@@ -134,27 +139,27 @@ class SchemaContext(
 
 
     fun getSchema(customSchemaRef: CustomSchemaRef): Schema<*> {
-        return customSchemas[customSchemaRef]
+        val schema = customSchemas[customSchemaRef.schemaId]
             ?: throw IllegalStateException("Could not retrieve schema for type '${customSchemaRef.schemaId}'")
+        return buildInlineSchema(customSchemaRef.schemaId, schema, 1)
     }
 
 
     fun getSchema(type: Type): Schema<*> {
-        println("Get schema for type '$type'")
         val schemaInfo = getSchemaInfo(type)
         val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
+        return buildInlineSchema(schemaInfo.rootSchema, rootSchema, schemaInfo.schemas.size)
+    }
 
-        if(isPrimitive(rootSchema) && schemaInfo.schemas.size == 1) {
-            println("-> is primitive, return root-schema")
-            return rootSchema
+    private fun buildInlineSchema(schemaId: String, schema: Schema<*>, connectedSchemaCount: Int): Schema<*> {
+        if(isPrimitive(schema) && connectedSchemaCount == 1) {
+            return schema
         }
-        if(isPrimitiveArray(rootSchema) && schemaInfo.schemas.size == 1) {
-            println("-> is primitive-array, return root-schema")
-            return rootSchema
+        if(isPrimitiveArray(schema) && connectedSchemaCount == 1) {
+            return schema
         }
-        println("-> is complex, return ref '#/components/schemas/${schemaInfo.rootSchema}'")
         return Schema<Any>().also {
-            it.`$ref` = "#/components/schemas/${schemaInfo.rootSchema}"
+            it.`$ref` = "#/components/schemas/$schemaId"
         }
     }
 

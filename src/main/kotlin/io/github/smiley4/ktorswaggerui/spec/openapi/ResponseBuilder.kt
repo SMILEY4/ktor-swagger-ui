@@ -9,7 +9,7 @@ class ResponseBuilder(
 ) {
 
     fun build(response: OpenApiResponse): Pair<String, ApiResponse> =
-        "" to ApiResponse().also {
+        response.statusCode to ApiResponse().also {
             it.description = response.description
             it.headers = response.getHeaders().mapValues { header -> headerBuilder.build(header.value) }
             response.getBody()?.let { body ->

@@ -245,7 +245,7 @@ private fun Application.myModule() {
                     }
                 }
             }) {
-                call.respond(HttpStatusCode.NotImplemented, "todo")
+                call.respond(HttpStatusCode.NotImplemented, "...")
             }
 
         }
