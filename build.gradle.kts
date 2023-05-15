@@ -53,6 +53,8 @@ dependencies {
     val versionKotlinTest = "1.7.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
+    // TODO: temporary for testing - pls remove
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
 tasks.test {
