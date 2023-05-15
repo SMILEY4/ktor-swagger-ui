@@ -24,8 +24,10 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
+import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
+import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.MonitoringEvent
@@ -47,11 +49,9 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         if (application.pluginOrNull(Webjars) == null) {
             application.install(Webjars)
         }
-        val routes = RouteCollector(RouteDocumentationMerger()).collectRoutes(application, pluginConfig)
-        val schemaContext = SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
-            .also { it.initialize(routes.toList()) }
-        apiSpecJson = Json.pretty(builder(pluginConfig, schemaContext).build(routes.toList()))
-//        apiSpecJson = ApiSpecBuilder().build(application, pluginConfig)
+        val routes = routes(application, pluginConfig)
+        val schemaContext = schemaContext(pluginConfig, routes)
+        apiSpecJson = Json.pretty(builder(pluginConfig, schemaContext).build(routes))
     }
 
     SwaggerRouting(
@@ -62,6 +62,16 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
 
 }
 
+private fun routes(application: Application, pluginConfig: SwaggerUIPluginConfig): List<RouteMeta> {
+    return RouteCollector(RouteDocumentationMerger()).collectRoutes(application, pluginConfig).toList()
+}
+
+private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): SchemaContext {
+    return SchemaContext(
+        config = pluginConfig,
+        jsonSchemaBuilder = JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build())
+    ).initialize(routes.toList())
+}
 
 private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext): OpenApiBuilder {
     return OpenApiBuilder(

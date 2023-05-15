@@ -13,6 +13,7 @@ class InfoBuilder(
             it.title = info.title
             it.version = info.version
             it.description = info.description
+            it.termsOfService = info.termsOfService
             info.getContact()?.also { contact ->
                 it.contact = contactBuilder.build(contact)
             }

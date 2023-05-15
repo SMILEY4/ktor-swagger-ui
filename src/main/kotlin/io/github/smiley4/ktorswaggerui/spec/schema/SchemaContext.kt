@@ -30,9 +30,10 @@ class SchemaContext(
     private val customSchemas = mutableMapOf<String, Schema<*>>()
 
 
-    fun initialize(routes: Collection<RouteMeta>) {
+    fun initialize(routes: Collection<RouteMeta>): SchemaContext {
         routes.forEach { handle(it) }
         config.getDefaultUnauthorizedResponse()?.also { handle(it) }
+        return this
     }
 
 
@@ -136,8 +137,12 @@ class SchemaContext(
         val componentSection = mutableMapOf<String, Schema<*>>()
         schemas.forEach { (_, schemaInfo) ->
             val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
-            if (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema) || isWrapperArray(rootSchema)) {
+            if (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema)) {
                 // skip
+            } else if (isWrapperArray(rootSchema)) {
+                schemaInfo.schemas.toMutableMap()
+                    .also { it.remove(schemaInfo.rootSchema) }
+                    .also { componentSection.putAll(it) }
             } else {
                 componentSection.putAll(schemaInfo.schemas)
             }
@@ -192,7 +197,7 @@ class SchemaContext(
 
 
     private fun isPrimitive(schema: Schema<*>): Boolean {
-        return schema.type != "object" && schema.type != "array"
+        return schema.type != "object" && schema.type != "array" && schema.type != null
     }
 
     private fun isPrimitiveArray(schema: Schema<*>): Boolean {

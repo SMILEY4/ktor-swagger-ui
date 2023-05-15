@@ -4,6 +4,8 @@ import io.github.smiley4.ktorswaggerui.dsl.AuthKeyLocation
 import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
 import io.github.smiley4.ktorswaggerui.dsl.AuthType
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
+import io.github.smiley4.ktorswaggerui.spec.openapi.OAuthFlowsBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldContainKey
@@ -13,7 +15,7 @@ import io.swagger.v3.oas.models.security.OAuthFlows
 import io.swagger.v3.oas.models.security.Scopes
 import io.swagger.v3.oas.models.security.SecurityScheme
 
-class SecuritySchemeObjectTest : StringSpec({
+class SecuritySchemesBuilderTest : StringSpec({
 
     "test default security scheme object" {
         val securityScheme = buildSecuritySchemeObject("TestAuth") {}
@@ -146,11 +148,13 @@ class SecuritySchemeObjectTest : StringSpec({
     companion object {
 
         private fun buildSecuritySchemeObject(name: String, builder: OpenApiSecurityScheme.() -> Unit): SecurityScheme {
-            return getOApiSecuritySchemesBuilder().build(listOf(OpenApiSecurityScheme(name).apply(builder))).let {
-                it shouldHaveSize 1
-                it shouldContainKey name
-                it[name]!!
-            }
+            return SecuritySchemesBuilder(OAuthFlowsBuilder())
+                .build(listOf(OpenApiSecurityScheme(name).apply(builder)))
+                .let {
+                    it shouldHaveSize 1
+                    it shouldContainKey name
+                    it[name]!!
+                }
         }
 
         private fun buildSecuritySchemeObjects(builders: Map<String, OpenApiSecurityScheme.() -> Unit>): List<SecurityScheme> {
