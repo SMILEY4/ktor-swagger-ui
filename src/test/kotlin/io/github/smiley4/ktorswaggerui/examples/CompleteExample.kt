@@ -250,6 +250,17 @@ private fun Application.myModule() {
 
         }
 
+        get("2dIntArray", {
+            description = "Returns a 2d-array of integers"
+            response {
+                HttpStatusCode.OK to {
+                    body<List<List<Int>>>()
+                }
+            }
+        }){
+            call.respond(HttpStatusCode.NotImplemented, "todo")
+        }
+
         get("hidden", {
             hidden = true
             description = "This route is hidden and not visible in swagger"

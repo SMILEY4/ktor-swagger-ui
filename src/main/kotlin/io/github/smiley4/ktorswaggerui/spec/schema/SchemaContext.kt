@@ -2,11 +2,24 @@ package io.github.smiley4.ktorswaggerui.spec.schema
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.*
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder.Companion.OpenApiSchemaInfo
+import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomObjectSchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
+import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder.Companion.OpenApiSchemaInfo
 import io.swagger.v3.oas.models.media.Schema
 import java.lang.reflect.Type
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 class SchemaContext(
     private val config: SwaggerUIPluginConfig,
@@ -74,7 +87,7 @@ class SchemaContext(
 
 
     private fun createSchema(type: Type) {
-        if(schemas.containsKey(type.typeName)) {
+        if (schemas.containsKey(type.typeName)) {
             return
         }
         schemas[type.typeName] = jsonSchemaBuilder.build(type)
@@ -82,7 +95,7 @@ class SchemaContext(
 
 
     private fun createSchema(customSchemaRef: CustomSchemaRef) {
-        if(customSchemas.containsKey(customSchemaRef.schemaId)) {
+        if (customSchemas.containsKey(customSchemaRef.schemaId)) {
             return
         }
         val customSchema = config.getCustomSchemas().getSchema(customSchemaRef.schemaId)
@@ -123,7 +136,7 @@ class SchemaContext(
         val componentSection = mutableMapOf<String, Schema<*>>()
         schemas.forEach { (_, schemaInfo) ->
             val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
-            if(schemaInfo.schemas.size == 1 && (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema))) {
+            if (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema) || isWrapperArray(rootSchema)) {
                 // skip
             } else {
                 componentSection.putAll(schemaInfo.schemas)
@@ -134,8 +147,6 @@ class SchemaContext(
         }
         return componentSection
     }
-
-
 
 
     fun getSchema(customSchemaRef: CustomSchemaRef): Schema<*> {
@@ -151,12 +162,21 @@ class SchemaContext(
         return buildInlineSchema(schemaInfo.rootSchema, rootSchema, schemaInfo.schemas.size)
     }
 
+
     private fun buildInlineSchema(schemaId: String, schema: Schema<*>, connectedSchemaCount: Int): Schema<*> {
-        if(isPrimitive(schema) && connectedSchemaCount == 1) {
+        if (isPrimitive(schema) && connectedSchemaCount == 1) {
             return schema
         }
-        if(isPrimitiveArray(schema) && connectedSchemaCount == 1) {
+        if (isPrimitiveArray(schema) && connectedSchemaCount == 1) {
             return schema
+        }
+        if (isWrapperArray(schema)) {
+            return Schema<Any>().also { wrapper ->
+                wrapper.type = "array"
+                wrapper.items = Schema<Any>().also {
+                    it.`$ref` = schema.items.`$ref`
+                }
+            }
         }
         return Schema<Any>().also {
             it.`$ref` = "#/components/schemas/$schemaId"
@@ -170,12 +190,17 @@ class SchemaContext(
         }
     }
 
+    
     private fun isPrimitive(schema: Schema<*>): Boolean {
         return schema.type != "object" && schema.type != "array"
     }
 
     private fun isPrimitiveArray(schema: Schema<*>): Boolean {
-        return schema.type == "array" && (isPrimitive(schema.items) || isPrimitiveArray(schema.items)) // todo: check if recursive nested-nested-arrays really work
+        return schema.type == "array" && (isPrimitive(schema.items) || isPrimitiveArray(schema.items))
+    }
+
+    private fun isWrapperArray(schema: Schema<*>): Boolean {
+        return schema.type == "array" && schema.items.type == null && schema.items.`$ref` != null
     }
 
 }
