@@ -91,7 +91,7 @@ class SchemaContext(
         if (schemas.containsKey(type.typeName)) {
             return
         }
-        schemas[type.typeName] = jsonSchemaBuilder.build(type)
+        addSchema(type, jsonSchemaBuilder.build(type))
     }
 
 
@@ -101,7 +101,7 @@ class SchemaContext(
         }
         val customSchema = config.getCustomSchemas().getSchema(customSchemaRef.schemaId)
         if (customSchema == null) {
-            customSchemas[customSchemaRef.schemaId] = Schema<Any>()
+            addSchema(customSchemaRef, Schema<Any>())
         } else {
             when (customSchema) {
                 is CustomJsonSchema -> {
@@ -127,11 +127,18 @@ class SchemaContext(
                     }
                 }
             }.also {
-                customSchemas[customSchemaRef.schemaId] = it
+                addSchema(customSchemaRef, it)
             }
         }
     }
 
+    fun addSchema(type: Type, schema: OpenApiSchemaInfo) {
+        schemas[type.typeName] = schema
+    }
+
+    fun addSchema(customSchemaRef: CustomSchemaRef, schema: Schema<*>) {
+        customSchemas[customSchemaRef.schemaId] = schema
+    }
 
     fun getComponentSection(): Map<String, Schema<*>> {
         val componentSection = mutableMapOf<String, Schema<*>>()

@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.tests
+package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute

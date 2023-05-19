@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.tests
+package io.github.smiley4.ktorswaggerui.tests.schema
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
@@ -9,8 +9,8 @@ import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.collections.shouldNotContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
@@ -180,11 +180,11 @@ class SchemaContextTest : StringSpec({
         val schemaContext = schemaContext().initialize(routes)
         schemaContext.getSchema(SimpleDataClass::class.java).also { schema ->
             schema.type shouldBe null
-            schema.`$ref` shouldBe "#/components/schemas/Data"
+            schema.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
         }
         schemaContext.getComponentSection().also { components ->
-            components.keys shouldContainExactlyInAnyOrder listOf("Data")
-            components["Data"]?.also { schema ->
+            components.keys shouldContainExactlyInAnyOrder listOf("SimpleDataClass")
+            components["SimpleDataClass"]?.also { schema ->
                 schema.type shouldBe "object"
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("text", "number")
             }
@@ -210,12 +210,12 @@ class SchemaContextTest : StringSpec({
             schema.`$ref` shouldBe null
             schema.items.also { item ->
                 item.type shouldBe null
-                item.`$ref` shouldBe "#/components/schemas/Data"
+                item.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
             }
         }
         schemaContext.getComponentSection().also { components ->
-            components.keys shouldContainExactlyInAnyOrder listOf("Data")
-            components["Data"]?.also { schema ->
+            components.keys shouldContainExactlyInAnyOrder listOf("SimpleDataClass")
+            components["SimpleDataClass"]?.also { schema ->
                 schema.type shouldBe "object"
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("text", "number")
             }
@@ -241,8 +241,8 @@ class SchemaContextTest : StringSpec({
             schema.`$ref` shouldBe "#/components/schemas/DataWrapper"
         }
         schemaContext.getComponentSection().also { components ->
-            components.keys shouldContainExactlyInAnyOrder listOf("Data", "DataWrapper")
-            components["Data"]?.also { schema ->
+            components.keys shouldContainExactlyInAnyOrder listOf("SimpleDataClass", "DataWrapper")
+            components["SimpleDataClass"]?.also { schema ->
                 schema.type shouldBe "object"
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("text", "number")
             }
@@ -251,7 +251,7 @@ class SchemaContextTest : StringSpec({
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("data", "enabled")
                 schema.properties["data"]?.also { nestedSchema ->
                     nestedSchema.type shouldBe null
-                    nestedSchema.`$ref` shouldBe "#/components/schemas/Data"
+                    nestedSchema.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
                 }
             }
         }
@@ -273,11 +273,11 @@ class SchemaContextTest : StringSpec({
         val schemaContext = schemaContext().initialize(routes)
         schemaContext.getSchema(SimpleEnum::class.java).also { schema ->
             schema.type shouldBe "string"
-            schema.enum shouldNotContainExactlyInAnyOrder SimpleEnum.values().map { it.name }
+            schema.enum shouldContainExactlyInAnyOrder SimpleEnum.values().map { it.name }
             schema.`$ref` shouldBe null
         }
         schemaContext.getComponentSection().also { components ->
-            components.keys shouldContainExactlyInAnyOrder listOf("")
+            components.keys.shouldBeEmpty()
         }
     }
 

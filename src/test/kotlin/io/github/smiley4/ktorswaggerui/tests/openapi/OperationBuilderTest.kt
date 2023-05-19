@@ -1,7 +1,8 @@
-package io.github.smiley4.ktorswaggerui.tests
+package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
@@ -27,6 +28,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.swagger.v3.oas.models.Operation
+import io.swagger.v3.oas.models.media.Schema
 import java.io.File
 
 class OperationBuilderTest : StringSpec({
@@ -82,6 +84,35 @@ class OperationBuilderTest : StringSpec({
             operation.security shouldBe null
             operation.servers shouldBe null
             operation.extensions shouldBe null
+        }
+    }
+
+    "operation with auto-generated tags" {
+        val config = SwaggerUIPluginConfig().also {
+            it.automaticTagGenerator = { url -> url.firstOrNull() }
+        }
+        val routeA = RouteMeta(
+            path = "a/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.tags = listOf("defaultTag")
+            },
+            protected = false
+        )
+        val routeB = RouteMeta(
+            path = "b/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.tags = listOf("defaultTag")
+            },
+            protected = false
+        )
+        val schemaContext = schemaContext().initialize(listOf(routeA, routeB))
+        buildOperationObject(routeA, schemaContext, config).also { operation ->
+            operation.tags shouldContainExactlyInAnyOrder listOf("a", "defaultTag")
+        }
+        buildOperationObject(routeB, schemaContext, config).also { operation ->
+            operation.tags shouldContainExactlyInAnyOrder listOf("b", "defaultTag")
         }
     }
 
@@ -549,6 +580,43 @@ class OperationBuilderTest : StringSpec({
         }
     }
 
+    "multipart body without parts" {
+        val route = RouteMeta(
+            path = "/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.request {
+                    multipartBody {
+                        mediaType(ContentType.MultiPart.FormData)
+                    }
+                }
+            },
+            protected = false
+        )
+        val schemaContext = schemaContext().initialize(listOf(route))
+        buildOperationObject(route, schemaContext).also { operation ->
+            operation.requestBody
+                .also { it.shouldNotBeNull() }
+                ?.also { body ->
+                    body.content
+                        .also { it.shouldNotBeNull() }
+                        ?.also { content ->
+                            content shouldHaveSize 1
+                            content.get("multipart/form-data")
+                                .also { it.shouldNotBeNull() }
+                                ?.also { mediaType ->
+                                    mediaType.schema.shouldNotBeNull()
+                                    mediaType.example shouldBe null
+                                    mediaType.examples shouldBe null
+                                    mediaType.encoding shouldBe null
+                                    mediaType.extensions shouldBe null
+                                    mediaType.exampleSetFlag shouldBe false
+                                }
+                        }
+                }
+        }
+    }
+
     "multiple responses" {
         val route = RouteMeta(
             path = "/test",
@@ -707,6 +775,98 @@ class OperationBuilderTest : StringSpec({
                 schema.type shouldBe "object"
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("number", "text")
             }
+        }
+    }
+
+    "custom body schema" {
+        val route = RouteMeta(
+            path = "/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.request {
+                    body(obj("myCustomSchema"))
+                }
+            },
+            protected = false
+        )
+        val schemaContext = schemaContext().initialize(listOf(route))
+        schemaContext.addSchema(obj("myCustomSchema"), Schema<Any>().also {
+            it.type = "custom_type"
+        })
+        buildOperationObject(route, schemaContext).also { operation ->
+            operation.requestBody
+                .also { it.shouldNotBeNull() }
+                ?.also { body ->
+                    body.description shouldBe null
+                    body.content
+                        .also { it.shouldNotBeNull() }
+                        ?.also { content ->
+                            content shouldHaveSize 1
+                            content.get("text/plain")
+                                .also { it.shouldNotBeNull() }
+                                ?.also { mediaType ->
+                                    mediaType.schema
+                                        .also { it.shouldNotBeNull() }
+                                        ?.also { schema -> schema.type shouldBe "custom_type" }
+                                    mediaType.example shouldBe null
+                                    mediaType.examples shouldBe null
+                                    mediaType.encoding shouldBe null
+                                    mediaType.extensions shouldBe null
+                                    mediaType.exampleSetFlag shouldBe false
+                                }
+
+                        }
+                    body.required shouldBe null
+                    body.extensions shouldBe null
+                    body.`$ref` shouldBe null
+                }
+        }
+    }
+
+    "custom multipart-body schema" {
+        val route = RouteMeta(
+            path = "/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.request {
+                    multipartBody {
+                        mediaType(ContentType.MultiPart.FormData)
+                        part("customData", obj("myCustomSchema"))
+                    }
+                }
+            },
+            protected = false
+        )
+        val schemaContext = schemaContext().initialize(listOf(route))
+        schemaContext.addSchema(obj("myCustomSchema"), Schema<Any>().also {
+            it.type = "custom_type"
+        })
+        buildOperationObject(route, schemaContext).also { operation ->
+            operation.requestBody
+                .also { it.shouldNotBeNull() }
+                ?.also { body ->
+                    body.content
+                        .also { it.shouldNotBeNull() }
+                        ?.also { content ->
+                            content shouldHaveSize 1
+                            content.get("multipart/form-data")
+                                .also { it.shouldNotBeNull() }
+                                ?.also { mediaType ->
+                                    mediaType.schema
+                                        .also { it.shouldNotBeNull() }
+                                        ?.also { schema ->
+                                            schema.type shouldBe "object"
+                                            schema.properties.keys shouldContainExactlyInAnyOrder listOf("customData")
+                                            schema.properties["customData"]!!.type shouldBe "custom_type"
+                                        }
+                                    mediaType.example shouldBe null
+                                    mediaType.examples shouldBe null
+                                    mediaType.encoding shouldBe null
+                                    mediaType.extensions shouldBe null
+                                    mediaType.exampleSetFlag shouldBe false
+                                }
+                        }
+                }
         }
     }
 
