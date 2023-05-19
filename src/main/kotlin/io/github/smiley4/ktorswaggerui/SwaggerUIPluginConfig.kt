@@ -67,12 +67,14 @@ class SwaggerUIPluginConfig {
      * Whether to put json-schemas in the component section and reference them or inline the schemas at the actual place of usage.
      * (https://swagger.io/specification/#components-object)
      */
+    @Deprecated("not used in versions 2+")
     var schemasInComponentSection: Boolean = false
 
 
     /**
      * Whether to put example objects in the component section and reference them or inline the examples at the actual place of usage.
      */
+    @Deprecated("not used in versions 2+")
     var examplesInComponentSection: Boolean = false
 
 
