@@ -76,8 +76,6 @@ private fun Application.myModule() {
         tag("math") {
             description = "Routes for math related operations"
         }
-        schemasInComponentSection = true
-        examplesInComponentSection = true
         automaticTagGenerator = { url -> url.firstOrNull() }
     }
 

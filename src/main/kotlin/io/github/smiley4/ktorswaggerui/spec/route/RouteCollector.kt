@@ -22,8 +22,8 @@ class RouteCollector(
     /**
      * Collect all routes from the given application
      */
-    fun collectRoutes(application: Application, config: SwaggerUIPluginConfig): Sequence<RouteMeta> {
-        return allRoutes(application.plugin(Routing))
+    fun collectRoutes(routeProvider: () -> Route, config: SwaggerUIPluginConfig): Sequence<RouteMeta> {
+        return allRoutes(routeProvider())
             .asSequence()
             .map { route ->
                 RouteMeta(

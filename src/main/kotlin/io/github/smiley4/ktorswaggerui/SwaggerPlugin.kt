@@ -32,7 +32,9 @@ import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.MonitoringEvent
 import io.ktor.server.application.install
+import io.ktor.server.application.plugin
 import io.ktor.server.application.pluginOrNull
+import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json
 
@@ -63,7 +65,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
 }
 
 private fun routes(application: Application, pluginConfig: SwaggerUIPluginConfig): List<RouteMeta> {
-    return RouteCollector(RouteDocumentationMerger()).collectRoutes(application, pluginConfig).toList()
+    return RouteCollector(RouteDocumentationMerger()).collectRoutes({ application.plugin(Routing) }, pluginConfig).toList()
 }
 
 private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): SchemaContext {
