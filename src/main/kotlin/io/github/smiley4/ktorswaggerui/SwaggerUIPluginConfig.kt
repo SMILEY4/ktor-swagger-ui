@@ -73,12 +73,6 @@ class SwaggerUIPluginConfig {
 
 
     /**
-     * Whether to use canonical instead of simple name for component object references
-     */
-    var canonicalNameObjectRefs: Boolean = false
-
-
-    /**
      * Swagger-UI configuration
      */
     fun swagger(block: SwaggerUI.() -> Unit) {
