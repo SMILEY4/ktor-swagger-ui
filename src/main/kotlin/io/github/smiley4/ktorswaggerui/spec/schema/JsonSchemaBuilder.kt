@@ -1,13 +1,12 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import com.github.victools.jsonschema.generator.*
-import com.github.victools.jsonschema.module.jackson.JacksonModule
-import com.github.victools.jsonschema.module.swagger2.Swagger2Module
+import com.github.victools.jsonschema.generator.SchemaGenerator
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfig
+import io.swagger.v3.core.util.Json
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.XML
 import java.lang.reflect.Type
@@ -89,7 +88,7 @@ class JsonSchemaBuilder(
     }
 
     private fun buildOpenApiSchema(json: JsonNode, name: String): Schema<*> {
-        return ObjectMapper().readValue(json.toString(), Schema::class.java).also { schema ->
+        return Json.mapper().readValue(json.toString(), Schema::class.java).also { schema ->
             schema.xml = XML().also {
                 it.name = name
             }

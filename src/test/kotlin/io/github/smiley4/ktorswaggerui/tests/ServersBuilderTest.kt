@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.tests.builders
+package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder

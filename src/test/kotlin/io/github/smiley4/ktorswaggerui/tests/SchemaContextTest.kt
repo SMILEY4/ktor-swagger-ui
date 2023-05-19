@@ -1,5 +1,7 @@
-package io.github.smiley4.ktorswaggerui.tests.schemas
+package io.github.smiley4.ktorswaggerui.tests
 
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.fasterxml.jackson.core.type.TypeReference
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
@@ -8,11 +10,12 @@ import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldNotContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.ktor.http.HttpMethod
 
-class OpenApiSchemaTest : StringSpec({
+class SchemaContextTest : StringSpec({
 
     "route with all schemas" {
         val routes = listOf(
@@ -168,14 +171,14 @@ class OpenApiSchemaTest : StringSpec({
                 method = HttpMethod.Get,
                 documentation = OpenApiRoute().apply {
                     request {
-                        body<Data>()
+                        body<SimpleDataClass>()
                     }
                 },
                 protected = false
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(Data::class.java).also { schema ->
+        schemaContext.getSchema(SimpleDataClass::class.java).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/Data"
         }
@@ -195,14 +198,14 @@ class OpenApiSchemaTest : StringSpec({
                 method = HttpMethod.Get,
                 documentation = OpenApiRoute().apply {
                     request {
-                        body<List<Data>>()
+                        body<List<SimpleDataClass>>()
                     }
                 },
                 protected = false
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(getType<List<Data>>()).also { schema ->
+        schemaContext.getSchema(getType<List<SimpleDataClass>>()).also { schema ->
             schema.type shouldBe "array"
             schema.`$ref` shouldBe null
             schema.items.also { item ->
@@ -254,11 +257,76 @@ class OpenApiSchemaTest : StringSpec({
         }
     }
 
+    "simple enum" {
+        val routes = listOf(
+            RouteMeta(
+                path = "/test",
+                method = HttpMethod.Get,
+                documentation = OpenApiRoute().apply {
+                    request {
+                        body<SimpleEnum>()
+                    }
+                },
+                protected = false
+            )
+        )
+        val schemaContext = schemaContext().initialize(routes)
+        schemaContext.getSchema(SimpleEnum::class.java).also { schema ->
+            schema.type shouldBe "string"
+            schema.enum shouldNotContainExactlyInAnyOrder SimpleEnum.values().map { it.name }
+            schema.`$ref` shouldBe null
+        }
+        schemaContext.getComponentSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf("")
+        }
+    }
+
+    "maps" {
+        val routes = listOf(
+            RouteMeta(
+                path = "/test",
+                method = HttpMethod.Get,
+                documentation = OpenApiRoute().apply {
+                    request {
+                        body<DataClassWithMaps>()
+                    }
+                },
+                protected = false
+            )
+        )
+        val schemaContext = schemaContext().initialize(routes)
+        schemaContext.getSchema(DataClassWithMaps::class.java).also { schema ->
+            schema.type shouldBe null
+            schema.`$ref` shouldBe "#/components/schemas/DataClassWithMaps"
+        }
+        schemaContext.getComponentSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf("DataClassWithMaps", "Map(String,Long)", "Map(String,String)")
+            components["DataClassWithMaps"]?.also { schema ->
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactlyInAnyOrder listOf("mapStringValues", "mapLongValues")
+                schema.properties["mapStringValues"]?.also { nestedSchema ->
+                    nestedSchema.type shouldBe null
+                    nestedSchema.`$ref` shouldBe "#/components/schemas/Map(String,String)"
+                }
+                schema.properties["mapLongValues"]?.also { nestedSchema ->
+                    nestedSchema.type shouldBe null
+                    nestedSchema.`$ref` shouldBe "#/components/schemas/Map(String,Long)"
+                }
+            }
+        }
+    }
+
 }) {
 
     companion object {
 
         inline fun <reified T> getType() = object : TypeReference<T>() {}.type
+
+        private val defaultPluginConfig = SwaggerUIPluginConfig()
+
+        private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
+            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
+        }
 
         private data class QueryParamType(val value: String)
         private data class PathParamType(val value: String)
@@ -267,21 +335,71 @@ class OpenApiSchemaTest : StringSpec({
         private data class ResponseHeaderType(val value: String)
         private data class ResponseBodyType(val value: String)
 
-        private data class Data(
+        private data class SimpleDataClass(
             val text: String,
             val number: Int
         )
 
         private data class DataWrapper(
             val enabled: Boolean,
-            val data: Data
+            val data: SimpleDataClass
         )
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
-
-        private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
+        private enum class SimpleEnum {
+            RED, GREEN, BLUE
         }
+
+        private data class DataClassWithMaps(
+            val mapStringValues: Map<String, String>,
+            val mapLongValues: Map<String, Long>
+        )
+
+        private data class AnotherDataClass(
+            val primitiveValue: Int,
+            val primitiveList: List<Int>,
+            private val privateValue: String,
+            val nestedClass: SimpleDataClass,
+            val nestedClassList: List<SimpleDataClass>
+        )
+
+
+        @JsonTypeInfo(
+            use = JsonTypeInfo.Id.CLASS,
+            include = JsonTypeInfo.As.PROPERTY,
+            property = "_type",
+        )
+        @JsonSubTypes(
+            JsonSubTypes.Type(value = SubClassA::class),
+            JsonSubTypes.Type(value = SubClassB::class),
+        )
+        private abstract class Superclass(
+            val superField: String,
+        )
+
+        private class SubClassA(
+            superField: String,
+            val subFieldA: Int
+        ) : Superclass(superField)
+
+        private class SubClassB(
+            superField: String,
+            val subFieldB: Boolean
+        ) : Superclass(superField)
+
+
+        private data class ClassWithNestedAbstractClass(
+            val nestedClass: Superclass,
+            val someField: String
+        )
+
+        private class ClassWithGenerics<T>(
+            val genericField: T,
+            val genericList: List<T>
+        )
+
+        private class WrapperForClassWithGenerics(
+            val genericClass: ClassWithGenerics<String>
+        )
 
     }
 
