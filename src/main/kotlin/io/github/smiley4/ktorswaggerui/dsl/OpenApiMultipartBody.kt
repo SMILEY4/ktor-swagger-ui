@@ -10,14 +10,14 @@ import java.lang.reflect.Type
 @OpenApiDslMarker
 class OpenApiMultipartBody : OpenApiBaseBody() {
 
-    private val parts = mutableListOf<OpenapiMultipartPart>()
+    private val parts = mutableListOf<OpenApiMultipartPart>()
 
 
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, type: Type, block: OpenapiMultipartPart.() -> Unit) {
-        parts.add(OpenapiMultipartPart(name, type).apply(block))
+    fun part(name: String, type: Type, block: OpenApiMultipartPart.() -> Unit) {
+        parts.add(OpenApiMultipartPart(name, type).apply(block))
     }
 
 
@@ -36,15 +36,15 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     /**
      * One part of a multipart-body
      */
-    inline fun <reified TYPE> part(name: String, noinline block: OpenapiMultipartPart.() -> Unit) =
+    inline fun <reified TYPE> part(name: String, noinline block: OpenApiMultipartPart.() -> Unit) =
         part(name, object : TypeReference<TYPE>() {}.type, block)
 
 
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, customSchema: CustomSchemaRef, block: OpenapiMultipartPart.() -> Unit) {
-        parts.add(OpenapiMultipartPart(name, null).apply(block).apply {
+    fun part(name: String, customSchema: CustomSchemaRef, block: OpenApiMultipartPart.() -> Unit) {
+        parts.add(OpenApiMultipartPart(name, null).apply(block).apply {
             this.customSchema = customSchema
         })
     }
@@ -59,7 +59,7 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, customSchemaId: String, block: OpenapiMultipartPart.() -> Unit) = part(name, obj(customSchemaId), block)
+    fun part(name: String, customSchemaId: String, block: OpenApiMultipartPart.() -> Unit) = part(name, obj(customSchemaId), block)
 
 
     /**
@@ -67,6 +67,6 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
      */
     fun part(name: String, customSchemaId: String) = part(name, customSchemaId) {}
 
-    fun getParts(): List<OpenapiMultipartPart> = parts
+    fun getParts(): List<OpenApiMultipartPart> = parts
 
 }

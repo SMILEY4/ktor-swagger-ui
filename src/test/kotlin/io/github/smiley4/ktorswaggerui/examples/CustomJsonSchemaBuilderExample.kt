@@ -65,11 +65,11 @@ private fun Application.myModule() {
     routing {
         get("something", {
             request {
-                body<MyResponseData>()
+                body<MyRequestData>()
             }
             response {
                 HttpStatusCode.OK to {
-                    body<MyRequestData>()
+                    body<MyResponseData>()
                 }
             }
         }) {
