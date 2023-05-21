@@ -1,17 +1,7 @@
 package io.github.smiley4.ktorswaggerui
 
-import com.fasterxml.jackson.databind.node.ObjectNode
-import com.github.victools.jsonschema.generator.FieldScope
-import com.github.victools.jsonschema.generator.Option
-import com.github.victools.jsonschema.generator.OptionPreset
-import com.github.victools.jsonschema.generator.SchemaGenerationContext
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
-import com.github.victools.jsonschema.generator.SchemaVersion
-import com.github.victools.jsonschema.generator.TypeScope
-import com.github.victools.jsonschema.module.jackson.JacksonModule
-import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
-import io.github.smiley4.ktorswaggerui.dsl.Example
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
@@ -19,10 +9,10 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
 import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
+import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaConfig
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.routing.RouteSelector
-import io.swagger.v3.oas.annotations.media.Schema
 import kotlin.reflect.KClass
 
 /**
@@ -31,9 +21,6 @@ import kotlin.reflect.KClass
 @OpenApiDslMarker
 class SwaggerUIPluginConfig {
 
-    private var defaultUnauthorizedResponse: OpenApiResponse? = null
-
-
     /**
      * Default response to automatically add to each protected route for the "Unauthorized"-Response-Code.
      * Generated response can be overwritten with custom response.
@@ -41,6 +28,8 @@ class SwaggerUIPluginConfig {
     fun defaultUnauthorizedResponse(block: OpenApiResponse.() -> Unit) {
         defaultUnauthorizedResponse = OpenApiResponse(HttpStatusCode.Unauthorized.value.toString()).apply(block)
     }
+
+    private var defaultUnauthorizedResponse: OpenApiResponse? = null
 
     fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
 
@@ -69,8 +58,6 @@ class SwaggerUIPluginConfig {
      */
     var pathFilter: ((method: HttpMethod, url: List<String>) -> Boolean)? = null
 
-    private var swaggerUI = SwaggerUI()
-
 
     /**
      * Swagger-UI configuration
@@ -79,9 +66,9 @@ class SwaggerUIPluginConfig {
         swaggerUI = SwaggerUI().apply(block)
     }
 
-    fun getSwaggerUI() = swaggerUI
+    private var swaggerUI = SwaggerUI()
 
-    private var info = OpenApiInfo()
+    fun getSwaggerUI() = swaggerUI
 
 
     /**
@@ -91,9 +78,9 @@ class SwaggerUIPluginConfig {
         info = OpenApiInfo().apply(block)
     }
 
-    fun getInfo() = info
+    private var info = OpenApiInfo()
 
-    private val servers = mutableListOf<OpenApiServer>()
+    fun getInfo() = info
 
 
     /**
@@ -103,9 +90,9 @@ class SwaggerUIPluginConfig {
         servers.add(OpenApiServer().apply(block))
     }
 
-    fun getServers(): List<OpenApiServer> = servers
+    private val servers = mutableListOf<OpenApiServer>()
 
-    private val securitySchemes = mutableListOf<OpenApiSecurityScheme>()
+    fun getServers(): List<OpenApiServer> = servers
 
 
     /**
@@ -115,9 +102,9 @@ class SwaggerUIPluginConfig {
         securitySchemes.add(OpenApiSecurityScheme(name).apply(block))
     }
 
-    fun getSecuritySchemes(): List<OpenApiSecurityScheme> = securitySchemes
+    private val securitySchemes = mutableListOf<OpenApiSecurityScheme>()
 
-    private val tags = mutableListOf<OpenApiTag>()
+    fun getSecuritySchemes(): List<OpenApiSecurityScheme> = securitySchemes
 
 
     /**
@@ -127,13 +114,19 @@ class SwaggerUIPluginConfig {
         tags.add(OpenApiTag(name).apply(block))
     }
 
+    private val tags = mutableListOf<OpenApiTag>()
+
     fun getTags(): List<OpenApiTag> = tags
 
-    private var customSchemas = CustomSchemas()
 
+    /**
+     * Custom schemas to reference via [io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef]
+     */
     fun schemas(block: CustomSchemas.() -> Unit) {
         this.customSchemas = CustomSchemas().apply(block)
     }
+
+    private var customSchemas = CustomSchemas()
 
     fun getCustomSchemas() = customSchemas
 
@@ -141,31 +134,7 @@ class SwaggerUIPluginConfig {
     /**
      * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
      */
-    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder =
-        SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-            .with(JacksonModule())
-            .with(Swagger2Module())
-            .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
-            .with(Option.ALLOF_CLEANUP_AT_THE_END)
-            .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
-            .with(Option.DEFINITIONS_FOR_ALL_OBJECTS)
-            .with(Option.DEFINITION_FOR_MAIN_SCHEMA)
-            .without(Option.INLINE_ALL_SCHEMAS)
-            .also {
-                it.forTypesInGeneral()
-                    .withTypeAttributeOverride { objectNode: ObjectNode, typeScope: TypeScope, _: SchemaGenerationContext ->
-                        if (typeScope is FieldScope) {
-                            typeScope.getAnnotation(Schema::class.java)?.also { annotation ->
-                                if (annotation.example != "") {
-                                    objectNode.put("example", annotation.example)
-                                }
-                            }
-                            typeScope.getAnnotation(Example::class.java)?.also { annotation ->
-                                objectNode.put("example", annotation.value)
-                            }
-                        }
-                    }
-            }
+    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = JsonSchemaConfig.schemaGeneratorConfigBuilder
 
 
     /**

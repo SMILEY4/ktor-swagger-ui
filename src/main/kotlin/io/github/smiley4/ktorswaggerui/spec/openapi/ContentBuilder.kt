@@ -4,7 +4,7 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenapiMultipartPart
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartPart
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
@@ -116,7 +116,7 @@ class ContentBuilder(
         }
     }
 
-    private fun getSchema(part: OpenapiMultipartPart): Schema<*>? {
+    private fun getSchema(part: OpenApiMultipartPart): Schema<*>? {
         return if (part.customSchema != null) {
             schemaContext.getSchema(part.customSchema!!)
         } else if (part.type != null) {

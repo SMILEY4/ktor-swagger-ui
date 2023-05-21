@@ -10,7 +10,7 @@ import kotlin.reflect.KClass
  * See https://swagger.io/docs/specification/describing-request-body/multipart-requests/ for more info
  */
 @OpenApiDslMarker
-class OpenapiMultipartPart(
+class OpenApiMultipartPart(
     /**
      * The name of this part
      */
