@@ -6,15 +6,14 @@ import java.lang.reflect.Type
 @OpenApiDslMarker
 class CustomSchemas {
 
-    private var jsonSchemaBuilder: ((type: Type) -> String?)? = null
-
-
     /**
      * Custom builder for building json-schemas from a given type. Return null to not use this builder for the given type.
      */
     fun jsonSchemaBuilder(builder: (type: Type) -> String?) {
         jsonSchemaBuilder = builder
     }
+
+    private var jsonSchemaBuilder: ((type: Type) -> String?)? = null
 
     fun getJsonSchemaBuilder() = jsonSchemaBuilder
 
