@@ -49,7 +49,21 @@ class SwaggerUIPluginConfig {
     /**
      * function to generate a tag from the given url for a path. Result will be added to the tags defined for each path
      */
+    @Deprecated("use 'generateTags' instead")
     var automaticTagGenerator: ((url: List<String>) -> String?)? = null
+
+
+    /**
+     * Automatically add tags to the route with the given url.
+     * The returned (non-null) tags will be added to the tags specified in the route-specific documentation.
+     */
+    fun generateTags(generator: TagGenerator) {
+        tagGenerator = generator
+    }
+
+    private var tagGenerator: TagGenerator = { emptyList() }
+
+    fun getTagGenerator() = tagGenerator
 
 
     /**
@@ -143,3 +157,9 @@ class SwaggerUIPluginConfig {
     var ignoredRouteSelectors: List<KClass<*>> = listOf()
 
 }
+
+/**
+ * url - the parts of the route-url split at all `/`.
+ * return a collection of tags. "Null"-entries will be ignored.
+ */
+typealias TagGenerator = (url: List<String>) -> Collection<String?>

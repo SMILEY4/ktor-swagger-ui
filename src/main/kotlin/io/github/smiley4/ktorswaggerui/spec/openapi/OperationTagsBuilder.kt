@@ -8,10 +8,18 @@ class OperationTagsBuilder(
 ) {
 
     fun build(route: RouteMeta): List<String> {
-        val generatedTags = config.automaticTagGenerator?.let {
-            it(route.path.split("/").filter { it.isNotEmpty() })
-        }
-        return (route.documentation.tags + generatedTags).filterNotNull()
+        return mutableSetOf<String?>().also { tags ->
+            tags.add(getGeneratedTagsDeprecated(route))
+            tags.addAll(getGeneratedTags(route))
+            tags.addAll(getRouteTags(route))
+        }.filterNotNull()
     }
+
+    private fun getRouteTags(route: RouteMeta) = route.documentation.tags
+
+    @Deprecated("see PluginConfig#automaticTagGenerator")
+    private fun getGeneratedTagsDeprecated(route: RouteMeta) = config.automaticTagGenerator?.let { it(route.path.split("/")) }
+
+    private fun getGeneratedTags(route: RouteMeta) = config.getTagGenerator()(route.path.split("/"))
 
 }

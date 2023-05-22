@@ -71,7 +71,7 @@ private fun Application.myModule() {
             externalDocDescription = "documentation for greetings"
             externalDocUrl = "example.com/doc"
         }
-        automaticTagGenerator = { url -> url.firstOrNull() }
+        generateTags { url -> listOf(url.firstOrNull()) }
         schemas {
             jsonSchemaBuilder { type ->
                 SchemaGenerator(JsonSchemaConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type).toPrettyString()
