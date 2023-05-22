@@ -2,9 +2,10 @@ package io.github.smiley4.ktorswaggerui.tests.schema
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.core.type.TypeReference
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
@@ -40,27 +41,27 @@ class SchemaContextTest : StringSpec({
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(QueryParamType::class.java).also { schema ->
+        schemaContext.getSchema(QueryParamType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/QueryParamType"
         }
-        schemaContext.getSchema(PathParamType::class.java).also { schema ->
+        schemaContext.getSchema(PathParamType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/PathParamType"
         }
-        schemaContext.getSchema(HeaderParamType::class.java).also { schema ->
+        schemaContext.getSchema(HeaderParamType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/HeaderParamType"
         }
-        schemaContext.getSchema(RequestBodyType::class.java).also { schema ->
+        schemaContext.getSchema(RequestBodyType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/RequestBodyType"
         }
-        schemaContext.getSchema(ResponseHeaderType::class.java).also { schema ->
+        schemaContext.getSchema(ResponseHeaderType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/ResponseHeaderType"
         }
-        schemaContext.getSchema(ResponseBodyType::class.java).also { schema ->
+        schemaContext.getSchema(ResponseBodyType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/ResponseBodyType"
         }
@@ -94,7 +95,7 @@ class SchemaContextTest : StringSpec({
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(Integer::class.java).also { schema ->
+        schemaContext.getSchema(Integer::class.asSchemaType()).also { schema ->
             schema.type shouldBe "integer"
             schema.format shouldBe "int32"
             schema.`$ref` shouldBe null
@@ -178,7 +179,7 @@ class SchemaContextTest : StringSpec({
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(SimpleDataClass::class.java).also { schema ->
+        schemaContext.getSchema(SimpleDataClass::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
         }
@@ -236,7 +237,7 @@ class SchemaContextTest : StringSpec({
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(DataWrapper::class.java).also { schema ->
+        schemaContext.getSchema(DataWrapper::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/DataWrapper"
         }
@@ -271,7 +272,7 @@ class SchemaContextTest : StringSpec({
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(SimpleEnum::class.java).also { schema ->
+        schemaContext.getSchema(SimpleEnum::class.asSchemaType()).also { schema ->
             schema.type shouldBe "string"
             schema.enum shouldContainExactlyInAnyOrder SimpleEnum.values().map { it.name }
             schema.`$ref` shouldBe null
@@ -295,7 +296,7 @@ class SchemaContextTest : StringSpec({
             )
         )
         val schemaContext = schemaContext().initialize(routes)
-        schemaContext.getSchema(DataClassWithMaps::class.java).also { schema ->
+        schemaContext.getSchema(DataClassWithMaps::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/DataClassWithMaps"
         }
@@ -320,12 +321,12 @@ class SchemaContextTest : StringSpec({
 
     companion object {
 
-        inline fun <reified T> getType() = object : TypeReference<T>() {}.type
+        inline fun <reified T> getType() = getSchemaType<T>()
 
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
+            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build()))
         }
 
         private data class QueryParamType(val value: String)

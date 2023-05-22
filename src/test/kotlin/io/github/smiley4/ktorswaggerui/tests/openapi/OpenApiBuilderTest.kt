@@ -99,7 +99,7 @@ class OpenApiBuilderTest : StringSpec({
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(pluginConfig: SwaggerUIPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
+            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build()))
         }
 
         private fun buildOpenApiObject(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): OpenAPI {
@@ -123,7 +123,9 @@ class OpenApiBuilderTest : StringSpec({
                             requestBodyBuilder = RequestBodyBuilder(
                                 contentBuilder = ContentBuilder(
                                     schemaContext = schemaContext,
-                                    exampleBuilder = ExampleBuilder(),
+                                    exampleBuilder = ExampleBuilder(
+                                        config = pluginConfig
+                                    ),
                                     headerBuilder = HeaderBuilder(schemaContext)
                                 )
                             ),
@@ -132,7 +134,9 @@ class OpenApiBuilderTest : StringSpec({
                                     headerBuilder = HeaderBuilder(schemaContext),
                                     contentBuilder = ContentBuilder(
                                         schemaContext = schemaContext,
-                                        exampleBuilder = ExampleBuilder(),
+                                        exampleBuilder = ExampleBuilder(
+                                            config = pluginConfig
+                                        ),
                                         headerBuilder = HeaderBuilder(schemaContext)
                                     )
                                 ),

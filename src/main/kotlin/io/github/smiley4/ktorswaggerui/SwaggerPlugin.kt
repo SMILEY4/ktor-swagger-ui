@@ -71,7 +71,7 @@ private fun routes(application: Application, pluginConfig: SwaggerUIPluginConfig
 private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): SchemaContext {
     return SchemaContext(
         config = pluginConfig,
-        jsonSchemaBuilder = JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build())
+        jsonSchemaBuilder = JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build())
     ).initialize(routes.toList())
 }
 
@@ -95,7 +95,9 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext)
                     requestBodyBuilder = RequestBodyBuilder(
                         contentBuilder = ContentBuilder(
                             schemaContext = schemaContext,
-                            exampleBuilder = ExampleBuilder(),
+                            exampleBuilder = ExampleBuilder(
+                                config = config
+                            ),
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),
@@ -104,7 +106,9 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext)
                             headerBuilder = HeaderBuilder(schemaContext),
                             contentBuilder = ContentBuilder(
                                 schemaContext = schemaContext,
-                                exampleBuilder = ExampleBuilder(),
+                                exampleBuilder = ExampleBuilder(
+                                    config = config
+                                ),
                                 headerBuilder = HeaderBuilder(schemaContext)
                             )
                         ),

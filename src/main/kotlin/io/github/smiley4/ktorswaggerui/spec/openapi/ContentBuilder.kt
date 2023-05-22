@@ -5,6 +5,7 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartPart
+import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
@@ -56,14 +57,14 @@ class ContentBuilder(
 
     private fun buildSimpleMediaTypes(body: OpenApiSimpleBody, schema: Schema<*>?): Map<ContentType, MediaType> {
         val mediaTypes = body.getMediaTypes().ifEmpty { schema?.let { setOf(chooseMediaType(schema)) } ?: setOf() }
-        return mediaTypes.associateWith { buildSimpleMediaType(schema, body.getExamples()) }
+        return mediaTypes.associateWith { buildSimpleMediaType(schema, body.type, body.getExamples()) }
     }
 
-    private fun buildSimpleMediaType(schema: Schema<*>?, examples: Map<String, OpenApiExample>): MediaType {
+    private fun buildSimpleMediaType(schema: Schema<*>?, type: SchemaType?, examples: Map<String, OpenApiExample>): MediaType {
         return MediaType().also {
             it.schema = schema
             examples.forEach { (name, obj) ->
-                it.addExamples(name, exampleBuilder.build(obj))
+                it.addExamples(name, exampleBuilder.build(type, obj))
             }
         }
     }

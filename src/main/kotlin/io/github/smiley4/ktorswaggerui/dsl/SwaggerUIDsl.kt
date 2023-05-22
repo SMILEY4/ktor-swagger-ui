@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
 @OpenApiDslMarker
-class SwaggerUI {
+class SwaggerUIDsl {
 
     /**
      * Whether to forward the root-url to the swagger-url

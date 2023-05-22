@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui
 
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
 import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSort
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -15,7 +15,7 @@ class SwaggerController(
     private val swaggerWebjarVersion: String,
     private val apiSpecUrl: String,
     private val jsonSpecProvider: () -> String,
-    private val swaggerUiConfig: SwaggerUI
+    private val swaggerUiConfig: SwaggerUIDsl
 ) {
 
     suspend fun serveOpenApiSpec(call: ApplicationCall) {

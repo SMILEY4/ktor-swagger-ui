@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui
 
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
@@ -16,7 +16,7 @@ import mu.KotlinLogging
  * Registers and handles routes required for the swagger-ui
  */
 class SwaggerRouting(
-    private val swaggerUiConfig: SwaggerUI,
+    private val swaggerUiConfig: SwaggerUIDsl,
     appConfig: ApplicationConfig,
     swaggerWebjarVersion: String,
     jsonSpecProvider: () -> String

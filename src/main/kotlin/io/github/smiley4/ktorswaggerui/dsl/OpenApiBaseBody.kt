@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
 import io.ktor.http.ContentType
-import java.lang.reflect.Type
 
 /**
  * Describes a single request/response body with a single schema.

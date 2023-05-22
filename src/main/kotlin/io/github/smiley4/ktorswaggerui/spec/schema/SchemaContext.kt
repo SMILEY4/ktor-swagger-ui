@@ -13,10 +13,11 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
+import io.github.smiley4.ktorswaggerui.dsl.SchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getTypeName
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder.Companion.OpenApiSchemaInfo
 import io.swagger.v3.oas.models.media.Schema
-import java.lang.reflect.Type
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -87,8 +88,8 @@ class SchemaContext(
     }
 
 
-    private fun createSchema(type: Type) {
-        if (schemas.containsKey(type.typeName)) {
+    private fun createSchema(type: SchemaType) {
+        if (schemas.containsKey(type.getTypeName())) {
             return
         }
         addSchema(type, jsonSchemaBuilder.build(type))
@@ -105,7 +106,7 @@ class SchemaContext(
         } else {
             when (customSchema) {
                 is CustomJsonSchema -> {
-                    jsonSchemaBuilder.build(ObjectMapper().readTree(customSchema.provider())).let {
+                    jsonSchemaBuilder.build(ObjectMapper().readTree(customSchema.provider()), customSchemaRef.schemaId).let {
                         it.schemas[it.rootSchema]!!
                     }
                 }
@@ -132,8 +133,8 @@ class SchemaContext(
         }
     }
 
-    fun addSchema(type: Type, schema: OpenApiSchemaInfo) {
-        schemas[type.typeName] = schema
+    fun addSchema(type: SchemaType, schema: OpenApiSchemaInfo) {
+        schemas[type.getTypeName()] = schema
     }
 
     fun addSchema(customSchemaRef: CustomSchemaRef, schema: Schema<*>) {
@@ -168,7 +169,7 @@ class SchemaContext(
     }
 
 
-    fun getSchema(type: Type): Schema<*> {
+    fun getSchema(type: SchemaType): Schema<*> {
         val schemaInfo = getSchemaInfo(type)
         val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
         return buildInlineSchema(schemaInfo.rootSchema, rootSchema, schemaInfo.schemas.size)
@@ -196,8 +197,8 @@ class SchemaContext(
     }
 
 
-    private fun getSchemaInfo(type: Type): OpenApiSchemaInfo {
-        return type.typeName.let { typeName ->
+    private fun getSchemaInfo(type: SchemaType): OpenApiSchemaInfo {
+        return type.getTypeName().let { typeName ->
             schemas[typeName] ?: throw IllegalStateException("Could not retrieve schema for type '${typeName}'")
         }
     }

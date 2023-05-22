@@ -8,7 +8,8 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUI
+import io.github.smiley4.ktorswaggerui.dsl.SerializationConfig
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
 import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaConfig
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
@@ -76,11 +77,11 @@ class SwaggerUIPluginConfig {
     /**
      * Swagger-UI configuration
      */
-    fun swagger(block: SwaggerUI.() -> Unit) {
-        swaggerUI = SwaggerUI().apply(block)
+    fun swagger(block: SwaggerUIDsl.() -> Unit) {
+        swaggerUI = SwaggerUIDsl().apply(block)
     }
 
-    private var swaggerUI = SwaggerUI()
+    private var swaggerUI = SwaggerUIDsl()
 
     fun getSwaggerUI() = swaggerUI
 
@@ -146,8 +147,25 @@ class SwaggerUIPluginConfig {
 
 
     /**
+     * customize the behaviour of different serializers (examples, schemas, ...)
+     */
+    fun serialization(block: SerializationConfig.() -> Unit) {
+        block(serializationConfig)
+    }
+
+    val serializationConfig: SerializationConfig = SerializationConfig()
+
+
+    /**
+     * whether to inline all schemas or move keep them in the components section.
+     */
+    var inlineAllSchemas: Boolean = false // TODO
+
+
+    /**
      * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
      */
+    @Deprecated("")
     var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = JsonSchemaConfig.schemaGeneratorConfigBuilder
 
 

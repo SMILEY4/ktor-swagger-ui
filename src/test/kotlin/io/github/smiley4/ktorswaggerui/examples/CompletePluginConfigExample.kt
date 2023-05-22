@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
@@ -12,6 +13,7 @@ import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.swagger.v3.oas.models.media.Schema
+import kotlin.reflect.jvm.javaType
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -74,7 +76,7 @@ private fun Application.myModule() {
         generateTags { url -> listOf(url.firstOrNull()) }
         schemas {
             jsonSchemaBuilder { type ->
-                SchemaGenerator(JsonSchemaConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type).toPrettyString()
+                SchemaGenerator(JsonSchemaConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toPrettyString()
             }
             json("customSchema1") {
                 """{"type": "string"}"""
@@ -85,6 +87,15 @@ private fun Application.myModule() {
                 }
             }
             remote("customSchema3", "example.com/schema")
+        }
+        inlineAllSchemas = true
+        serialization {
+            exampleSerializer { type, example ->
+                jacksonObjectMapper().writeValueAsString(example)
+            }
+            schemaSerializer { type ->
+                SchemaGenerator(JsonSchemaConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toPrettyString()
+            }
         }
         schemaGeneratorConfigBuilder = schemaGeneratorConfigBuilder.let { /*...*/ it }
     }

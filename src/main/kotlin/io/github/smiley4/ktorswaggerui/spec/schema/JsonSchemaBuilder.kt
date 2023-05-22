@@ -1,18 +1,23 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfig
+import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.SchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSimpleTypeName
 import io.swagger.v3.core.util.Json
 import io.swagger.v3.oas.models.media.Schema
 import io.swagger.v3.oas.models.media.XML
-import java.lang.reflect.Type
+import kotlin.reflect.javaType
 
 
 class JsonSchemaBuilder(
+    private val pluginConfig: SwaggerUIPluginConfig,
     schemaGeneratorConfig: SchemaGeneratorConfig
 ) {
 
@@ -32,26 +37,32 @@ class JsonSchemaBuilder(
 
     private val generator = SchemaGenerator(schemaGeneratorConfig)
 
-    fun build(type: Type): OpenApiSchemaInfo {
+    fun build(type: SchemaType): OpenApiSchemaInfo {
         return type
             .let { buildJsonSchema(it) }
-            .let { build(it) }
+            .let { build(it, type.getSimpleTypeName()) }
     }
 
-    fun build(schema: JsonNode): OpenApiSchemaInfo {
+    fun build(schema: JsonNode, typeName: String): OpenApiSchemaInfo {
+        println("hello")
         return schema
-            .let { processJsonSchema(it) }
+            .let { processJsonSchema(it, typeName) }
             .let { buildOpenApiSchema(it) }
     }
 
-    private fun buildJsonSchema(type: Type): JsonNode {
-        return generator.generateSchema(type)
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun buildJsonSchema(type: SchemaType): JsonNode {
+        return pluginConfig.serializationConfig.getCustomSchemaSerializer()
+            .let { customSerializer -> customSerializer(type) }
+            ?.let { ObjectMapper().readTree(it) }
+            ?: generator.generateSchema(type.javaType)
     }
 
-    private fun processJsonSchema(json: JsonNode): JsonSchemaInfo {
-        if (json is ObjectNode && json.get("\$defs") != null) {
-            val mainDefinition = json.get("\$ref").asText().replace("#/\$defs/", "")
-            val definitions = json.get("\$defs").fields().asSequence().map { it.key to it.value }.toList()
+    private fun processJsonSchema(json: JsonNode, typeName: String): JsonSchemaInfo {
+        if (json is ObjectNode && hasDefinitions(json)) {
+            val mainDefinition = getMainDefinition(json)
+            val definitions = getDefinitions(json)
             definitions.forEach { cleanupRefPaths(it.second) }
             return JsonSchemaInfo(
                 rootSchema = mainDefinition,
@@ -59,11 +70,22 @@ class JsonSchemaBuilder(
             )
         } else {
             return JsonSchemaInfo(
-                rootSchema = "root",
-                schemas = mapOf("root" to json)
+                rootSchema = typeName,
+                schemas = mapOf(typeName to json)
             )
         }
     }
+
+    private fun hasDefinitions(json: JsonNode) = json.get("\$defs") != null || json.get("definitions") != null
+
+    private fun getDefinitions(json: JsonNode): List<Pair<String, JsonNode>> {
+        return (json.get("\$defs") ?: json["definitions"]).fields().asSequence().map { it.key to it.value }.toList()
+    }
+
+    private fun getMainDefinition(json: JsonNode) =
+        json.get("\$ref").asText()
+            .replace("#/definitions/", "")
+            .replace("#/\$defs/", "")
 
     private fun cleanupRefPaths(node: JsonNode) {
         when (node) {
@@ -81,6 +103,7 @@ class JsonSchemaBuilder(
     }
 
     private fun buildOpenApiSchema(json: JsonSchemaInfo): OpenApiSchemaInfo {
+        println(json)
         return OpenApiSchemaInfo(
             rootSchema = json.rootSchema,
             schemas = json.schemas.mapValues { (name, schema) -> buildOpenApiSchema(schema, name) }

@@ -882,7 +882,7 @@ class OperationBuilderTest : StringSpec({
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
+            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build()))
         }
 
         private fun buildOperationObject(
@@ -896,7 +896,9 @@ class OperationBuilderTest : StringSpec({
                 requestBodyBuilder = RequestBodyBuilder(
                     contentBuilder = ContentBuilder(
                         schemaContext = schemaContext,
-                        exampleBuilder = ExampleBuilder(),
+                        exampleBuilder = ExampleBuilder(
+                            config = pluginConfig
+                        ),
                         headerBuilder = HeaderBuilder(schemaContext)
                     )
                 ),
@@ -905,7 +907,9 @@ class OperationBuilderTest : StringSpec({
                         headerBuilder = HeaderBuilder(schemaContext),
                         contentBuilder = ContentBuilder(
                             schemaContext = schemaContext,
-                            exampleBuilder = ExampleBuilder(),
+                            exampleBuilder = ExampleBuilder(
+                                config = pluginConfig
+                            ),
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),

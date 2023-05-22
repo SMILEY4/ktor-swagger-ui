@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-import java.lang.reflect.Type
 
 
 @OpenApiDslMarker
@@ -15,7 +14,7 @@ class OpenApiHeader {
     /**
      * The schema of the header
      */
-    var type: Type? = null
+    var type: SchemaType? = null
 
 
     /**

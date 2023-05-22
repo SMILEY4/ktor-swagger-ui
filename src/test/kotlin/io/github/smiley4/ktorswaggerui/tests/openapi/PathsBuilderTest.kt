@@ -84,7 +84,7 @@ class PathsBuilderTest : StringSpec({
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig.schemaGeneratorConfigBuilder.build()))
+            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build()))
         }
 
         private fun buildPathsObject(
@@ -100,7 +100,9 @@ class PathsBuilderTest : StringSpec({
                         requestBodyBuilder = RequestBodyBuilder(
                             contentBuilder = ContentBuilder(
                                 schemaContext = schemaContext,
-                                exampleBuilder = ExampleBuilder(),
+                                exampleBuilder = ExampleBuilder(
+                                    config = pluginConfig
+                                ),
                                 headerBuilder = HeaderBuilder(schemaContext)
                             )
                         ),
@@ -109,7 +111,9 @@ class PathsBuilderTest : StringSpec({
                                 headerBuilder = HeaderBuilder(schemaContext),
                                 contentBuilder = ContentBuilder(
                                     schemaContext = schemaContext,
-                                    exampleBuilder = ExampleBuilder(),
+                                    exampleBuilder = ExampleBuilder(
+                                        config = pluginConfig
+                                    ),
                                     headerBuilder = HeaderBuilder(schemaContext)
                                 )
                             ),
