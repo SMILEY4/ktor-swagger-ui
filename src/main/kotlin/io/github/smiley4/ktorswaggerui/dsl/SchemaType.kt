@@ -13,8 +13,7 @@ inline fun <reified T> getSchemaType(): SchemaType {
     return typeOf<T>()
 }
 
-@OptIn(ExperimentalStdlibApi::class)
-fun SchemaType.getTypeName() = this.javaType.typeName
+fun SchemaType.getTypeName() = this.toString()
 
 fun SchemaType.getSimpleTypeName(): String {
     val rawName = getTypeName()

@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
+import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
@@ -16,6 +17,7 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -23,6 +25,7 @@ import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.ktor.http.HttpMethod
 import io.swagger.v3.oas.models.Paths
+import kotlin.reflect.jvm.javaType
 
 class PathsBuilderTest : StringSpec({
 
@@ -84,7 +87,12 @@ class PathsBuilderTest : StringSpec({
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build()))
+            return SchemaContext(
+                config = pluginConfig,
+                schemaBuilder = SchemaBuilder("\$defs") { type ->
+                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
+                }
+            )
         }
 
         private fun buildPathsObject(

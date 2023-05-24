@@ -2,19 +2,21 @@ package io.github.smiley4.ktorswaggerui.tests.schema
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
-import io.ktor.http.HttpMethod
+import io.ktor.http.*
+import kotlin.reflect.jvm.javaType
 
 class SchemaContextTest : StringSpec({
 
@@ -301,7 +303,11 @@ class SchemaContextTest : StringSpec({
             schema.`$ref` shouldBe "#/components/schemas/DataClassWithMaps"
         }
         schemaContext.getComponentSection().also { components ->
-            components.keys shouldContainExactlyInAnyOrder listOf("DataClassWithMaps", "Map(String,Long)", "Map(String,String)")
+            components.keys shouldContainExactlyInAnyOrder listOf(
+                "DataClassWithMaps",
+                "Map(String,Long)",
+                "Map(String,String)"
+            )
             components["DataClassWithMaps"]?.also { schema ->
                 schema.type shouldBe "object"
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("mapStringValues", "mapLongValues")
@@ -326,7 +332,12 @@ class SchemaContextTest : StringSpec({
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(pluginConfig, JsonSchemaBuilder(pluginConfig, pluginConfig.schemaGeneratorConfigBuilder.build()))
+            return SchemaContext(
+                config = pluginConfig,
+                schemaBuilder = SchemaBuilder("\$defs") { type ->
+                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
+                }
+            )
         }
 
         private data class QueryParamType(val value: String)

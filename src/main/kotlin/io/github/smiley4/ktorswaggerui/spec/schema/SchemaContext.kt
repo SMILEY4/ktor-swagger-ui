@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
@@ -16,7 +15,6 @@ import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getTypeName
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder.Companion.OpenApiSchemaInfo
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -24,10 +22,10 @@ import kotlin.collections.set
 
 class SchemaContext(
     private val config: SwaggerUIPluginConfig,
-    private val jsonSchemaBuilder: JsonSchemaBuilder
+    private val schemaBuilder: SchemaBuilder
 ) {
 
-    private val schemas = mutableMapOf<String, OpenApiSchemaInfo>()
+    private val schemas = mutableMapOf<String, SchemaDefinitions>()
     private val customSchemas = mutableMapOf<String, Schema<*>>()
 
 
@@ -92,7 +90,7 @@ class SchemaContext(
         if (schemas.containsKey(type.getTypeName())) {
             return
         }
-        addSchema(type, jsonSchemaBuilder.build(type))
+        addSchema(type, schemaBuilder.create(type))
     }
 
 
@@ -106,9 +104,7 @@ class SchemaContext(
         } else {
             when (customSchema) {
                 is CustomJsonSchema -> {
-                    jsonSchemaBuilder.build(ObjectMapper().readTree(customSchema.provider()), customSchemaRef.schemaId).let {
-                        it.schemas[it.rootSchema]!!
-                    }
+                    schemaBuilder.create(customSchema.provider()).root
                 }
                 is CustomOpenApiSchema -> {
                     customSchema.provider()
@@ -133,7 +129,7 @@ class SchemaContext(
         }
     }
 
-    fun addSchema(type: SchemaType, schema: OpenApiSchemaInfo) {
+    fun addSchema(type: SchemaType, schema: SchemaDefinitions) {
         schemas[type.getTypeName()] = schema
     }
 
@@ -143,16 +139,12 @@ class SchemaContext(
 
     fun getComponentSection(): Map<String, Schema<*>> {
         val componentSection = mutableMapOf<String, Schema<*>>()
-        schemas.forEach { (_, schemaInfo) ->
-            val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
+        schemas.forEach { (_, schemaDefinitions) ->
+            val rootSchema = schemaDefinitions.root
             if (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema)) {
                 // skip
-            } else if (isWrapperArray(rootSchema)) {
-                schemaInfo.schemas.toMutableMap()
-                    .also { it.remove(schemaInfo.rootSchema) }
-                    .also { componentSection.putAll(it) }
             } else {
-                componentSection.putAll(schemaInfo.schemas)
+                componentSection.putAll(schemaDefinitions.definitions)
             }
         }
         customSchemas.forEach { (schemaId, schema) ->
@@ -165,31 +157,21 @@ class SchemaContext(
     fun getSchema(customSchemaRef: CustomSchemaRef): Schema<*> {
         val schema = customSchemas[customSchemaRef.schemaId]
             ?: throw IllegalStateException("Could not retrieve schema for type '${customSchemaRef.schemaId}'")
-        return buildInlineSchema(customSchemaRef.schemaId, schema, 1)
+        return buildInlineSchema(customSchemaRef.schemaId, schema)
     }
 
 
     fun getSchema(type: SchemaType): Schema<*> {
-        val schemaInfo = getSchemaInfo(type)
-        val rootSchema = schemaInfo.schemas[schemaInfo.rootSchema]!!
-        return buildInlineSchema(schemaInfo.rootSchema, rootSchema, schemaInfo.schemas.size)
+        return getSchemaDefinitions(type).root
     }
 
 
-    private fun buildInlineSchema(schemaId: String, schema: Schema<*>, connectedSchemaCount: Int): Schema<*> {
-        if (isPrimitive(schema) && connectedSchemaCount == 1) {
+    private fun buildInlineSchema(schemaId: String, schema: Schema<*>): Schema<*> {
+        if (isPrimitive(schema)) {
             return schema
         }
-        if (isPrimitiveArray(schema) && connectedSchemaCount == 1) {
+        if (isPrimitiveArray(schema)) {
             return schema
-        }
-        if (isWrapperArray(schema)) {
-            return Schema<Any>().also { wrapper ->
-                wrapper.type = "array"
-                wrapper.items = Schema<Any>().also {
-                    it.`$ref` = schema.items.`$ref`
-                }
-            }
         }
         return Schema<Any>().also {
             it.`$ref` = "#/components/schemas/$schemaId"
@@ -197,7 +179,7 @@ class SchemaContext(
     }
 
 
-    private fun getSchemaInfo(type: SchemaType): OpenApiSchemaInfo {
+    private fun getSchemaDefinitions(type: SchemaType): SchemaDefinitions {
         return type.getTypeName().let { typeName ->
             schemas[typeName] ?: throw IllegalStateException("Could not retrieve schema for type '${typeName}'")
         }
@@ -210,10 +192,6 @@ class SchemaContext(
 
     private fun isPrimitiveArray(schema: Schema<*>): Boolean {
         return schema.type == "array" && (isPrimitive(schema.items) || isPrimitiveArray(schema.items))
-    }
-
-    private fun isWrapperArray(schema: Schema<*>): Boolean {
-        return schema.type == "array" && schema.items.type == null && schema.items.`$ref` != null
     }
 
 }

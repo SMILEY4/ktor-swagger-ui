@@ -44,7 +44,6 @@ class JsonSchemaBuilder(
     }
 
     fun build(schema: JsonNode, typeName: String): OpenApiSchemaInfo {
-        println("hello")
         return schema
             .let { processJsonSchema(it, typeName) }
             .let { buildOpenApiSchema(it) }
