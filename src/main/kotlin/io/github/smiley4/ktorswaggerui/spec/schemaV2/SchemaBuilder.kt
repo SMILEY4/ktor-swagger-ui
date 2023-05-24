@@ -1,4 +1,4 @@
-package io.github.smiley4.ktorswaggerui.spec.schema
+package io.github.smiley4.ktorswaggerui.spec.schemaV2
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper

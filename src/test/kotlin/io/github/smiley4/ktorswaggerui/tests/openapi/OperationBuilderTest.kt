@@ -15,8 +15,7 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty

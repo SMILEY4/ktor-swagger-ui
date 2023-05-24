@@ -15,6 +15,8 @@ import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getTypeName
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaDefinitions
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -192,6 +194,10 @@ class SchemaContext(
 
     private fun isPrimitiveArray(schema: Schema<*>): Boolean {
         return schema.type == "array" && (isPrimitive(schema.items) || isPrimitiveArray(schema.items))
+    }
+
+    private fun isReference(schema: Schema<*>): Boolean {
+        return schema.type == null && schema.`$ref` != null
     }
 
 }

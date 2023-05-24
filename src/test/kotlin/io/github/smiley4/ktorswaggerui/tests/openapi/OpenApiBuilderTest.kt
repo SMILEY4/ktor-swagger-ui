@@ -2,7 +2,6 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
 import io.github.smiley4.ktorswaggerui.spec.openapi.ComponentsBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
@@ -26,19 +25,15 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.kotest.core.spec.style.StringSpec
-import io.kotest.engine.test.logging.info
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldHaveSize
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.swagger.v3.oas.models.OpenAPI
-import io.swagger.v3.oas.models.info.Info
 import kotlin.reflect.jvm.javaType
 
 

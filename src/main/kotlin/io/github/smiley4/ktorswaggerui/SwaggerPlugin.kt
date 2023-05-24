@@ -5,7 +5,7 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*

@@ -56,9 +56,9 @@ dependencies {
     val versionKotlinTest = "1.7.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")// TODO: remove!!!!
-    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")// TODO: remove!!!!
-    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // TODO: remove!!!
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")// TODO
+    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")// TODO  -> https://github.com/tillersystems/json-schema-serialization/tree/glureau
+    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // TODO
 }
 
 tasks.test {

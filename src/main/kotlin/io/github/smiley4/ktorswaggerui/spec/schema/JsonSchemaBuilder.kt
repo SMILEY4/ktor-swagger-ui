@@ -102,7 +102,6 @@ class JsonSchemaBuilder(
     }
 
     private fun buildOpenApiSchema(json: JsonSchemaInfo): OpenApiSchemaInfo {
-        println(json)
         return OpenApiSchemaInfo(
             rootSchema = json.rootSchema,
             schemas = json.schemas.mapValues { (name, schema) -> buildOpenApiSchema(schema, name) }
