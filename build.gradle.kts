@@ -12,7 +12,6 @@ version = "2.0.0"
 
 repositories {
     mavenCentral()
-    jcenter() // TODO: remove!!!!
     maven(url = "https://raw.githubusercontent.com/glureau/json-schema-serialization/mvn-repo")
 }
 
@@ -59,9 +58,9 @@ dependencies {
     val versionKotlinTest = "1.7.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")// TODO
-    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")// TODO  -> https://github.com/tillersystems/json-schema-serialization/tree/glureau
-    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0") // TODO
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
 tasks.test {
