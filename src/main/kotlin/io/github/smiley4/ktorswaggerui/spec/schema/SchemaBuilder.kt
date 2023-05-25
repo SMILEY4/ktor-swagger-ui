@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaSerializer
+import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.swagger.v3.core.util.Json
 import io.swagger.v3.oas.models.media.Schema
@@ -18,7 +18,7 @@ data class SchemaDefinitions(
 
 class SchemaBuilder(
     private val definitionsField: String? = null,
-    private val schemaSerializer: CustomSchemaSerializer
+    private val schemaEncoder: SchemaEncoder
 ) {
 
 
@@ -42,7 +42,7 @@ class SchemaBuilder(
     }
 
     private fun createJsonSchema(type: SchemaType): JsonNode {
-        val str = schemaSerializer(type)
+        val str = schemaEncoder(type)
         return ObjectMapper().readTree(str)
     }
 

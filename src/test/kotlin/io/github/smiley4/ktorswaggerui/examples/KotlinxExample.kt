@@ -16,10 +16,10 @@ import kotlinx.serialization.serializer
 import com.github.ricky12awesome.jss.encodeToSchema
 
 /**
- * An example showcasing compatibility with kotlinx serializer and kotlinx multiplatform using:
+ * An example showing compatibility with kotlinx serializer and kotlinx multiplatform using:
  * - https://github.com/Kotlin/kotlinx.serialization
  * - https://github.com/Kotlin/kotlinx-datetime
- * - https://github.com/Ricky12Awesome/json-schema-serialization
+ * - https://github.com/tillersystems/json-schema-serialization
  */
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -33,12 +33,12 @@ private fun Application.myModule() {
     }
 
     install(SwaggerUI) {
-        serialization {
-            schemaSerializer { type ->
-                kotlinxJson.encodeToSchema(serializer(type), generateDefinitions = true)
-//                globalJson.encodeToSchema(serializer(type), generateDefinitions = false)
+        encoding {
+            schemaEncoder { type ->
+                kotlinxJson.encodeToSchema(serializer(type), generateDefinitions = false)
             }
-            exampleSerializer { type, value ->
+            schemaDefinitionsField = "definitions"
+            exampleEncoder { type, value ->
                 kotlinxJson.encodeToString(serializer(type!!), value)
             }
         }
@@ -57,18 +57,18 @@ private fun Application.myModule() {
         }) {
             call.respondText("...")
         }
-//        get("example/many", {
-//            request {
-//                body<List<ExampleRequest>> {
-//                    example("default", listOf(
-//                        ExampleRequest.B(Instant.fromEpochMilliseconds(System.currentTimeMillis())),
-//                        ExampleRequest.A(true)
-//                    ))
-//                }
-//            }
-//        }) {
-//            call.respondText("...")
-//        }
+        get("example/many", {
+            request {
+                body<List<ExampleRequest>> {
+                    example("default", listOf(
+                        ExampleRequest.B(Instant.fromEpochMilliseconds(System.currentTimeMillis())),
+                        ExampleRequest.A(true)
+                    ))
+                }
+            }
+        }) {
+            call.respondText("...")
+        }
     }
 }
 

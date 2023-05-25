@@ -8,7 +8,7 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaSerializer
+import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
@@ -338,12 +338,12 @@ class SchemaBuilderTest : StringSpec({
 
         inline fun <reified T> createSchema(
             defs: String,
-            noinline serializer: CustomSchemaSerializer
+            noinline serializer: SchemaEncoder
         ): SchemaDefinitions {
             return SchemaBuilder(defs, serializer).create(getSchemaType<T>())
         }
 
-        fun serializerVictools(definitions: Boolean): CustomSchemaSerializer {
+        fun serializerVictools(definitions: Boolean): SchemaEncoder {
             return { type ->
                 SchemaGenerator(
                     SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
@@ -366,7 +366,7 @@ class SchemaBuilderTest : StringSpec({
             }
         }
 
-        fun serializerKotlinX(generateDefinitions: Boolean): CustomSchemaSerializer {
+        fun serializerKotlinX(generateDefinitions: Boolean): SchemaEncoder {
             val kotlinxJson = Json {
                 prettyPrint = true
                 encodeDefaults = true

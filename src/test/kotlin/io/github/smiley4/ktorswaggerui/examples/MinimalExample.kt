@@ -26,6 +26,13 @@ private fun Application.myModule() {
 	routing {
 		// documented "get"-route
 		get("hello", {
+
+			request {
+				body<Int> {
+					example("example", 42)
+				}
+			}
+
 			// a description of the route
 			description = "Simple 'Hello World'- Route"
 			// information about possible responses

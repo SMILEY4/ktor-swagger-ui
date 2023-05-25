@@ -3,15 +3,10 @@ package io.github.smiley4.ktorswaggerui.examples
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
-import io.github.smiley4.ktorswaggerui.dsl.AuthType
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSort
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSyntaxHighlight
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaConfig
-import io.ktor.server.application.Application
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
+import io.github.smiley4.ktorswaggerui.dsl.*
+import io.ktor.server.application.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.jvm.javaType
 
@@ -19,6 +14,9 @@ fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
 }
 
+/**
+ * Example of an (almost) complete plugin config. This config will (probably) not work, but is only supposed to show all/most configuration options.
+ */
 private fun Application.myModule() {
 
     install(SwaggerUI) {
@@ -74,10 +72,7 @@ private fun Application.myModule() {
             externalDocUrl = "example.com/doc"
         }
         generateTags { url -> listOf(url.firstOrNull()) }
-        schemas {
-            jsonSchemaBuilder { type ->
-                SchemaGenerator(JsonSchemaConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toPrettyString()
-            }
+        customSchemas {
             json("customSchema1") {
                 """{"type": "string"}"""
             }
@@ -88,15 +83,16 @@ private fun Application.myModule() {
             }
             remote("customSchema3", "example.com/schema")
         }
-        inlineAllSchemas = true
-        serialization {
-            exampleSerializer { type, example ->
+        encoding {
+            schemaEncoder { type ->
+                SchemaGenerator(EncodingConfig.schemaGeneratorConfigBuilder().build())
+                    .generateSchema(type.javaType)
+                    .toPrettyString()
+            }
+            schemaDefinitionsField = "\$defs"
+            exampleEncoder { type, example ->
                 jacksonObjectMapper().writeValueAsString(example)
             }
-            schemaSerializer { type ->
-                SchemaGenerator(JsonSchemaConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toPrettyString()
-            }
         }
-        schemaGeneratorConfigBuilder = schemaGeneratorConfigBuilder.let { /*...*/ it }
     }
 }

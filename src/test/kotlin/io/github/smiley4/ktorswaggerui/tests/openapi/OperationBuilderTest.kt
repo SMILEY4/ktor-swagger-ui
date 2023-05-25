@@ -9,7 +9,6 @@ import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -444,7 +443,7 @@ class OperationBuilderTest : StringSpec({
                         .also { it.shouldNotBeNull() }
                         ?.also { content ->
                             content shouldHaveSize 2
-                            content.get("application/json")
+                            content["application/json"]
                                 .also { it.shouldNotBeNull() }
                                 ?.also { mediaType ->
                                     mediaType.schema
@@ -468,7 +467,7 @@ class OperationBuilderTest : StringSpec({
                                     mediaType.extensions shouldBe null
                                     mediaType.exampleSetFlag shouldBe false
                                 }
-                            content.get("application/xml")
+                            content["application/xml"]
                                 .also { it.shouldNotBeNull() }
                                 ?.also { mediaType ->
                                     mediaType.schema
@@ -740,7 +739,7 @@ class OperationBuilderTest : StringSpec({
                         .also { it.shouldNotBeNull() }
                         ?.also { content ->
                             content shouldHaveSize 1
-                            content.get("application/json")
+                            content["application/json"]
                                 .also { it.shouldNotBeNull() }
                                 ?.also { mediaType ->
                                     mediaType.schema
@@ -776,7 +775,7 @@ class OperationBuilderTest : StringSpec({
 
     "custom body schema" {
         val config = SwaggerUIPluginConfig().also {
-            it.schemas {
+            it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
                         schema.type = "object"
@@ -832,7 +831,7 @@ class OperationBuilderTest : StringSpec({
 
     "custom multipart-body schema" {
         val config = SwaggerUIPluginConfig().also {
-            it.schemas {
+            it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
                         schema.type = "object"
@@ -905,10 +904,10 @@ class OperationBuilderTest : StringSpec({
         ): SchemaContext {
             return SchemaContextBuilder(
                 config = pluginConfig,
-                schemaBuilder = SchemaBuilder("\$defs") { type ->
-                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType)
-                        .toString()
-                }
+                schemaBuilder = SchemaBuilder(
+                    definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
+                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+                )
             ).build(routes)
         }
 

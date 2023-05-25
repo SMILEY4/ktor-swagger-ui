@@ -1,19 +1,8 @@
 package io.github.smiley4.ktorswaggerui
 
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.dsl.SerializationConfig
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
-import io.github.smiley4.ktorswaggerui.spec.schema.JsonSchemaConfig
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.routing.RouteSelector
+import io.github.smiley4.ktorswaggerui.dsl.*
+import io.ktor.http.*
+import io.ktor.server.routing.*
 import kotlin.reflect.KClass
 
 /**
@@ -137,7 +126,7 @@ class SwaggerUIPluginConfig {
     /**
      * Custom schemas to reference via [io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef]
      */
-    fun schemas(block: CustomSchemas.() -> Unit) {
+    fun customSchemas(block: CustomSchemas.() -> Unit) {
         this.customSchemas = CustomSchemas().apply(block)
     }
 
@@ -147,26 +136,13 @@ class SwaggerUIPluginConfig {
 
 
     /**
-     * customize the behaviour of different serializers (examples, schemas, ...)
+     * customize the behaviour of different encoders (examples, schemas, ...)
      */
-    fun serialization(block: SerializationConfig.() -> Unit) {
-        block(serializationConfig)
+    fun encoding(block: EncodingConfig.() -> Unit) {
+        block(encodingConfig)
     }
 
-    val serializationConfig: SerializationConfig = SerializationConfig()
-
-
-    /**
-     * whether to inline all schemas or move keep them in the components section.
-     */
-    var inlineAllSchemas: Boolean = false // TODO
-
-
-    /**
-     * Customize or replace the configuration-builder for the json-schema-generator (see https://victools.github.io/jsonschema-generator/#generator-options for more information)
-     */
-    @Deprecated("")
-    var schemaGeneratorConfigBuilder: SchemaGeneratorConfigBuilder = JsonSchemaConfig.schemaGeneratorConfigBuilder
+    val encodingConfig: EncodingConfig = EncodingConfig()
 
 
     /**

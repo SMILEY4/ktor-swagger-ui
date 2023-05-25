@@ -327,7 +327,7 @@ class SchemaContextTest : StringSpec({
 
     "custom schema object" {
         val config = SwaggerUIPluginConfig().also {
-            it.schemas {
+            it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
                         schema.type = "object"
@@ -370,7 +370,7 @@ class SchemaContextTest : StringSpec({
 
     "custom schema array" {
         val config = SwaggerUIPluginConfig().also {
-            it.schemas {
+            it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
                         schema.type = "object"
@@ -422,9 +422,7 @@ class SchemaContextTest : StringSpec({
 
         inline fun <reified T> getType() = getSchemaType<T>()
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig().also {
-            it.schemaGeneratorConfigBuilder = it.schemaGeneratorConfigBuilder.without(Option.DEFINITION_FOR_MAIN_SCHEMA)
-        }
+        private val defaultPluginConfig = SwaggerUIPluginConfig()
 
         private fun schemaContext(
             routes: Collection<RouteMeta>,
@@ -432,10 +430,10 @@ class SchemaContextTest : StringSpec({
         ): SchemaContext {
             return SchemaContextBuilder(
                 config = pluginConfig,
-                schemaBuilder = SchemaBuilder("\$defs") { type ->
-                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType)
-                        .toString()
-                }
+                schemaBuilder = SchemaBuilder(
+                    definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
+                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+                )
             ).build(routes)
         }
 

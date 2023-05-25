@@ -17,7 +17,7 @@ class ExampleBuilder(
         }
 
     private fun buildExampleValue(type: SchemaType?, value: Any): Any {
-        return config.serializationConfig.getCustomExampleSerializer()(type, value) ?: value
+        return config.encodingConfig.getExampleEncoder()(type, value) ?: value
     }
 
 }

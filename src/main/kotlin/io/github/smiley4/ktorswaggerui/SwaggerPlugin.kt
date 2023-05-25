@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui
 
-import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.spec.openapi.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
@@ -13,7 +12,6 @@ import io.ktor.server.application.hooks.*
 import io.ktor.server.routing.*
 import io.ktor.server.webjars.*
 import io.swagger.v3.core.util.Json
-import kotlin.reflect.jvm.javaType
 
 /**
  * This version must match the version of the gradle dependency
@@ -50,9 +48,10 @@ private fun routes(application: Application, pluginConfig: SwaggerUIPluginConfig
 private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): SchemaContext {
     return SchemaContextBuilder(
         config = pluginConfig,
-        schemaBuilder = SchemaBuilder("\$defs") { type -> // TODO: customizable
-            SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
-        }
+        schemaBuilder = SchemaBuilder(
+            definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
+            schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+        ),
     ).build(routes.toList())
 }
 

@@ -40,6 +40,9 @@ dependencies {
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
 
+    val jacksonVersion = "2.14.2"
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
+
     val kotlinLoggingVersion = "2.1.23"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 

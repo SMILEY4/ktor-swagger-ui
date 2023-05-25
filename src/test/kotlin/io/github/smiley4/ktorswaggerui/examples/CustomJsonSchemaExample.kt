@@ -37,7 +37,7 @@ private fun Application.myModule() {
     install(SwaggerUI) {
         // don't show the test-routes providing json-schemas
         pathFilter = { _, url -> url.firstOrNull() != "schema" }
-        schemas {
+        customSchemas {
             // specify a custom json-schema with the id 'myRequestData'
             json("myRequestData") {
                 """

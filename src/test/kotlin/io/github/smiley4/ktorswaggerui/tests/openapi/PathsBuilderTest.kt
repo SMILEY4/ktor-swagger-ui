@@ -89,9 +89,10 @@ class PathsBuilderTest : StringSpec({
         private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
             return SchemaContextBuilder(
                 config = pluginConfig,
-                schemaBuilder = SchemaBuilder("\$defs") { type ->
-                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
-                }
+                schemaBuilder = SchemaBuilder(
+                    definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
+                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+                )
             ).build(routes)
         }
 
