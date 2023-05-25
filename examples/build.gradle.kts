@@ -4,11 +4,8 @@ plugins {
     kotlin("jvm") version "1.7.21"
     `maven-publish`
     id("org.owasp.dependencycheck") version "8.2.1"
-    kotlin("plugin.serialization") version "1.8.21" // TODO: remove!!!!
+    kotlin("plugin.serialization") version "1.8.21"
 }
-
-group = "io.github.smiley4"
-version = "2.0.0"
 
 repositories {
     mavenCentral()

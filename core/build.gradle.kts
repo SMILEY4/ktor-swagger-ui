@@ -4,15 +4,10 @@ plugins {
     kotlin("jvm") version "1.7.21"
     `maven-publish`
     id("org.owasp.dependencycheck") version "8.2.1"
-    kotlin("plugin.serialization") version "1.8.21" // TODO: remove!!!!
 }
-
-group = "io.github.smiley4"
-version = "2.0.0"
 
 repositories {
     mavenCentral()
-    maven(url = "https://raw.githubusercontent.com/glureau/json-schema-serialization/mvn-repo")
 }
 
 dependencies {
@@ -57,10 +52,6 @@ dependencies {
 
     val versionKotlinTest = "1.7.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
-
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
 tasks.test {
