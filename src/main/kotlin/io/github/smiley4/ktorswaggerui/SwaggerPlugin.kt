@@ -5,8 +5,9 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*
 import io.ktor.server.routing.*
@@ -47,12 +48,12 @@ private fun routes(application: Application, pluginConfig: SwaggerUIPluginConfig
 }
 
 private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): SchemaContext {
-    return SchemaContext(
+    return SchemaContextBuilder(
         config = pluginConfig,
-        schemaBuilder = SchemaBuilder("\$defs") { type ->
+        schemaBuilder = SchemaBuilder("\$defs") { type -> // TODO: customizable
             SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
         }
-    ).initialize(routes.toList())
+    ).build(routes.toList())
 }
 
 private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext): OpenApiBuilder {

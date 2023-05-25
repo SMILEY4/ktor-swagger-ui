@@ -5,18 +5,19 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo
 import com.github.victools.jsonschema.generator.Option
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
-import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
+import io.github.smiley4.ktorswaggerui.dsl.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.ktor.http.*
+import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.jvm.javaType
 
 class SchemaContextTest : StringSpec({
@@ -43,7 +44,7 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(QueryParamType::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/QueryParamType"
@@ -68,7 +69,7 @@ class SchemaContextTest : StringSpec({
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/ResponseBodyType"
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf(
                 "QueryParamType",
                 "PathParamType",
@@ -97,13 +98,13 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(Integer::class.asSchemaType()).also { schema ->
             schema.type shouldBe "integer"
             schema.format shouldBe "int32"
             schema.`$ref` shouldBe null
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.shouldBeEmpty()
         }
     }
@@ -121,7 +122,7 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(getType<List<String>>()).also { schema ->
             schema.type shouldBe "array"
             schema.`$ref` shouldBe null
@@ -129,7 +130,7 @@ class SchemaContextTest : StringSpec({
                 item.type shouldBe "string"
             }
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.shouldBeEmpty()
         }
     }
@@ -147,7 +148,7 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(getType<List<List<List<Boolean>>>>()).also { schema ->
             schema.type shouldBe "array"
             schema.`$ref` shouldBe null
@@ -163,7 +164,7 @@ class SchemaContextTest : StringSpec({
                 }
             }
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.shouldBeEmpty()
         }
     }
@@ -181,12 +182,12 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(SimpleDataClass::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf("SimpleDataClass")
             components["SimpleDataClass"]?.also { schema ->
                 schema.type shouldBe "object"
@@ -208,7 +209,7 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(getType<List<SimpleDataClass>>()).also { schema ->
             schema.type shouldBe "array"
             schema.`$ref` shouldBe null
@@ -217,7 +218,7 @@ class SchemaContextTest : StringSpec({
                 item.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
             }
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf("SimpleDataClass")
             components["SimpleDataClass"]?.also { schema ->
                 schema.type shouldBe "object"
@@ -239,12 +240,12 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(DataWrapper::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/DataWrapper"
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf("SimpleDataClass", "DataWrapper")
             components["SimpleDataClass"]?.also { schema ->
                 schema.type shouldBe "object"
@@ -274,13 +275,13 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(SimpleEnum::class.asSchemaType()).also { schema ->
             schema.type shouldBe "string"
             schema.enum shouldContainExactlyInAnyOrder SimpleEnum.values().map { it.name }
             schema.`$ref` shouldBe null
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.keys.shouldBeEmpty()
         }
     }
@@ -298,12 +299,12 @@ class SchemaContextTest : StringSpec({
                 protected = false
             )
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         schemaContext.getSchema(DataClassWithMaps::class.asSchemaType()).also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/DataClassWithMaps"
         }
-        schemaContext.getComponentSection().also { components ->
+        schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf(
                 "DataClassWithMaps",
                 "Map(String,Long)",
@@ -324,6 +325,97 @@ class SchemaContextTest : StringSpec({
         }
     }
 
+    "custom schema object" {
+        val config = SwaggerUIPluginConfig().also {
+            it.schemas {
+                openApi("myCustomSchema") {
+                    Schema<Any>().also { schema ->
+                        schema.type = "object"
+                        schema.properties = mapOf(
+                            "custom" to Schema<Any>().also { prop ->
+                                prop.type = "string"
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        val routes = listOf(
+            RouteMeta(
+                path = "/test",
+                method = HttpMethod.Get,
+                documentation = OpenApiRoute().apply {
+                    request {
+                        body(obj("myCustomSchema"))
+                    }
+                },
+                protected = false
+            )
+        )
+        val schemaContext = schemaContext(routes, config)
+        schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
+            schema.type shouldBe null
+            schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
+        }
+        schemaContext.getComponentsSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf(
+                "myCustomSchema",
+            )
+            components["myCustomSchema"]?.also { schema ->
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactlyInAnyOrder listOf("custom")
+            }
+        }
+    }
+
+    "custom schema array" {
+        val config = SwaggerUIPluginConfig().also {
+            it.schemas {
+                openApi("myCustomSchema") {
+                    Schema<Any>().also { schema ->
+                        schema.type = "object"
+                        schema.properties = mapOf(
+                            "custom" to Schema<Any>().also { prop ->
+                                prop.type = "string"
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        val routes = listOf(
+            RouteMeta(
+                path = "/test",
+                method = HttpMethod.Get,
+                documentation = OpenApiRoute().apply {
+                    request {
+                        body(array("myCustomSchema"))
+                    }
+                },
+                protected = false
+            )
+        )
+        val schemaContext = schemaContext(routes, config)
+        schemaContext.getSchema(array("myCustomSchema")).also { schema ->
+            schema.type shouldBe "array"
+            schema.`$ref` shouldBe null
+            schema.items
+                .also { it shouldNotBe null }
+                ?.also { items ->
+                    items.`$ref` shouldBe "#/components/schemas/myCustomSchema"
+                }
+        }
+        schemaContext.getComponentsSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf(
+                "myCustomSchema",
+            )
+            components["myCustomSchema"]?.also { schema ->
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactlyInAnyOrder listOf("custom")
+            }
+        }
+    }
+
 }) {
 
     companion object {
@@ -334,14 +426,19 @@ class SchemaContextTest : StringSpec({
             it.schemaGeneratorConfigBuilder = it.schemaGeneratorConfigBuilder.without(Option.DEFINITION_FOR_MAIN_SCHEMA)
         }
 
-        private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(
+        private fun schemaContext(
+            routes: Collection<RouteMeta>,
+            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+        ): SchemaContext {
+            return SchemaContextBuilder(
                 config = pluginConfig,
                 schemaBuilder = SchemaBuilder("\$defs") { type ->
-                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
+                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType)
+                        .toString()
                 }
-            )
+            ).build(routes)
         }
+
         private data class QueryParamType(val value: String)
 
         private data class PathParamType(val value: String)

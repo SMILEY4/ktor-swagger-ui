@@ -10,8 +10,8 @@ import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaSerializer
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaDefinitions
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize

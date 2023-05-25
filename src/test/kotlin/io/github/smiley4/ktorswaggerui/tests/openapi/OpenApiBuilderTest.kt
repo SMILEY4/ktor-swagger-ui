@@ -25,8 +25,9 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
@@ -96,17 +97,17 @@ class OpenApiBuilderTest : StringSpec({
 
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
-        private fun schemaContext(pluginConfig: SwaggerUIPluginConfig): SchemaContext {
-            return SchemaContext(
+        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): SchemaContext {
+            return SchemaContextBuilder(
                 config = pluginConfig,
                 schemaBuilder = SchemaBuilder("\$defs") { type ->
                     SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
                 }
-            )
+            ).build(routes)
         }
 
         private fun buildOpenApiObject(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): OpenAPI {
-            val schemaContext = schemaContext(pluginConfig).initialize(routes)
+            val schemaContext = schemaContext(routes, pluginConfig)
             return OpenApiBuilder(
                 config = pluginConfig,
                 schemaContext = schemaContext,

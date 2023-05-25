@@ -4,19 +4,12 @@ import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.obj
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -25,9 +18,7 @@ import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.media.Schema
 import java.io.File
@@ -42,7 +33,7 @@ class OperationBuilderTest : StringSpec({
             documentation = OpenApiRoute(),
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
@@ -72,7 +63,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.tags shouldContainExactlyInAnyOrder listOf("tag1", "tag2")
             operation.summary shouldBe "this is some test route"
@@ -109,7 +100,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(routeA, routeB))
+        val schemaContext = schemaContext(listOf(routeA, routeB))
         buildOperationObject(routeA, schemaContext, config).also { operation ->
             operation.tags shouldContainExactlyInAnyOrder listOf("a", "defaultTag")
         }
@@ -127,7 +118,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = true
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.security
                 .also { it.shouldNotBeNull() }
@@ -146,7 +137,7 @@ class OperationBuilderTest : StringSpec({
             documentation = OpenApiRoute(),
             protected = true
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
@@ -172,7 +163,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
@@ -203,7 +194,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
@@ -325,7 +316,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
@@ -397,7 +388,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.parameters.also { parameters ->
                 parameters shouldHaveSize 1
@@ -443,7 +434,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
@@ -532,7 +523,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
@@ -548,7 +539,10 @@ class OperationBuilderTest : StringSpec({
                                         .also { it.shouldNotBeNull() }
                                         ?.also { schema ->
                                             schema.type shouldBe "object"
-                                            schema.properties.keys shouldContainExactlyInAnyOrder listOf("image", "data")
+                                            schema.properties.keys shouldContainExactlyInAnyOrder listOf(
+                                                "image",
+                                                "data"
+                                            )
 
                                         }
                                     mediaType.example shouldBe null
@@ -595,7 +589,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
@@ -641,7 +635,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.responses
                 .also { it shouldHaveSize 4 }
@@ -680,7 +674,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = true
         )
-        val schemaContext = schemaContext(config).initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route), config)
         buildOperationObject(route, schemaContext, config).also { operation ->
             operation.responses
                 .also { it shouldHaveSize 2 }
@@ -713,7 +707,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext(config).initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route), config)
         buildOperationObject(route, schemaContext, config).also { operation ->
             operation.responses
                 .also { it shouldHaveSize 1 }
@@ -736,7 +730,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
+        val schemaContext = schemaContext(listOf(route))
         buildOperationObject(route, schemaContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
@@ -771,7 +765,7 @@ class OperationBuilderTest : StringSpec({
                     body.`$ref` shouldBe null
                 }
         }
-        schemaContext.getComponentSection().also { section ->
+        schemaContext.getComponentsSection().also { section ->
             section.keys shouldContainExactlyInAnyOrder listOf("SimpleObject")
             section["SimpleObject"]?.also { schema ->
                 schema.type shouldBe "object"
@@ -781,6 +775,20 @@ class OperationBuilderTest : StringSpec({
     }
 
     "custom body schema" {
+        val config = SwaggerUIPluginConfig().also {
+            it.schemas {
+                openApi("myCustomSchema") {
+                    Schema<Any>().also { schema ->
+                        schema.type = "object"
+                        schema.properties = mapOf(
+                            "custom" to Schema<Any>().also { prop ->
+                                prop.type = "string"
+                            }
+                        )
+                    }
+                }
+            }
+        }
         val route = RouteMeta(
             path = "/test",
             method = HttpMethod.Get,
@@ -791,10 +799,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
-        schemaContext.addSchema(obj("myCustomSchema"), Schema<Any>().also {
-            it.type = "custom_type"
-        })
+        val schemaContext = schemaContext(listOf(route), config)
         buildOperationObject(route, schemaContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
@@ -804,12 +809,12 @@ class OperationBuilderTest : StringSpec({
                         .also { it.shouldNotBeNull() }
                         ?.also { content ->
                             content shouldHaveSize 1
-                            content.get("text/plain")
+                            content["application/json"]
                                 .also { it.shouldNotBeNull() }
                                 ?.also { mediaType ->
                                     mediaType.schema
                                         .also { it.shouldNotBeNull() }
-                                        ?.also { schema -> schema.type shouldBe "custom_type" }
+                                        ?.also { schema -> schema.`$ref` shouldBe "#/components/schemas/myCustomSchema" }
                                     mediaType.example shouldBe null
                                     mediaType.examples shouldBe null
                                     mediaType.encoding shouldBe null
@@ -826,6 +831,20 @@ class OperationBuilderTest : StringSpec({
     }
 
     "custom multipart-body schema" {
+        val config = SwaggerUIPluginConfig().also {
+            it.schemas {
+                openApi("myCustomSchema") {
+                    Schema<Any>().also { schema ->
+                        schema.type = "object"
+                        schema.properties = mapOf(
+                            "custom" to Schema<Any>().also { prop ->
+                                prop.type = "string"
+                            }
+                        )
+                    }
+                }
+            }
+        }
         val route = RouteMeta(
             path = "/test",
             method = HttpMethod.Get,
@@ -839,10 +858,7 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext().initialize(listOf(route))
-        schemaContext.addSchema(obj("myCustomSchema"), Schema<Any>().also {
-            it.type = "custom_type"
-        })
+        val schemaContext = schemaContext(listOf(route), config)
         buildOperationObject(route, schemaContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
@@ -851,7 +867,7 @@ class OperationBuilderTest : StringSpec({
                         .also { it.shouldNotBeNull() }
                         ?.also { content ->
                             content shouldHaveSize 1
-                            content.get("multipart/form-data")
+                            content["multipart/form-data"]
                                 .also { it.shouldNotBeNull() }
                                 ?.also { mediaType ->
                                     mediaType.schema
@@ -859,7 +875,7 @@ class OperationBuilderTest : StringSpec({
                                         ?.also { schema ->
                                             schema.type shouldBe "object"
                                             schema.properties.keys shouldContainExactlyInAnyOrder listOf("customData")
-                                            schema.properties["customData"]!!.type shouldBe "custom_type"
+                                            schema.properties["customData"]!!.`$ref` shouldBe "#/components/schemas/myCustomSchema"
                                         }
                                     mediaType.example shouldBe null
                                     mediaType.examples shouldBe null
@@ -883,13 +899,17 @@ class OperationBuilderTest : StringSpec({
 
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
-        private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(
+        private fun schemaContext(
+            routes: List<RouteMeta>,
+            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+        ): SchemaContext {
+            return SchemaContextBuilder(
                 config = pluginConfig,
                 schemaBuilder = SchemaBuilder("\$defs") { type ->
-                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
+                    SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType)
+                        .toString()
                 }
-            )
+            ).build(routes)
         }
 
         private fun buildOperationObject(

@@ -1,203 +1,218 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
-import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
-import io.github.smiley4.ktorswaggerui.dsl.CustomObjectSchemaRef
-import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
-import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
-import io.github.smiley4.ktorswaggerui.dsl.SchemaType
-import io.github.smiley4.ktorswaggerui.dsl.getTypeName
-import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaDefinitions
+import io.github.smiley4.ktorswaggerui.dsl.*
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-class SchemaContext(
-    private val config: SwaggerUIPluginConfig,
-    private val schemaBuilder: SchemaBuilder
-) {
 
-    private val schemas = mutableMapOf<String, SchemaDefinitions>()
-    private val customSchemas = mutableMapOf<String, Schema<*>>()
+class SchemaContext {
 
+    companion object {
 
-    fun initialize(routes: Collection<RouteMeta>): SchemaContext {
-        routes.forEach { handle(it) }
-        config.getDefaultUnauthorizedResponse()?.also { handle(it) }
-        return this
-    }
+        private data class SchemaKeyWrapper(
+            val type: SchemaType,
+            val schemaId: String,
+            val isCustom: Boolean
+        ) {
 
+            companion object {
+                val PLACEHOLDER_TYPE = getSchemaType<Any>()
+                const val PLACEHOLDER_SCHEMAID = ""
 
-    private fun handle(route: RouteMeta) {
-        route.documentation.getRequest().getBody()?.also { handle(it) }
-        route.documentation.getRequest().getParameters().forEach { handle(it) }
-        route.documentation.getResponses().getResponses().forEach { handle(it) }
-    }
+                fun type(type: SchemaType) = SchemaKeyWrapper(
+                    type = type,
+                    schemaId = PLACEHOLDER_SCHEMAID,
+                    isCustom = false
+                )
 
-
-    private fun handle(response: OpenApiResponse) {
-        response.getHeaders().forEach { (_, header) ->
-            header.type?.also { headerType ->
-                createSchema(headerType)
-            }
-        }
-        response.getBody()?.also { handle(it) }
-    }
-
-
-    private fun handle(body: OpenApiBaseBody) {
-        return when (body) {
-            is OpenApiSimpleBody -> handle(body)
-            is OpenApiMultipartBody -> handle(body)
-        }
-    }
-
-
-    private fun handle(body: OpenApiSimpleBody) {
-        if (body.customSchema != null) {
-            body.customSchema?.also { createSchema(it) }
-        } else {
-            body.type?.also { createSchema(it) }
-        }
-    }
-
-
-    private fun handle(body: OpenApiMultipartBody) {
-        body.getParts().forEach { part ->
-            if (part.customSchema != null) {
-                part.customSchema?.also { createSchema(it) }
-            } else {
-                part.type?.also { createSchema(it) }
+                fun custom(schemaId: String) = SchemaKeyWrapper(
+                    type = PLACEHOLDER_TYPE,
+                    schemaId = schemaId,
+                    isCustom = true
+                )
             }
         }
     }
 
+    private val schemas = mutableMapOf<SchemaType, SchemaDefinitions>()
+    private val schemasCustom = mutableMapOf<String, SchemaDefinitions>()
 
-    private fun handle(parameter: OpenApiRequestParameter) {
-        createSchema(parameter.type)
-    }
+    private val componentsSection = mutableMapOf<String, Schema<*>>()
+    private val inlineSchemas = mutableMapOf<SchemaType, Schema<*>>()
+    private val inlineSchemasCustom = mutableMapOf<String, Schema<*>>()
 
-
-    private fun createSchema(type: SchemaType) {
-        if (schemas.containsKey(type.getTypeName())) {
-            return
-        }
-        addSchema(type, schemaBuilder.create(type))
-    }
-
-
-    private fun createSchema(customSchemaRef: CustomSchemaRef) {
-        if (customSchemas.containsKey(customSchemaRef.schemaId)) {
-            return
-        }
-        val customSchema = config.getCustomSchemas().getSchema(customSchemaRef.schemaId)
-        if (customSchema == null) {
-            addSchema(customSchemaRef, Schema<Any>())
-        } else {
-            when (customSchema) {
-                is CustomJsonSchema -> {
-                    schemaBuilder.create(customSchema.provider()).root
-                }
-                is CustomOpenApiSchema -> {
-                    customSchema.provider()
-                }
-                is RemoteSchema -> {
-                    Schema<Any>().apply {
-                        type = "object"
-                        `$ref` = customSchema.url
-                    }
-                }
-            }.let { schema ->
-                when (customSchemaRef) {
-                    is CustomObjectSchemaRef -> schema
-                    is CustomArraySchemaRef -> Schema<Any>().apply {
-                        this.type = "array"
-                        this.items = schema
-                    }
-                }
-            }.also {
-                addSchema(customSchemaRef, it)
-            }
-        }
-    }
 
     fun addSchema(type: SchemaType, schema: SchemaDefinitions) {
-        schemas[type.getTypeName()] = schema
+        schemas[type] = schema
     }
 
-    fun addSchema(customSchemaRef: CustomSchemaRef, schema: Schema<*>) {
-        customSchemas[customSchemaRef.schemaId] = schema
+
+    fun addSchema(ref: CustomSchemaRef, schema: SchemaDefinitions) {
+        schemasCustom[ref.schemaId] = schema
     }
 
-    fun getComponentSection(): Map<String, Schema<*>> {
-        val componentSection = mutableMapOf<String, Schema<*>>()
-        schemas.forEach { (_, schemaDefinitions) ->
-            val rootSchema = schemaDefinitions.root
-            if (isPrimitive(rootSchema) || isPrimitiveArray(rootSchema)) {
-                // skip
+
+    fun getComponentsSection(): Map<String, Schema<*>> = componentsSection
+
+
+    fun getSchema(type: SchemaType) = inlineSchemas[type] ?: throw Exception("No schema for type '$type'!")
+
+
+    fun getSchema(ref: CustomSchemaRef) = inlineSchemasCustom[ref.schemaId] ?: throw Exception("No schema for ref '$ref'!")
+
+
+    fun finalize() {
+        schemas.forEach { (type, schemaDefinitions) ->
+            finalize(SchemaKeyWrapper.type(type), schemaDefinitions)
+        }
+        schemasCustom.forEach { (schemaId, schemaDefinitions) ->
+            finalize(SchemaKeyWrapper.custom(schemaId), schemaDefinitions)
+        }
+    }
+
+    private fun finalize(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        // only root definition
+        if (schemaDefinitions.definitions.isEmpty()) {
+            val root = schemaDefinitions.root
+            if (root.isPrimitive() || root.isPrimitiveArray()) {
+                inlineRoot(key, schemaDefinitions)
+            } else if (root.isObjectArray()) {
+                unwrapRootArray(key, schemaDefinitions)
             } else {
-                componentSection.putAll(schemaDefinitions.definitions)
+                createInlineReference(key, schemaDefinitions)
             }
         }
-        customSchemas.forEach { (schemaId, schema) ->
-            componentSection[schemaId] = schema
+        // only one additional definition
+        if (schemaDefinitions.definitions.size == 1) {
+            val root = schemaDefinitions.root
+            val definition = schemaDefinitions.definitions.entries.first().value
+            if (root.isReference() && (definition.isPrimitive() || definition.isPrimitiveArray())) {
+                inlineSingleDefinition(key, schemaDefinitions)
+            } else if (root.isReference() || root.isReferenceArray()) {
+                inlineRoot(key, schemaDefinitions)
+            } else if (root.isObjectArray()) {
+                unwrapRootArray(key, schemaDefinitions)
+            } else {
+                createInlineReference(key, schemaDefinitions)
+            }
         }
-        return componentSection
-    }
-
-
-    fun getSchema(customSchemaRef: CustomSchemaRef): Schema<*> {
-        val schema = customSchemas[customSchemaRef.schemaId]
-            ?: throw IllegalStateException("Could not retrieve schema for type '${customSchemaRef.schemaId}'")
-        return buildInlineSchema(customSchemaRef.schemaId, schema)
-    }
-
-
-    fun getSchema(type: SchemaType): Schema<*> {
-        return getSchemaDefinitions(type).root
-    }
-
-
-    private fun buildInlineSchema(schemaId: String, schema: Schema<*>): Schema<*> {
-        if (isPrimitive(schema)) {
-            return schema
-        }
-        if (isPrimitiveArray(schema)) {
-            return schema
-        }
-        return Schema<Any>().also {
-            it.`$ref` = "#/components/schemas/$schemaId"
+        // multiple additional definitions
+        if (schemaDefinitions.definitions.size > 1) {
+            val root = schemaDefinitions.root
+            if (root.isReference() || root.isReferenceArray()) {
+                inlineRoot(key, schemaDefinitions)
+            } else if (root.isObjectArray()) {
+                unwrapRootArray(key, schemaDefinitions)
+            } else {
+                createInlineReference(key, schemaDefinitions)
+            }
         }
     }
 
-
-    private fun getSchemaDefinitions(type: SchemaType): SchemaDefinitions {
-        return type.getTypeName().let { typeName ->
-            schemas[typeName] ?: throw IllegalStateException("Could not retrieve schema for type '${typeName}'")
+    private fun inlineRoot(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        /*
+        - root-schema: inline
+        - definitions: in components section
+         */
+        addInline(key, schemaDefinitions.root)
+        schemaDefinitions.definitions.forEach { (name, schema) ->
+            addToComponentsSection(name, schema)
         }
     }
 
-
-    private fun isPrimitive(schema: Schema<*>): Boolean {
-        return schema.type != "object" && schema.type != "array" && schema.type != null
+    private fun inlineSingleDefinition(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        /*
+        - assumption: size(definitions) == 1
+        - root-schema: discard
+        - definition:  inline
+         */
+        if (schemaDefinitions.definitions.size != 1) {
+            throw Exception("Unexpected amount of additional schema-definitions: ${schemaDefinitions.definitions.size}")
+        }
+        schemaDefinitions.definitions.entries.first()
+            .also { addInline(key, it.value) }
     }
 
-    private fun isPrimitiveArray(schema: Schema<*>): Boolean {
-        return schema.type == "array" && (isPrimitive(schema.items) || isPrimitiveArray(schema.items))
+    private fun createInlineReference(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        /*
+        - root-schema: in components section
+        - definitions: in components section
+        - create inline ref to root
+         */
+        schemaDefinitions.definitions.forEach { (name, schema) ->
+            addToComponentsSection(name, schema)
+        }
+        val rootName = schemaName(key)
+        addToComponentsSection(rootName, schemaDefinitions.root)
+        addInline(key, Schema<Any>().also {
+            it.`$ref` = "#/components/schemas/$rootName"
+        })
     }
 
-    private fun isReference(schema: Schema<*>): Boolean {
-        return schema.type == null && schema.`$ref` != null
+    private fun unwrapRootArray(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        /*
+        - assumption: root schema.type == array
+        - root-schema: unwrap
+            - item -> component section
+            - create inline array-ref to item
+        - definitions: in components section
+         */
+        if (schemaDefinitions.root.items == null) {
+            throw Exception("Expected items for array-schema but items were 'null'.")
+        }
+        schemaDefinitions.definitions.forEach { (name, schema) ->
+            addToComponentsSection(name, schema)
+        }
+        val rootName = schemaName(key)
+        addToComponentsSection(rootName, schemaDefinitions.root.items)
+        addInline(key, Schema<Any>().also { array ->
+            array.type = "array"
+            array.items = Schema<Any>().also { item ->
+                item.`$ref` = "#/components/schemas/$rootName"
+            }
+        })
+    }
+
+    private fun schemaName(key: SchemaKeyWrapper): String {
+        return if (key.isCustom) {
+            key.schemaId
+        } else {
+            key.type.getSimpleTypeName()
+        }
+    }
+
+    private fun addToComponentsSection(name: String, schema: Schema<*>) {
+        componentsSection[name] = schema
+    }
+
+    private fun addInline(key: SchemaKeyWrapper, schema: Schema<*>) {
+        if (key.isCustom) {
+            inlineSchemasCustom[key.schemaId] = schema
+        } else {
+            inlineSchemas[key.type] = schema
+        }
+    }
+
+    private fun Schema<*>.isPrimitive(): Boolean {
+        return type != "object" && type != "array" && type != null
+    }
+
+    private fun Schema<*>.isPrimitiveArray(): Boolean {
+        return type == "array" && (items.isPrimitive() || items.isPrimitiveArray())
+    }
+
+    private fun Schema<*>.isObjectArray(): Boolean {
+        return type == "array" && !items.isPrimitive() && !items.isPrimitiveArray()
+    }
+
+    private fun Schema<*>.isReference(): Boolean {
+        return type == null && `$ref` != null
+    }
+
+    private fun Schema<*>.isReferenceArray(): Boolean {
+        return type == "array" && items.isReference()
     }
 
 }

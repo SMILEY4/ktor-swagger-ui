@@ -16,8 +16,9 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schemaV2.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldHaveSize
@@ -34,7 +35,7 @@ class PathsBuilderTest : StringSpec({
             route(HttpMethod.Delete, "/test/path"),
             route(HttpMethod.Post, "/other/test/route")
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         buildPathsObject(routes, schemaContext).also { paths ->
             paths shouldHaveSize 3
             paths.keys shouldContainExactlyInAnyOrder listOf(
@@ -59,7 +60,7 @@ class PathsBuilderTest : StringSpec({
             route(HttpMethod.Get, "/test/path"),
             route(HttpMethod.Post, "/test/path"),
         )
-        val schemaContext = schemaContext().initialize(routes)
+        val schemaContext = schemaContext(routes)
         buildPathsObject(routes, schemaContext, config).also { paths ->
             paths shouldHaveSize 2
             paths.keys shouldContainExactlyInAnyOrder listOf(
@@ -85,13 +86,13 @@ class PathsBuilderTest : StringSpec({
 
         private val defaultPluginConfig = SwaggerUIPluginConfig()
 
-        private fun schemaContext(pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
-            return SchemaContext(
+        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
+            return SchemaContextBuilder(
                 config = pluginConfig,
                 schemaBuilder = SchemaBuilder("\$defs") { type ->
                     SchemaGenerator(pluginConfig.schemaGeneratorConfigBuilder.build()).generateSchema(type.javaType).toString()
                 }
-            )
+            ).build(routes)
         }
 
         private fun buildPathsObject(

@@ -21,7 +21,7 @@ class OpenApiBuilder(
             it.servers = config.getServers().map { server -> serverBuilder.build(server) }
             it.tags = config.getTags().map { tag -> tagBuilder.build(tag) }
             it.paths = pathsBuilder.build(routes)
-            it.components = componentsBuilder.build(schemaContext.getComponentSection())
+            it.components = componentsBuilder.build(schemaContext.getComponentsSection())
         }
     }
 
