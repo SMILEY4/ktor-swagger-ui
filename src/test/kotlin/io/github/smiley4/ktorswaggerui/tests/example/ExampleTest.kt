@@ -197,6 +197,5 @@ class ExampleTest : StringSpec({
             return this.documentation.getRequest().getBody()!! as OpenApiSimpleBody
         }
 
-
     }
 }

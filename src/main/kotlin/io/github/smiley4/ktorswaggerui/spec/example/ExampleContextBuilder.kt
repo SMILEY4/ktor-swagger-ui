@@ -18,9 +18,8 @@ class ExampleContextBuilder(
 ) {
 
     fun build(routes: Collection<RouteMeta>): ExampleContext {
-        return ExampleContext(config)
+        return ExampleContext()
             .also { ctx -> routes.forEach { handle(ctx, it) } }
-            .also { ctx -> ctx.finalize() }
     }
 
 

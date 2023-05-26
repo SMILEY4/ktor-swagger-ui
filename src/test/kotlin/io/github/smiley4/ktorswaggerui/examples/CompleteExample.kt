@@ -227,7 +227,7 @@ private fun Application.myModule() {
                     }
                 }
             }) {
-                call.respond(HttpStatusCode.NotImplemented, "todo")
+                call.respond(HttpStatusCode.NotImplemented, "...")
             }
 
             delete("{id}", {
@@ -256,14 +256,14 @@ private fun Application.myModule() {
                 }
             }
         }){
-            call.respond(HttpStatusCode.NotImplemented, "todo")
+            call.respond(HttpStatusCode.NotImplemented, "...")
         }
 
         get("hidden", {
             hidden = true
             description = "This route is hidden and not visible in swagger"
         }){
-            call.respond(HttpStatusCode.NotImplemented, "todo")
+            call.respond(HttpStatusCode.NotImplemented, "...")
         }
 
     }
