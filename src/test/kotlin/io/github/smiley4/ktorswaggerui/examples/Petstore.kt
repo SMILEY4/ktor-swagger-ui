@@ -60,7 +60,7 @@ private fun Application.myModule() {
             response {
                 HttpStatusCode.OK to {
                     description = "pet response"
-                    body(Array<Pet>::class) {
+                    body<List<Pet>>() {
                         mediaType(ContentType.Application.Json)
                         mediaType(ContentType.Application.Xml)
                         example(

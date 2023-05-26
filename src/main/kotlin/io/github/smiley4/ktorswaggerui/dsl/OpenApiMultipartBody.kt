@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-import com.fasterxml.jackson.core.type.TypeReference
-import java.lang.reflect.Type
+import kotlin.reflect.KClass
+
 
 /**
  * Describes a single request/response body with multipart content.
@@ -10,41 +10,42 @@ import java.lang.reflect.Type
 @OpenApiDslMarker
 class OpenApiMultipartBody : OpenApiBaseBody() {
 
-    private val parts = mutableListOf<OpenapiMultipartPart>()
+    private val parts = mutableListOf<OpenApiMultipartPart>()
+
+    fun getParts(): List<OpenApiMultipartPart> = parts
 
 
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, type: Type, block: OpenapiMultipartPart.() -> Unit) {
-        parts.add(OpenapiMultipartPart(name, type).apply(block))
+    fun part(name: String, type: SchemaType, block: OpenApiMultipartPart.() -> Unit) {
+        parts.add(OpenApiMultipartPart(name, type).apply(block))
     }
 
 
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, type: Type) = part(name, type) {}
+    fun part(name: String, type: KClass<*>) = part(name, type.asSchemaType()) {}
 
 
     /**
      * One part of a multipart-body
      */
-    inline fun <reified TYPE> part(name: String) = part(name, object : TypeReference<TYPE>() {}.type)
+    inline fun <reified TYPE> part(name: String) = part(name, getSchemaType<TYPE>()) {}
 
 
     /**
      * One part of a multipart-body
      */
-    inline fun <reified TYPE> part(name: String, noinline block: OpenapiMultipartPart.() -> Unit) =
-        part(name, object : TypeReference<TYPE>() {}.type, block)
+    inline fun <reified TYPE> part(name: String, noinline block: OpenApiMultipartPart.() -> Unit) = part(name, getSchemaType<TYPE>(), block)
 
 
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, customSchema: CustomSchemaRef, block: OpenapiMultipartPart.() -> Unit) {
-        parts.add(OpenapiMultipartPart(name, null).apply(block).apply {
+    fun part(name: String, customSchema: CustomSchemaRef, block: OpenApiMultipartPart.() -> Unit) {
+        parts.add(OpenApiMultipartPart(name, null).apply(block).apply {
             this.customSchema = customSchema
         })
     }
@@ -59,14 +60,12 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, customSchemaId: String, block: OpenapiMultipartPart.() -> Unit) = part(name, obj(customSchemaId), block)
+    fun part(name: String, customSchemaId: String, block: OpenApiMultipartPart.() -> Unit) = part(name, obj(customSchemaId), block)
 
 
     /**
      * One part of a multipart-body
      */
     fun part(name: String, customSchemaId: String) = part(name, customSchemaId) {}
-
-    fun getParts(): List<OpenapiMultipartPart> = parts
 
 }

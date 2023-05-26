@@ -19,29 +19,28 @@ import io.ktor.server.routing.routing
  * An example for defining custom json-schemas
  */
 fun main() {
-	embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
+    embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
 }
 
 private fun Application.myModule() {
 
-	data class MyRequestData(
-		val someText: String,
-		val someBoolean: Boolean
-	)
+    data class MyRequestData(
+        val someText: String,
+        val someBoolean: Boolean
+    )
 
-	data class MyResponseData(
-		val someText: String,
-		val someNumber: Long
-	)
+    data class MyResponseData(
+        val someText: String,
+        val someNumber: Long
+    )
 
-	install(SwaggerUI) {
-		// don't show the test-routes providing json-schemas
-		pathFilter = { _, url -> url.firstOrNull() != "schema" }
-		schemasInComponentSection
-		schemas {
-			// specify a custom json-schema with the id 'myRequestData'
-			json("myRequestData") {
-				"""
+    install(SwaggerUI) {
+        // don't show the test-routes providing json-schemas
+        pathFilter = { _, url -> url.firstOrNull() != "schema" }
+        customSchemas {
+            // specify a custom json-schema with the id 'myRequestData'
+            json("myRequestData") {
+                """
                         {
                             "type": "object",
                             "properties": {
@@ -54,64 +53,64 @@ private fun Application.myModule() {
                             }
                         }
                     """.trimIndent()
-			}
-			// specify a remote json-schema with the id 'myRequestData'
-			remote("myResponseData", "http://localhost:8080/schema/myResponseData")
-		}
-	}
+            }
+            // specify a remote json-schema with the id 'myRequestData'
+            remote("myResponseData", "http://localhost:8080/schema/myResponseData")
+        }
+    }
 
-	routing {
+    routing {
 
-		get("something", {
-			request {
-				// body referencing the custom schema with id 'myRequestData'
-				body(obj("myRequestData"))
-			}
-			response {
-				HttpStatusCode.OK to {
-					// body referencing the custom schema with id 'myResponseData'
-					body(obj("myResponseData"))
-				}
-			}
-		}) {
-			val text = call.receive<MyRequestData>().someText
-			call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
-		}
+        get("something", {
+            request {
+                // body referencing the custom schema with id 'myRequestData'
+                body(obj("myRequestData"))
+            }
+            response {
+                HttpStatusCode.OK to {
+                    // body referencing the custom schema with id 'myResponseData'
+                    body(obj("myResponseData"))
+                }
+            }
+        }) {
+            val text = call.receive<MyRequestData>().someText
+            call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+        }
 
-		get("something/many", {
-			request {
-				// body referencing the custom schema with id 'myRequestData'
-				body(array("myRequestData"))
-			}
-			response {
-				HttpStatusCode.OK to {
-					// body referencing the custom schema with id 'myResponseData'
-					body(array("myResponseData"))
-				}
-			}
-		}) {
-			val text = call.receive<MyRequestData>().someText
-			call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
-		}
+        get("something/many", {
+            request {
+                // body referencing the custom schema with id 'myRequestData'
+                body(array("myRequestData"))
+            }
+            response {
+                HttpStatusCode.OK to {
+                    // body referencing the custom schema with id 'myResponseData'
+                    body(array("myResponseData"))
+                }
+            }
+        }) {
+            val text = call.receive<MyRequestData>().someText
+            call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+        }
 
-		// route providing a json-schema
-		get("schema/myResponseData") {
-			call.respondText(
-				"""
-                        {
-                            "type": "object",
-                            "properties": {
-                                "someNumber": {
-                                    "type": "integer",
-                                    "format": "int64"
-                                },
-                                "someText": {
-                                    "type": "string"
-                                }
+        // (external) endpoint providing a json-schema
+        get("schema/myResponseData") {
+            call.respondText(
+                """
+                    {
+                        "type": "object",
+                        "properties": {
+                            "someNumber": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "someText": {
+                                "type": "string"
                             }
                         }
-                    """.trimIndent()
-			)
-		}
-	}
+                    }
+                """.trimIndent()
+            )
+        }
+    }
 }

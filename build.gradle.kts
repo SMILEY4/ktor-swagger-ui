@@ -4,18 +4,20 @@ plugins {
     kotlin("jvm") version "1.7.21"
     `maven-publish`
     id("org.owasp.dependencycheck") version "8.2.1"
+    kotlin("plugin.serialization") version "1.8.21"
 }
 
 group = "io.github.smiley4"
-version = "1.6.1"
+version = "2.0.0-rc"
 
 repositories {
     mavenCentral()
+    maven(url = "https://raw.githubusercontent.com/glureau/json-schema-serialization/mvn-repo")
 }
 
 dependencies {
 
-    val ktorVersion = "2.2.4"
+    val ktorVersion = "2.3.0"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
@@ -37,6 +39,9 @@ dependencies {
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
 
+    val jacksonVersion = "2.14.2"
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
+
     val kotlinLoggingVersion = "2.1.23"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
@@ -53,6 +58,9 @@ dependencies {
     val versionKotlinTest = "1.7.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
 tasks.test {

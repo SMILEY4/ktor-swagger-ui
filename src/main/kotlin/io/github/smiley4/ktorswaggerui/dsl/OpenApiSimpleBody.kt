@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-import java.lang.reflect.Type
 
 /**
  * Describes the base of a single request/response body.
@@ -10,13 +9,14 @@ class OpenApiSimpleBody(
     /**
      * The type defining the schema used for the body.
      */
-    val type: Type?,
+    val type: SchemaType?,
 ) : OpenApiBaseBody() {
 
     /**
      * reference to a custom schema (alternative to 'type')
      */
     var customSchema: CustomSchemaRef? = null
+
 
     /**
      * Examples for this body
