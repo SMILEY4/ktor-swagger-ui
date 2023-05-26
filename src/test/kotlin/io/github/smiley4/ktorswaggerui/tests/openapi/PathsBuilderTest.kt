@@ -2,6 +2,8 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
@@ -34,7 +36,8 @@ class PathsBuilderTest : StringSpec({
             route(HttpMethod.Post, "/other/test/route")
         )
         val schemaContext = schemaContext(routes)
-        buildPathsObject(routes, schemaContext).also { paths ->
+        val exampleContext = exampleContext(routes)
+        buildPathsObject(routes, schemaContext, exampleContext).also { paths ->
             paths shouldHaveSize 3
             paths.keys shouldContainExactlyInAnyOrder listOf(
                 "/",
@@ -58,8 +61,9 @@ class PathsBuilderTest : StringSpec({
             route(HttpMethod.Get, "/test/path"),
             route(HttpMethod.Post, "/test/path"),
         )
-        val schemaContext = schemaContext(routes)
-        buildPathsObject(routes, schemaContext, config).also { paths ->
+        val schemaContext = schemaContext(routes, config)
+        val exampleContext = exampleContext(routes, config)
+        buildPathsObject(routes, schemaContext, exampleContext, config).also { paths ->
             paths shouldHaveSize 2
             paths.keys shouldContainExactlyInAnyOrder listOf(
                 "/different/path",
@@ -94,9 +98,19 @@ class PathsBuilderTest : StringSpec({
             ).build(routes)
         }
 
+        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): ExampleContext {
+            return ExampleContextBuilder(
+                config = pluginConfig,
+                exampleBuilder = ExampleBuilder(
+                    config = pluginConfig
+                )
+            ).build(routes.toList())
+        }
+
         private fun buildPathsObject(
             routes: Collection<RouteMeta>,
             schemaContext: SchemaContext,
+            exampleContext: ExampleContext,
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): Paths {
             return PathsBuilder(
@@ -105,16 +119,12 @@ class PathsBuilderTest : StringSpec({
                         operationTagsBuilder = OperationTagsBuilder(pluginConfig),
                         parameterBuilder = ParameterBuilder(
                             schemaContext = schemaContext,
-                            exampleBuilder = ExampleBuilder(
-                                config = pluginConfig
-                            )
+                            exampleContext = exampleContext
                         ),
                         requestBodyBuilder = RequestBodyBuilder(
                             contentBuilder = ContentBuilder(
                                 schemaContext = schemaContext,
-                                exampleBuilder = ExampleBuilder(
-                                    config = pluginConfig
-                                ),
+                                exampleContext = exampleContext,
                                 headerBuilder = HeaderBuilder(schemaContext)
                             )
                         ),
@@ -123,9 +133,7 @@ class PathsBuilderTest : StringSpec({
                                 headerBuilder = HeaderBuilder(schemaContext),
                                 contentBuilder = ContentBuilder(
                                     schemaContext = schemaContext,
-                                    exampleBuilder = ExampleBuilder(
-                                        config = pluginConfig
-                                    ),
+                                    exampleContext = exampleContext,
                                     headerBuilder = HeaderBuilder(schemaContext)
                                 )
                             ),

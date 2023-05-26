@@ -2,6 +2,8 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ComponentsBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
@@ -107,8 +109,18 @@ class OpenApiBuilderTest : StringSpec({
             ).build(routes)
         }
 
+        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): ExampleContext {
+            return ExampleContextBuilder(
+                config = pluginConfig,
+                exampleBuilder = ExampleBuilder(
+                    config = pluginConfig
+                )
+            ).build(routes.toList())
+        }
+
         private fun buildOpenApiObject(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): OpenAPI {
             val schemaContext = schemaContext(routes, pluginConfig)
+            val exampleContext = exampleContext(routes, pluginConfig)
             return OpenApiBuilder(
                 config = pluginConfig,
                 schemaContext = schemaContext,
@@ -126,15 +138,12 @@ class OpenApiBuilderTest : StringSpec({
                             operationTagsBuilder = OperationTagsBuilder(pluginConfig),
                             parameterBuilder = ParameterBuilder(
                                 schemaContext = schemaContext,
-                                exampleBuilder = ExampleBuilder(
-                                    config = pluginConfig
-                                )),
+                                exampleContext = exampleContext
+                            ),
                             requestBodyBuilder = RequestBodyBuilder(
                                 contentBuilder = ContentBuilder(
                                     schemaContext = schemaContext,
-                                    exampleBuilder = ExampleBuilder(
-                                        config = pluginConfig
-                                    ),
+                                    exampleContext = exampleContext,
                                     headerBuilder = HeaderBuilder(schemaContext)
                                 )
                             ),
@@ -143,9 +152,7 @@ class OpenApiBuilderTest : StringSpec({
                                     headerBuilder = HeaderBuilder(schemaContext),
                                     contentBuilder = ContentBuilder(
                                         schemaContext = schemaContext,
-                                        exampleBuilder = ExampleBuilder(
-                                            config = pluginConfig
-                                        ),
+                                        exampleContext = exampleContext,
                                         headerBuilder = HeaderBuilder(schemaContext)
                                     )
                                 ),

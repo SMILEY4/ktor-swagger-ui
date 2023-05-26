@@ -3,6 +3,8 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.obj
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
@@ -42,7 +44,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
             operation.description shouldBe null
@@ -72,7 +75,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.tags shouldContainExactlyInAnyOrder listOf("tag1", "tag2")
             operation.summary shouldBe "this is some test route"
             operation.description shouldBe "route for testing"
@@ -108,11 +112,12 @@ class OperationBuilderTest : StringSpec({
             },
             protected = false
         )
-        val schemaContext = schemaContext(listOf(routeA, routeB))
-        buildOperationObject(routeA, schemaContext, config).also { operation ->
+        val schemaContext = schemaContext(listOf(routeA, routeB), config)
+        val exampleContext = exampleContext(listOf(routeA, routeB), config)
+        buildOperationObject(routeA, schemaContext, exampleContext, config).also { operation ->
             operation.tags shouldContainExactlyInAnyOrder listOf("a", "defaultTag")
         }
-        buildOperationObject(routeB, schemaContext, config).also { operation ->
+        buildOperationObject(routeB, schemaContext, exampleContext, config).also { operation ->
             operation.tags shouldContainExactlyInAnyOrder listOf("b", "defaultTag")
         }
     }
@@ -127,7 +132,8 @@ class OperationBuilderTest : StringSpec({
             protected = true
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.security
                 .also { it.shouldNotBeNull() }
                 ?.also { security ->
@@ -146,7 +152,8 @@ class OperationBuilderTest : StringSpec({
             protected = true
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
             operation.description shouldBe null
@@ -172,7 +179,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
             operation.description shouldBe null
@@ -203,7 +211,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
             operation.description shouldBe null
@@ -325,7 +334,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.tags.shouldBeEmpty()
             operation.summary shouldBe null
             operation.description shouldBe null
@@ -397,7 +407,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.parameters.also { parameters ->
                 parameters shouldHaveSize 1
                 parameters[0].also { param ->
@@ -443,7 +454,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
                 ?.also { body ->
@@ -532,7 +544,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
                 ?.also { body ->
@@ -598,7 +611,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
                 ?.also { body ->
@@ -644,7 +658,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.responses
                 .also { it shouldHaveSize 4 }
                 ?.also { responses ->
@@ -683,7 +698,8 @@ class OperationBuilderTest : StringSpec({
             protected = true
         )
         val schemaContext = schemaContext(listOf(route), config)
-        buildOperationObject(route, schemaContext, config).also { operation ->
+        val exampleContext = exampleContext(listOf(route), config)
+        buildOperationObject(route, schemaContext, exampleContext, config).also { operation ->
             operation.responses
                 .also { it shouldHaveSize 2 }
                 ?.also { responses ->
@@ -716,7 +732,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route), config)
-        buildOperationObject(route, schemaContext, config).also { operation ->
+        val exampleContext = exampleContext(listOf(route), config)
+        buildOperationObject(route, schemaContext, exampleContext, config).also { operation ->
             operation.responses
                 .also { it shouldHaveSize 1 }
                 ?.also { responses ->
@@ -739,7 +756,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route))
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route))
+        buildOperationObject(route, schemaContext, exampleContext).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
                 ?.also { body ->
@@ -808,7 +826,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route), config)
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route), config)
+        buildOperationObject(route, schemaContext, exampleContext, config).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
                 ?.also { body ->
@@ -867,7 +886,8 @@ class OperationBuilderTest : StringSpec({
             protected = false
         )
         val schemaContext = schemaContext(listOf(route), config)
-        buildOperationObject(route, schemaContext).also { operation ->
+        val exampleContext = exampleContext(listOf(route), config)
+        buildOperationObject(route, schemaContext, exampleContext, config).also { operation ->
             operation.requestBody
                 .also { it.shouldNotBeNull() }
                 ?.also { body ->
@@ -920,25 +940,35 @@ class OperationBuilderTest : StringSpec({
             ).build(routes)
         }
 
+        private fun exampleContext(
+            routes: List<RouteMeta>,
+            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+        ): ExampleContext {
+            return ExampleContextBuilder(
+                config = pluginConfig,
+                exampleBuilder = ExampleBuilder(
+                    config = pluginConfig
+                )
+            ).build(routes.toList())
+        }
+
+
         private fun buildOperationObject(
             route: RouteMeta,
             schemaContext: SchemaContext,
+            exampleContext: ExampleContext,
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): Operation {
             return OperationBuilder(
                 operationTagsBuilder = OperationTagsBuilder(pluginConfig),
                 parameterBuilder = ParameterBuilder(
                     schemaContext = schemaContext,
-                    exampleBuilder = ExampleBuilder(
-                        config = pluginConfig
-                    )
+                    exampleContext = exampleContext
                 ),
                 requestBodyBuilder = RequestBodyBuilder(
                     contentBuilder = ContentBuilder(
                         schemaContext = schemaContext,
-                        exampleBuilder = ExampleBuilder(
-                            config = pluginConfig
-                        ),
+                        exampleContext = exampleContext,
                         headerBuilder = HeaderBuilder(schemaContext)
                     )
                 ),
@@ -947,9 +977,7 @@ class OperationBuilderTest : StringSpec({
                         headerBuilder = HeaderBuilder(schemaContext),
                         contentBuilder = ContentBuilder(
                             schemaContext = schemaContext,
-                            exampleBuilder = ExampleBuilder(
-                                config = pluginConfig
-                            ),
+                            exampleContext = exampleContext,
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),

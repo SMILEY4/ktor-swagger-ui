@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlin.reflect.jvm.javaType
 
 
-typealias ExampleEncoder = (type: SchemaType?, example: Any?) -> String?
+typealias ExampleEncoder = (type: SchemaType?, example: Any) -> String?
 
 typealias SchemaEncoder = (type: SchemaType) -> String?
 
