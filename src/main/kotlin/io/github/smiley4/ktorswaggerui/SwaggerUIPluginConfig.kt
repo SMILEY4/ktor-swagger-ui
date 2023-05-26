@@ -1,8 +1,17 @@
 package io.github.smiley4.ktorswaggerui
 
-import io.github.smiley4.ktorswaggerui.dsl.*
-import io.ktor.http.*
-import io.ktor.server.routing.*
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
+import io.github.smiley4.ktorswaggerui.dsl.EncodingConfig
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.routing.RouteSelector
 import kotlin.reflect.KClass
 
 /**
@@ -61,6 +70,12 @@ class SwaggerUIPluginConfig {
      * The url of the paths are already split at '/'.
      */
     var pathFilter: ((method: HttpMethod, url: List<String>) -> Boolean)? = null
+
+
+    /**
+     * Whether examples should always be inlined or be moved into the component section if necessary.
+     */
+    var inlineExamples: Boolean = true
 
 
     /**

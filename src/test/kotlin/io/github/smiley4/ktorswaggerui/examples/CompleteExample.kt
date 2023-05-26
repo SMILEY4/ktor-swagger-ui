@@ -76,7 +76,7 @@ private fun Application.myModule() {
         tag("math") {
             description = "Routes for math related operations"
         }
-        automaticTagGenerator = { url -> url.firstOrNull() }
+        generateTags { url -> listOf(url.firstOrNull()) }
     }
 
     install(ContentNegotiation) {

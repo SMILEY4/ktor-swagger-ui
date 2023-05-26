@@ -101,6 +101,7 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext,
     return OpenApiBuilder(
         config = config,
         schemaContext = schemaContext,
+        exampleContext = exampleContext,
         infoBuilder = InfoBuilder(
             contactBuilder = ContactBuilder(),
             licenseBuilder = LicenseBuilder()

@@ -122,6 +122,7 @@ class OpenApiBuilderTest : StringSpec({
             return OpenApiBuilder(
                 config = pluginConfig,
                 schemaContext = schemaContext,
+                exampleContext = exampleContext,
                 infoBuilder = InfoBuilder(
                     contactBuilder = ContactBuilder(),
                     licenseBuilder = LicenseBuilder()
