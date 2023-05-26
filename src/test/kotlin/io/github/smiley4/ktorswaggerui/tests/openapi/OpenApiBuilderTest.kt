@@ -124,7 +124,11 @@ class OpenApiBuilderTest : StringSpec({
                     pathBuilder = PathBuilder(
                         operationBuilder = OperationBuilder(
                             operationTagsBuilder = OperationTagsBuilder(pluginConfig),
-                            parameterBuilder = ParameterBuilder(schemaContext),
+                            parameterBuilder = ParameterBuilder(
+                                schemaContext = schemaContext,
+                                exampleBuilder = ExampleBuilder(
+                                    config = pluginConfig
+                                )),
                             requestBodyBuilder = RequestBodyBuilder(
                                 contentBuilder = ContentBuilder(
                                     schemaContext = schemaContext,

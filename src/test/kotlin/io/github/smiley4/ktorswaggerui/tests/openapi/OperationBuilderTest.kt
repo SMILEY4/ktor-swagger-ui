@@ -1,10 +1,18 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
-import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.obj
-import io.github.smiley4.ktorswaggerui.spec.openapi.*
+import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.OperationBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.OperationTagsBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.ParameterBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.RequestBodyBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
@@ -17,11 +25,12 @@ import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.ktor.http.*
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.media.Schema
 import java.io.File
-import kotlin.reflect.jvm.javaType
 
 class OperationBuilderTest : StringSpec({
 
@@ -918,7 +927,12 @@ class OperationBuilderTest : StringSpec({
         ): Operation {
             return OperationBuilder(
                 operationTagsBuilder = OperationTagsBuilder(pluginConfig),
-                parameterBuilder = ParameterBuilder(schemaContext),
+                parameterBuilder = ParameterBuilder(
+                    schemaContext = schemaContext,
+                    exampleBuilder = ExampleBuilder(
+                        config = pluginConfig
+                    )
+                ),
                 requestBodyBuilder = RequestBodyBuilder(
                     contentBuilder = ContentBuilder(
                         schemaContext = schemaContext,

@@ -26,12 +26,10 @@ fun main() {
 }
 
 private fun Application.myModule() {
-
     val kotlinxJson = Json {
         prettyPrint = true
         encodeDefaults = true
     }
-
     install(SwaggerUI) {
         encoding {
             schemaEncoder { type ->

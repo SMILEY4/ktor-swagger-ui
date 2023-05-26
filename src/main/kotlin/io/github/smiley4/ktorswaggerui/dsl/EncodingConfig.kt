@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlin.reflect.jvm.javaType
 
 
-typealias ExampleEncoder = (type: SchemaType?, example: Any) -> String?
+typealias ExampleEncoder = (type: SchemaType?, example: Any?) -> String?
 
 typealias SchemaEncoder = (type: SchemaType) -> String?
 
@@ -71,7 +71,7 @@ class EncodingConfig {
         /**
          * encode the given value to a json string
          */
-        fun encodeExample(value: Any): String {
+        fun encodeExample(value: Any?): String {
             return if (value is String) {
                 value
             } else {

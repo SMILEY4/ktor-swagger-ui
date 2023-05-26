@@ -16,7 +16,7 @@ class ExampleBuilder(
             it.description = example.description
         }
 
-    private fun buildExampleValue(type: SchemaType?, value: Any): Any {
+    fun buildExampleValue(type: SchemaType?, value: Any?): Any? {
         return config.encodingConfig.getExampleEncoder()(type, value) ?: value
     }
 
