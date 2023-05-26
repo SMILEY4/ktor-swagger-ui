@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
-import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
@@ -37,7 +36,6 @@ import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.swagger.v3.oas.models.OpenAPI
-import kotlin.reflect.jvm.javaType
 
 
 class OpenApiBuilderTest : StringSpec({
@@ -86,7 +84,7 @@ class OpenApiBuilderTest : StringSpec({
         }
         buildOpenApiObject(emptyList(), config).also { openapi ->
             openapi.tags shouldHaveSize 2
-            openapi.tags.map { it.name} shouldContainExactlyInAnyOrder listOf(
+            openapi.tags.map { it.name } shouldContainExactlyInAnyOrder listOf(
                 "tag-1",
                 "tag-2"
             )
