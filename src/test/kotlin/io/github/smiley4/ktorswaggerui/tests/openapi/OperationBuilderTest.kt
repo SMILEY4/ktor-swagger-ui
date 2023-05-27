@@ -94,7 +94,7 @@ class OperationBuilderTest : StringSpec({
 
     "operation with auto-generated tags" {
         val config = SwaggerUIPluginConfig().also {
-            it.automaticTagGenerator = { url -> url.firstOrNull() }
+            it.generateTags { url -> listOf(url.firstOrNull()) }
         }
         val routeA = RouteMeta(
             path = "a/test",
