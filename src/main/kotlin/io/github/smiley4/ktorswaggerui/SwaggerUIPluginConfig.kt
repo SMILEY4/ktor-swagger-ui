@@ -46,13 +46,6 @@ class SwaggerUIPluginConfig {
 
 
     /**
-     * function to generate a tag from the given url for a path. Result will be added to the tags defined for each path
-     */
-    @Deprecated("use 'generateTags' instead")
-    var automaticTagGenerator: ((url: List<String>) -> String?)? = null
-
-
-    /**
      * Automatically add tags to the route with the given url.
      * The returned (non-null) tags will be added to the tags specified in the route-specific documentation.
      */
@@ -70,12 +63,6 @@ class SwaggerUIPluginConfig {
      * The url of the paths are already split at '/'.
      */
     var pathFilter: ((method: HttpMethod, url: List<String>) -> Boolean)? = null
-
-
-    /**
-     * Whether examples should always be inlined or be moved into the component section if necessary.
-     */
-    var inlineExamples: Boolean = true
 
 
     /**
