@@ -4,7 +4,6 @@ import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.swagger.v3.oas.models.media.Schema
-import org.checkerframework.checker.units.qual.m
 
 class SchemaContextBuilder(
     private val config: SwaggerUIPluginConfig,

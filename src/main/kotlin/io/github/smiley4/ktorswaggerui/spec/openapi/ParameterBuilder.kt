@@ -3,7 +3,6 @@ package io.github.smiley4.ktorswaggerui.spec.openapi
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
-import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.parameters.Parameter
 
 class ParameterBuilder(

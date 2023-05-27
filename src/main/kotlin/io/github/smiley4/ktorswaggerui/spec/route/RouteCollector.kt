@@ -4,14 +4,11 @@ import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.DocumentedRouteSelector
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpMethod
-import io.ktor.server.application.Application
-import io.ktor.server.application.plugin
 import io.ktor.server.auth.AuthenticationRouteSelector
 import io.ktor.server.routing.HttpMethodRouteSelector
 import io.ktor.server.routing.RootRouteSelector
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector
-import io.ktor.server.routing.Routing
 import io.ktor.server.routing.TrailingSlashRouteSelector
 import kotlin.reflect.full.isSubclassOf
 
