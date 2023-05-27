@@ -1,11 +1,11 @@
 package io.github.smiley4.ktorswaggerui.tests.schema
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.github.victools.jsonschema.generator.Option
-import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.array
+import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
+import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
@@ -16,33 +16,27 @@ import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import io.ktor.http.*
+import io.ktor.http.HttpMethod
 import io.swagger.v3.oas.models.media.Schema
-import kotlin.reflect.jvm.javaType
 
 class SchemaContextTest : StringSpec({
 
     "route with all schemas" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        queryParameter<QueryParamType>("queryParam")
-                        pathParameter<PathParamType>("pathParam")
-                        headerParameter<HeaderParamType>("headerParam")
-                        body<RequestBodyType>()
+            route {
+                request {
+                    queryParameter<QueryParamType>("queryParam")
+                    pathParameter<PathParamType>("pathParam")
+                    headerParameter<HeaderParamType>("headerParam")
+                    body<RequestBodyType>()
+                }
+                response {
+                    default {
+                        header<ResponseHeaderType>("header")
+                        body<ResponseBodyType>()
                     }
-                    response {
-                        default {
-                            header<ResponseHeaderType>("header")
-                            body<ResponseBodyType>()
-                        }
-                    }
-                },
-                protected = false
-            )
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(QueryParamType::class.asSchemaType()).also { schema ->
@@ -87,16 +81,11 @@ class SchemaContextTest : StringSpec({
 
     "primitive type" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<Int>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<Int>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(Integer::class.asSchemaType()).also { schema ->
@@ -111,16 +100,11 @@ class SchemaContextTest : StringSpec({
 
     "primitive array" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<List<String>>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<List<String>>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(getType<List<String>>()).also { schema ->
@@ -137,16 +121,11 @@ class SchemaContextTest : StringSpec({
 
     "primitive deep array" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<List<List<List<Boolean>>>>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<List<List<List<Boolean>>>>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(getType<List<List<List<Boolean>>>>()).also { schema ->
@@ -171,16 +150,11 @@ class SchemaContextTest : StringSpec({
 
     "object" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<SimpleDataClass>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<SimpleDataClass>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(SimpleDataClass::class.asSchemaType()).also { schema ->
@@ -198,16 +172,11 @@ class SchemaContextTest : StringSpec({
 
     "object array" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<List<SimpleDataClass>>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<List<SimpleDataClass>>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(getType<List<SimpleDataClass>>()).also { schema ->
@@ -229,16 +198,11 @@ class SchemaContextTest : StringSpec({
 
     "nested objects" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<DataWrapper>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<DataWrapper>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(DataWrapper::class.asSchemaType()).also { schema ->
@@ -264,16 +228,11 @@ class SchemaContextTest : StringSpec({
 
     "simple enum" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<SimpleEnum>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<SimpleEnum>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(SimpleEnum::class.asSchemaType()).also { schema ->
@@ -288,16 +247,11 @@ class SchemaContextTest : StringSpec({
 
     "maps" {
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body<DataClassWithMaps>()
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body<DataClassWithMaps>()
+                }
+            }
         )
         val schemaContext = schemaContext(routes)
         schemaContext.getSchema(DataClassWithMaps::class.asSchemaType()).also { schema ->
@@ -341,16 +295,11 @@ class SchemaContextTest : StringSpec({
             }
         }
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body(obj("myCustomSchema"))
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body(obj("myCustomSchema"))
+                }
+            }
         )
         val schemaContext = schemaContext(routes, config)
         schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
@@ -384,16 +333,11 @@ class SchemaContextTest : StringSpec({
             }
         }
         val routes = listOf(
-            RouteMeta(
-                path = "/test",
-                method = HttpMethod.Get,
-                documentation = OpenApiRoute().apply {
-                    request {
-                        body(array("myCustomSchema"))
-                    }
-                },
-                protected = false
-            )
+            route {
+                request {
+                    body(array("myCustomSchema"))
+                }
+            }
         )
         val schemaContext = schemaContext(routes, config)
         schemaContext.getSchema(array("myCustomSchema")).also { schema ->
@@ -437,6 +381,15 @@ class SchemaContextTest : StringSpec({
             ).build(routes)
         }
 
+        fun route(block: OpenApiRoute.() -> Unit): RouteMeta {
+            return RouteMeta(
+                path = "/test",
+                method = HttpMethod.Get,
+                documentation = OpenApiRoute().apply(block),
+                protected = false
+            )
+        }
+
         private data class QueryParamType(val value: String)
 
         private data class PathParamType(val value: String)
@@ -462,53 +415,6 @@ class SchemaContextTest : StringSpec({
         private data class DataClassWithMaps(
             val mapStringValues: Map<String, String>,
             val mapLongValues: Map<String, Long>
-        )
-
-        private data class AnotherDataClass(
-            val primitiveValue: Int,
-            val primitiveList: List<Int>,
-            private val privateValue: String,
-            val nestedClass: SimpleDataClass,
-            val nestedClassList: List<SimpleDataClass>
-        )
-
-
-        @JsonTypeInfo(
-            use = JsonTypeInfo.Id.CLASS,
-            include = JsonTypeInfo.As.PROPERTY,
-            property = "_type",
-        )
-        @JsonSubTypes(
-            JsonSubTypes.Type(value = SubClassA::class),
-            JsonSubTypes.Type(value = SubClassB::class),
-        )
-        private abstract class Superclass(
-            val superField: String,
-        )
-
-        private class SubClassA(
-            superField: String,
-            val subFieldA: Int
-        ) : Superclass(superField)
-
-        private class SubClassB(
-            superField: String,
-            val subFieldB: Boolean
-        ) : Superclass(superField)
-
-
-        private data class ClassWithNestedAbstractClass(
-            val nestedClass: Superclass,
-            val someField: String
-        )
-
-        private class ClassWithGenerics<T>(
-            val genericField: T,
-            val genericList: List<T>
-        )
-
-        private class WrapperForClassWithGenerics(
-            val genericClass: ClassWithGenerics<String>
         )
 
     }

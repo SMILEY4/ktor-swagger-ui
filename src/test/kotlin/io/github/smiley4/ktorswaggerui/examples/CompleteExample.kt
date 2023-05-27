@@ -76,7 +76,7 @@ private fun Application.myModule() {
         tag("math") {
             description = "Routes for math related operations"
         }
-        automaticTagGenerator = { url -> url.firstOrNull() }
+        generateTags { url -> listOf(url.firstOrNull()) }
     }
 
     install(ContentNegotiation) {
@@ -227,7 +227,7 @@ private fun Application.myModule() {
                     }
                 }
             }) {
-                call.respond(HttpStatusCode.NotImplemented, "todo")
+                call.respond(HttpStatusCode.NotImplemented, "...")
             }
 
             delete("{id}", {
@@ -256,14 +256,14 @@ private fun Application.myModule() {
                 }
             }
         }){
-            call.respond(HttpStatusCode.NotImplemented, "todo")
+            call.respond(HttpStatusCode.NotImplemented, "...")
         }
 
         get("hidden", {
             hidden = true
             description = "This route is hidden and not visible in swagger"
         }){
-            call.respond(HttpStatusCode.NotImplemented, "todo")
+            call.respond(HttpStatusCode.NotImplemented, "...")
         }
 
     }

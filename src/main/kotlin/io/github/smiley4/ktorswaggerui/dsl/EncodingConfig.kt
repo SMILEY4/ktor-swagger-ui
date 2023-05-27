@@ -71,7 +71,7 @@ class EncodingConfig {
         /**
          * encode the given value to a json string
          */
-        fun encodeExample(value: Any): String {
+        fun encodeExample(value: Any?): String {
             return if (value is String) {
                 value
             } else {
