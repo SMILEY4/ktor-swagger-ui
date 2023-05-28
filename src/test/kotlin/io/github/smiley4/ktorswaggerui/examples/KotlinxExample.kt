@@ -26,16 +26,20 @@ fun main() {
 }
 
 private fun Application.myModule() {
+    // create own [Json] instance
     val kotlinxJson = Json {
         prettyPrint = true
         encodeDefaults = true
     }
     install(SwaggerUI) {
         encoding {
+            // custom implementation of schema-encoder supporting kotlinx
             schemaEncoder { type ->
                 kotlinxJson.encodeToSchema(serializer(type), generateDefinitions = false)
             }
+            // generated schemas have the definitions in the field 'definitions'
             schemaDefinitionsField = "definitions"
+            // custom implementation of json serializer for converting examples to json supporting kotlinx
             exampleEncoder { type, value ->
                 kotlinxJson.encodeToString(serializer(type!!), value)
             }
