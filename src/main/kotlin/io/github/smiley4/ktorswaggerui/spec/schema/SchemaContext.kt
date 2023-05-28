@@ -1,9 +1,10 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.SchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSimpleTypeName
 import io.swagger.v3.oas.models.media.Schema
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.set
 
 
@@ -73,43 +74,53 @@ class SchemaContext {
     }
 
     private fun finalize(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
-        // only root definition
         if (schemaDefinitions.definitions.isEmpty()) {
-            val root = schemaDefinitions.root
-            if (root.isPrimitive() || root.isPrimitiveArray()) {
-                inlineRoot(key, schemaDefinitions)
-            } else if (root.isObjectArray()) {
-                unwrapRootArray(key, schemaDefinitions)
-            } else {
-                createInlineReference(key, schemaDefinitions)
-            }
+            finalizeOnlyRootDefinition(key, schemaDefinitions)
         }
-        // only one additional definition
         if (schemaDefinitions.definitions.size == 1) {
-            val root = schemaDefinitions.root
-            val definition = schemaDefinitions.definitions.entries.first().value
-            if (root.isReference() && (definition.isPrimitive() || definition.isPrimitiveArray())) {
-                inlineSingleDefinition(key, schemaDefinitions)
-            } else if (root.isReference() || root.isReferenceArray()) {
-                inlineRoot(key, schemaDefinitions)
-            } else if (root.isObjectArray()) {
-                unwrapRootArray(key, schemaDefinitions)
-            } else {
-                createInlineReference(key, schemaDefinitions)
-            }
+            finalizeOneAdditionalDefinition(key, schemaDefinitions)
         }
-        // multiple additional definitions
         if (schemaDefinitions.definitions.size > 1) {
-            val root = schemaDefinitions.root
-            if (root.isReference() || root.isReferenceArray()) {
-                inlineRoot(key, schemaDefinitions)
-            } else if (root.isObjectArray()) {
-                unwrapRootArray(key, schemaDefinitions)
-            } else {
-                createInlineReference(key, schemaDefinitions)
-            }
+            finalizeMultipleAdditionalDefinitions(key, schemaDefinitions)
         }
     }
+
+    private fun finalizeOnlyRootDefinition(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        val root = schemaDefinitions.root
+        if (root.isPrimitive() || root.isPrimitiveArray()) {
+            inlineRoot(key, schemaDefinitions)
+        } else if (root.isObjectArray()) {
+            unwrapRootArray(key, schemaDefinitions)
+        } else {
+            createInlineReference(key, schemaDefinitions)
+        }
+    }
+
+    private fun finalizeOneAdditionalDefinition(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        val root = schemaDefinitions.root
+        val definition = schemaDefinitions.definitions.entries.first().value
+        if (root.isReference() && (definition.isPrimitive() || definition.isPrimitiveArray())) {
+            inlineSingleDefinition(key, schemaDefinitions)
+        } else if (root.isReference() || root.isReferenceArray()) {
+            inlineRoot(key, schemaDefinitions)
+        } else if (root.isObjectArray()) {
+            unwrapRootArray(key, schemaDefinitions)
+        } else {
+            createInlineReference(key, schemaDefinitions)
+        }
+    }
+
+    private fun finalizeMultipleAdditionalDefinitions(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
+        val root = schemaDefinitions.root
+        if (root.isReference() || root.isReferenceArray()) {
+            inlineRoot(key, schemaDefinitions)
+        } else if (root.isObjectArray()) {
+            unwrapRootArray(key, schemaDefinitions)
+        } else {
+            createInlineReference(key, schemaDefinitions)
+        }
+    }
+
 
     private fun inlineRoot(key: SchemaKeyWrapper, schemaDefinitions: SchemaDefinitions) {
         /*
