@@ -1,11 +1,10 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartPart
-import io.github.smiley4.ktorswaggerui.dsl.SchemaType
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
@@ -15,8 +14,6 @@ import io.swagger.v3.oas.models.media.Schema
 import kotlin.collections.Map
 import kotlin.collections.MutableMap
 import kotlin.collections.associateWith
-import kotlin.collections.component1
-import kotlin.collections.component2
 import kotlin.collections.filter
 import kotlin.collections.flatMap
 import kotlin.collections.forEach
@@ -30,7 +27,7 @@ import kotlin.collections.setOf
 
 class ContentBuilder(
     private val schemaContext: SchemaContext,
-    private val exampleBuilder: ExampleBuilder,
+    private val exampleContext: ExampleContext,
     private val headerBuilder: HeaderBuilder
 ) {
 
@@ -57,14 +54,15 @@ class ContentBuilder(
 
     private fun buildSimpleMediaTypes(body: OpenApiSimpleBody, schema: Schema<*>?): Map<ContentType, MediaType> {
         val mediaTypes = body.getMediaTypes().ifEmpty { schema?.let { setOf(chooseMediaType(schema)) } ?: setOf() }
-        return mediaTypes.associateWith { buildSimpleMediaType(schema, body.type, body.getExamples()) }
+        return mediaTypes.associateWith { buildSimpleMediaType(schema, body) }
     }
 
-    private fun buildSimpleMediaType(schema: Schema<*>?, type: SchemaType?, examples: Map<String, OpenApiExample>): MediaType {
+    private fun buildSimpleMediaType(schema: Schema<*>?, body: OpenApiSimpleBody): MediaType {
         return MediaType().also {
             it.schema = schema
-            examples.forEach { (name, obj) ->
-                it.addExamples(name, exampleBuilder.build(type, obj))
+            body.getExamples().forEach { (name, _) ->
+                exampleContext.getExample(body, name)
+                    ?.also { example -> it.addExamples(name, example) }
             }
         }
     }

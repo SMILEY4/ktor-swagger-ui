@@ -1,8 +1,17 @@
 package io.github.smiley4.ktorswaggerui
 
-import io.github.smiley4.ktorswaggerui.dsl.*
-import io.ktor.http.*
-import io.ktor.server.routing.*
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
+import io.github.smiley4.ktorswaggerui.dsl.EncodingConfig
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
+import io.ktor.http.HttpMethod
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.routing.RouteSelector
 import kotlin.reflect.KClass
 
 /**
@@ -34,13 +43,6 @@ class SwaggerUIPluginConfig {
      * The names of the security schemes available for use for the protected paths
      */
     var defaultSecuritySchemeNames: Collection<String>? = null
-
-
-    /**
-     * function to generate a tag from the given url for a path. Result will be added to the tags defined for each path
-     */
-    @Deprecated("use 'generateTags' instead")
-    var automaticTagGenerator: ((url: List<String>) -> String?)? = null
 
 
     /**

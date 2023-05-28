@@ -22,6 +22,8 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
@@ -52,8 +54,9 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         }
         val routes = routes(application, pluginConfig)
         val schemaContext = schemaContext(pluginConfig, routes)
+        val exampleContext = exampleContext(pluginConfig, routes)
         try {
-            apiSpecJson = Json.pretty(builder(pluginConfig, schemaContext).build(routes))
+            apiSpecJson = Json.pretty(builder(pluginConfig, schemaContext, exampleContext).build(routes))
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -81,10 +84,20 @@ private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<Rout
     ).build(routes.toList())
 }
 
-private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext): OpenApiBuilder {
+private fun exampleContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): ExampleContext {
+    return ExampleContextBuilder(
+        config = pluginConfig,
+        exampleBuilder = ExampleBuilder(
+            config = pluginConfig
+        )
+    ).build(routes.toList())
+}
+
+private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext, exampleContext: ExampleContext): OpenApiBuilder {
     return OpenApiBuilder(
         config = config,
         schemaContext = schemaContext,
+        exampleContext = exampleContext,
         infoBuilder = InfoBuilder(
             contactBuilder = ContactBuilder(),
             licenseBuilder = LicenseBuilder()
@@ -97,13 +110,14 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext)
             pathBuilder = PathBuilder(
                 operationBuilder = OperationBuilder(
                     operationTagsBuilder = OperationTagsBuilder(config),
-                    parameterBuilder = ParameterBuilder(schemaContext),
+                    parameterBuilder = ParameterBuilder(
+                        schemaContext = schemaContext,
+                        exampleContext = exampleContext
+                    ),
                     requestBodyBuilder = RequestBodyBuilder(
                         contentBuilder = ContentBuilder(
                             schemaContext = schemaContext,
-                            exampleBuilder = ExampleBuilder(
-                                config = config
-                            ),
+                            exampleContext = exampleContext,
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),
@@ -112,9 +126,7 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext)
                             headerBuilder = HeaderBuilder(schemaContext),
                             contentBuilder = ContentBuilder(
                                 schemaContext = schemaContext,
-                                exampleBuilder = ExampleBuilder(
-                                    config = config
-                                ),
+                                exampleContext = exampleContext,
                                 headerBuilder = HeaderBuilder(schemaContext)
                             )
                         ),
