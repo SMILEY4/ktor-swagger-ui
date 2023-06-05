@@ -1,5 +1,7 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ComponentsBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
@@ -22,8 +24,6 @@ import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
@@ -40,11 +40,14 @@ import io.ktor.server.application.pluginOrNull
 import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json
+import mu.KotlinLogging
 
 /**
  * This version must match the version of the gradle dependency
  */
 internal const val SWAGGER_UI_WEBJARS_VERSION = "4.15.0"
+
+private val logger = KotlinLogging.logger {}
 
 val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::SwaggerUIPluginConfig) {
     var apiSpecJson = "{}"
@@ -58,7 +61,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         try {
             apiSpecJson = Json.pretty(builder(pluginConfig, schemaContext, exampleContext).build(routes))
         } catch (e: Exception) {
-            e.printStackTrace()
+            logger.error("Error during openapi-generation", e)
         }
     }
     SwaggerRouting(
