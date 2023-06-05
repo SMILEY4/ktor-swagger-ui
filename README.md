@@ -12,6 +12,7 @@ This library provides a Ktor plugin to document routes, generate an OpenApi Spec
 - provides swagger-ui with no initial configuration required
 - supports most of the [OpenAPI 3.0.3 Specification](https://swagger.io/specification/)
 - automatic json-schema generation from arbitrary types/classes for bodies and parameters
+- use custom encoder/serializers for examples and json-schemas
 - provide custom schemas or a custom schema-builder
 - external/custom json-schemas for bodies
 - protect Swagger-UI and OpenApi-Spec with custom authentication
