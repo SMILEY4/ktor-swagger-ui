@@ -42,7 +42,8 @@ class OpenApiRoute {
 
     /**
      * A declaration of which security mechanism can be used for this operation.
-     * If not specified (and none specified with [securitySchemeNames]), defaultSecuritySchemeName (global plugin config) will be used
+     * If not specified (and none specified with [securitySchemeNames]), defaultSecuritySchemeName (global plugin config) will be used.
+     * Only applied to [protected] operations.
      */
     var securitySchemeName: String? = null
 
@@ -50,8 +51,15 @@ class OpenApiRoute {
     /**
      * A declaration of which security mechanisms can be used for this operation (i.e. any of the specified ones).
      * If none specified (and none with [securitySchemeName]), defaultSecuritySchemeName (global plugin config) will be used.
+     * Only applied to [protected] operations.
      */
     var securitySchemeNames: Collection<String>? = null
+
+    /**
+     * Specifies whether this operation is protected.
+     * If not specified, the authentication state of the Ktor route will be used (i.e. whether it is surrounded by an [authenticate][io.ktor.server.auth.authenticate] block or not).
+     */
+    var protected: Boolean? = null
 
     private val request = OpenApiRequest()
 
