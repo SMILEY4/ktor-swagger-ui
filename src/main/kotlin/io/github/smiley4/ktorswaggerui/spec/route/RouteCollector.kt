@@ -23,11 +23,12 @@ class RouteCollector(
         return allRoutes(routeProvider())
             .asSequence()
             .map { route ->
+                val documentation = getDocumentation(route, OpenApiRoute())
                 RouteMeta(
                     method = getMethod(route),
                     path = getPath(route, config),
-                    documentation = getDocumentation(route, OpenApiRoute()),
-                    protected = isProtected(route)
+                    documentation = documentation,
+                    protected = documentation.protected ?: isProtected(route)
                 )
             }
             .filter { removeLeadingSlash(it.path) != removeLeadingSlash(config.getSwaggerUI().swaggerUrl) }
@@ -52,7 +53,8 @@ class RouteCollector(
     private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
         var documentation = base
         if (route.selector is DocumentedRouteSelector) {
-            documentation = routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
+            documentation =
+                routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
         }
         return if (route.parent != null) {
             getDocumentation(route.parent!!, documentation)
