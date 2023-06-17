@@ -20,6 +20,7 @@ class RouteDocumentationMerger {
             }
             deprecated = a.deprecated || b.deprecated
             hidden = a.hidden || b.hidden
+            protected = a.protected ?: b.protected
             request {
                 (getParameters() as MutableList).also {
                     it.addAll(a.getRequest().getParameters())

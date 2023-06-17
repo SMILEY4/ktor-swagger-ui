@@ -23,6 +23,7 @@ class RouteDocumentationMergerTest : StringSpec({
             route.hidden shouldBe false
             route.securitySchemeName shouldBe null
             route.securitySchemeNames.shouldBeEmpty()
+            route.protected shouldBe null
             route.getRequest().also { requests ->
                 requests.getParameters().shouldBeEmpty()
                 requests.getBody() shouldBe null
@@ -44,6 +45,7 @@ class RouteDocumentationMergerTest : StringSpec({
                 securitySchemeNames = listOf("securitySchemeNameA1", "securitySchemeNameA2")
                 deprecated = true
                 hidden = false
+                protected = true
                 request {
                     queryParameter<String>("query")
                     pathParameter<String>("pathA1")
@@ -66,6 +68,7 @@ class RouteDocumentationMergerTest : StringSpec({
                 securitySchemeNames = listOf("securitySchemeNameB1", "securitySchemeNameB2")
                 deprecated = false
                 hidden = true
+                protected = false
                 request {
                     queryParameter<String>("query")
                     pathParameter<String>("pathB1")
@@ -93,6 +96,7 @@ class RouteDocumentationMergerTest : StringSpec({
                 "securitySchemeNameB1",
                 "securitySchemeNameB2"
             )
+            route.protected shouldBe true
             route.getRequest().also { requests ->
                 requests.getParameters().map { it.name } shouldContainExactlyInAnyOrder listOf(
                     "query",
