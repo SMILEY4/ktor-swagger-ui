@@ -1,14 +1,21 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.7.21"
-    `maven-publish`
-    id("org.owasp.dependencycheck") version "8.2.1"
     kotlin("plugin.serialization") version "1.8.21"
+    id("org.owasp.dependencycheck") version "8.2.1"
+    `maven-publish`
 }
 
 group = "io.github.smiley4"
-version = "2.1.0"
+version = "2.2.0"
+
+object Meta {
+    const val desc = "Ktor plugin to document routes and provide Swagger UI"
+    const val license = "Apache-2.0"
+    const val githubRepo = "https://github.com/SMILEY4/ktor-swagger-ui"
+    const val release = "todo"
+    const val snapshot = "todo"
+}
+
 
 repositories {
     mavenCentral()
@@ -63,14 +70,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
 java {
     withJavadocJar()
     withSourcesJar()
@@ -83,7 +82,7 @@ publishing {
             from(components["java"])
             pom {
                 name.set("Ktor Swagger-UI")
-                description.set("Ktor plugin to document routes and provide Swagger UI ")
+                description.set("Ktor plugin to document routes and provide Swagger UI")
                 url.set("https://github.com/SMILEY4/ktor-swagger-ui")
             }
         }
