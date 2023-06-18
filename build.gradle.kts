@@ -1,18 +1,32 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.vanniktech.maven.publish.SonatypeHost
 
 plugins {
     kotlin("jvm") version "1.7.21"
-    `maven-publish`
-    id("org.owasp.dependencycheck") version "8.2.1"
     kotlin("plugin.serialization") version "1.8.21"
+    id("org.owasp.dependencycheck") version "8.2.1"
+    id("com.vanniktech.maven.publish") version "0.25.2"
 }
 
-group = "io.github.smiley4"
-version = "2.1.0"
+object Meta {
+    const val groupId = "io.github.smiley4"
+    const val artifactId = "ktor-swagger-ui"
+    const val version = "2.2.0"
+    const val name = "Ktor Swagger-UI"
+    const val description = "Ktor plugin to document routes and provide Swagger UI"
+    const val licenseName = "The Apache License, Version 2.0"
+    const val licenseUrl = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+    const val scmUrl = "https://github.com/SMILEY4/ktor-swagger-ui"
+    const val scmConnection = "scm:git:git://github.com/SMILEY4/ktor-swagger-ui.git"
+    const val developerName = "smiley4"
+    const val developerUrl = "https://github.com/SMILEY4"
+}
+
+group = Meta.groupId
+version = Meta.version
+
 
 repositories {
     mavenCentral()
-    maven(url = "https://raw.githubusercontent.com/glureau/json-schema-serialization/mvn-repo")
 }
 
 dependencies {
@@ -63,28 +77,34 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
 }
 
-tasks.test {
-    useJUnitPlatform()
+kotlin {
+    jvmToolchain(8)
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-java {
-    withJavadocJar()
-    withSourcesJar()
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            artifactId = "ktor-swagger-ui"
-            from(components["java"])
-            pom {
-                name.set("Ktor Swagger-UI")
-                description.set("Ktor plugin to document routes and provide Swagger UI ")
-                url.set("https://github.com/SMILEY4/ktor-swagger-ui")
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.S01)
+    signAllPublications()
+    coordinates(Meta.groupId, Meta.artifactId, Meta.version)
+    pom {
+        name.set(Meta.name)
+        description.set(Meta.description)
+        url.set(Meta.scmUrl)
+        licenses {
+            license {
+                name.set(Meta.licenseName)
+                url.set(Meta.licenseUrl)
+                distribution.set(Meta.licenseUrl)
+            }
+        }
+        scm {
+            url.set(Meta.scmUrl)
+            connection.set(Meta.scmConnection)
+        }
+        developers {
+            developer {
+                id.set(Meta.developerName)
+                name.set(Meta.developerName)
+                url.set(Meta.developerUrl)
             }
         }
     }
