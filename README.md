@@ -1,5 +1,6 @@
 # Ktor Swagger-UI
 
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui)
 [![](https://jitpack.io/v/SMILEY4/ktor-swagger-ui.svg)](https://jitpack.io/#SMILEY4/ktor-swagger-ui)
 
 
