@@ -1,7 +1,6 @@
 # Ktor Swagger-UI
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui)
-[![](https://jitpack.io/v/SMILEY4/ktor-swagger-ui.svg)](https://jitpack.io/#SMILEY4/ktor-swagger-ui)
 
 
 This library provides a Ktor plugin to document routes, generate an OpenApi Specification and serve a Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing application without requiring immediate changes to the code. Routes can then be gradually enhanced with documentation.
