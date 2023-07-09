@@ -17,10 +17,9 @@ fun SchemaType.getTypeName() = this.toString()
 fun SchemaType.getSimpleTypeName(): String {
     val rawName = getTypeName()
     if(rawName.contains("<") || rawName.contains(">")) {
-        return rawName
-    } else {
         return (this.classifier as KClass<*>).simpleName ?: rawName
     }
+    return rawName
 }
 
 fun KClass<*>.asSchemaType() = this.starProjectedType
