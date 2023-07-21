@@ -16,10 +16,18 @@ fun SchemaType.getTypeName() = this.toString()
 
 fun SchemaType.getSimpleTypeName(): String {
     val rawName = getTypeName()
-    if(rawName.contains("<") || rawName.contains(">")) {
-        return rawName
+    return if (rawName.contains("<") || rawName.contains(">")) {
+        rawName
     } else {
-        return (this.classifier as KClass<*>).simpleName ?: rawName
+        (this.classifier as KClass<*>).simpleName ?: rawName
+    }
+}
+
+fun SchemaType.getSimpleArrayElementTypeName(): String {
+    if (this.arguments.size != 1 || this.arguments.first().type == null) {
+        throw IllegalArgumentException("Could not determine type of array-elements")
+    } else {
+        return this.arguments[0].type!!.getSimpleTypeName()
     }
 }
 

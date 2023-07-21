@@ -10,7 +10,7 @@ plugins {
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.2.0"
+    const val version = "2.2.1"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"
@@ -27,6 +27,7 @@ version = Meta.version
 
 repositories {
     mavenCentral()
+    maven(url = "https://raw.githubusercontent.com/glureau/json-schema-serialization/mvn-repo")
 }
 
 dependencies {
