@@ -1,5 +1,11 @@
 package io.github.smiley4.ktorswaggerui.tests.schema
 
+import com.github.victools.jsonschema.generator.Option
+import com.github.victools.jsonschema.generator.OptionPreset
+import com.github.victools.jsonschema.generator.SchemaGenerator
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfig
+import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
+import com.github.victools.jsonschema.generator.SchemaVersion
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.array
@@ -18,6 +24,7 @@ import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.ktor.http.HttpMethod
 import io.swagger.v3.oas.models.media.Schema
+import kotlin.reflect.jvm.javaType
 
 class SchemaContextTest : StringSpec({
 
@@ -359,6 +366,51 @@ class SchemaContextTest : StringSpec({
             }
         }
     }
+
+    "unwrap inlined array schema" {
+        val generator = SchemaGenerator(
+            SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
+                .without(Option.DEFINITIONS_FOR_ALL_OBJECTS)
+                .with(Option.INLINE_ALL_SCHEMAS)
+                .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
+                .with(Option.ALLOF_CLEANUP_AT_THE_END)
+                .build()
+        )
+        val config = SwaggerUIPluginConfig().also {
+            it.encoding {
+                schemaEncoder { type ->
+                    generator.generateSchema(type.javaType).toString()
+                }
+            }
+        }
+        val routes = listOf(
+            route {
+                request {
+                    body<List<SimpleDataClass>>()
+                }
+            }
+        )
+        val schemaContext = schemaContext(routes, config)
+        schemaContext.getSchema(getSchemaType<List<SimpleDataClass>>()).also { schema ->
+            schema.type shouldBe "array"
+            schema.`$ref` shouldBe null
+            schema.items
+                .also { it shouldNotBe null }
+                ?.also { items ->
+                    items.`$ref` shouldBe "#/components/schemas/SimpleDataClass"
+                }
+        }
+        schemaContext.getComponentsSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf(
+                "SimpleDataClass",
+            )
+            components["SimpleDataClass"]?.also { schema ->
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactlyInAnyOrder listOf("number", "text")
+            }
+        }
+    }
+
 
 }) {
 
