@@ -3,6 +3,7 @@ package io.github.smiley4.ktorswaggerui.spec.schema
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSimpleArrayElementTypeName
 import io.github.smiley4.ktorswaggerui.dsl.getSimpleTypeName
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.collections.set
@@ -176,7 +177,7 @@ class SchemaContext {
         schemaDefinitions.definitions.forEach { (name, schema) ->
             addToComponentsSection(name, schema)
         }
-        val rootName = schemaName(key)
+        val rootName = getWrappedSchemaName(key)
         addToComponentsSection(rootName, schemaDefinitions.root.items)
         addInline(key, Schema<Any>().also { array ->
             array.type = "array"
@@ -191,6 +192,14 @@ class SchemaContext {
             key.schemaId
         } else {
             key.type.getSimpleTypeName()
+        }
+    }
+
+    private fun getWrappedSchemaName(key: SchemaKeyWrapper): String {
+        return if (key.isCustom) {
+            key.schemaId
+        } else {
+            key.type.getSimpleArrayElementTypeName()
         }
     }
 
