@@ -8,15 +8,18 @@ import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
+import io.github.smiley4.ktorswaggerui.dsl.Example
 import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
+import io.github.smiley4.ktorswaggerui.spec.schema.SchemaTypeAttributeOverride
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
+import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
@@ -319,6 +322,38 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
+    "test schema with Schema-Annotations" {
+        createSchemaVictools<Person>(false).also { defs ->
+            defs.definitions shouldHaveSize 0
+            defs.root.also { schema ->
+                schema.title = "The Schema for a person"
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactly setOf("age", "city_code", "name")
+                schema.properties["age"]!!.also { age ->
+                    age.type shouldBe "integer"
+                    age.description shouldBe "the age of the person in years"
+                    age.format shouldBe "int32"
+                    age.nullable shouldBe true
+                    age.minimum.toInt() shouldBe 1
+                    age.maximum.toInt() shouldBe 99
+                    age.example shouldBe 42
+                }
+                schema.properties["name"]!!.also { name ->
+                    name.type shouldBe "string"
+                    name.description shouldBe "the name of the person"
+                    name.minLength shouldBe 1
+                    name.maxLength shouldBe 32
+                    name.example shouldBe "Mr. Example"
+                }
+                schema.properties["city_code"]!!.also { cityCode ->
+                    cityCode.type shouldBe "integer"
+                    cityCode.format shouldBe "int32"
+                    cityCode.example shouldBe 12345
+                }
+            }
+        }
+    }
+
 }) {
 
     companion object {
@@ -328,6 +363,35 @@ class SchemaBuilderTest : StringSpec({
             val id: Int,
             val name: String,
             val tag: String
+        )
+
+
+        @Schema(title = "The Schema for a person")
+        data class Person(
+
+            @field:Schema(
+                description = "the name of the person",
+                minLength = 1,
+                maxLength = 32
+            )
+            @field:Example("Mr. Example")
+            val name: String,
+
+            @field:Schema(
+                description = "the age of the person in years",
+                nullable = true,
+                maximum = "99",
+                minimum = "1",
+            )
+            @field:Example("42")
+            val age: Int,
+
+            @field:Schema(
+                name = "city_code",
+                example = "12345"
+            )
+            val cityCode: Int
+
         )
 
         inline fun <reified T> createSchemaVictools(definitions: Boolean) =
@@ -360,6 +424,10 @@ class SchemaBuilderTest : StringSpec({
                             } else {
                                 it.with(Option.INLINE_ALL_SCHEMAS)
                             }
+                        }
+                        .also {
+                            it.forTypesInGeneral()
+                                .withTypeAttributeOverride(SchemaTypeAttributeOverride())
                         }
                         .build()
                 ).generateSchema(type.javaType).toPrettyString()
