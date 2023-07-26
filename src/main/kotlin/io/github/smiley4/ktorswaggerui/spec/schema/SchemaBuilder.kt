@@ -3,6 +3,7 @@ package io.github.smiley4.ktorswaggerui.spec.schema
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.BooleanNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
@@ -20,7 +21,6 @@ class SchemaBuilder(
     private val definitionsField: String? = null,
     private val schemaEncoder: SchemaEncoder
 ) {
-
 
     fun create(type: SchemaType): SchemaDefinitions {
         return create(createJsonSchema(type))
@@ -46,17 +46,12 @@ class SchemaBuilder(
         return ObjectMapper().readTree(str)
     }
 
-    private fun normalizeRefs(node: JsonNode, normalizer: (ref: String) -> String) {
-        when (node) {
-            is ObjectNode -> {
+    private fun normalizeRefs(jsonSchema: JsonNode, normalizer: (ref: String) -> String) {
+        iterateTree(jsonSchema) { node ->
+            if (node is ObjectNode) {
                 node.get("\$ref")?.also {
                     node.set<ObjectNode>("\$ref", TextNode(normalizer(it.asText())))
                 }
-                node.elements().asSequence().forEach { normalizeRefs(it, normalizer) }
-            }
-
-            is ArrayNode -> {
-                node.elements().asSequence().forEach { normalizeRefs(it, normalizer) }
             }
         }
     }
@@ -82,7 +77,31 @@ class SchemaBuilder(
     }
 
     private fun toOpenApiSchema(jsonSchema: JsonNode): Schema<*> {
+        iterateTree(jsonSchema) { node ->
+            node.get("type")?.also { typeNode ->
+                if (typeNode is ArrayNode && node is ObjectNode) {
+                    val types = typeNode.asSequence().filterIsInstance<TextNode>().map { it.asText() }.toSet()
+                    node.set<ObjectNode>("type", TextNode(types.first { it != "null" }))
+                    if(types.contains("null")){
+                        node.set<ObjectNode>("nullable", BooleanNode.TRUE)
+                    }
+                }
+            }
+        }
         return Json.mapper().readValue(jsonSchema.toString(), Schema::class.java)
+    }
+
+
+    private fun iterateTree(node: JsonNode, consumer: (node: JsonNode) -> Unit) {
+        consumer(node)
+        when (node) {
+            is ObjectNode -> {
+                node.elements().asSequence().forEach { iterateTree(it, consumer) }
+            }
+            is ArrayNode -> {
+                node.elements().asSequence().forEach { iterateTree(it, consumer) }
+            }
+        }
     }
 
 }
