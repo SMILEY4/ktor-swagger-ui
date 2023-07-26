@@ -1,16 +1,9 @@
 import com.vanniktech.maven.publish.SonatypeHost
 
-plugins {
-    kotlin("jvm") version "1.7.21"
-    kotlin("plugin.serialization") version "1.8.21"
-    id("org.owasp.dependencycheck") version "8.2.1"
-    id("com.vanniktech.maven.publish") version "0.25.2"
-}
-
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.2.1"
+    const val version = "2.2.2"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"
@@ -24,6 +17,12 @@ object Meta {
 group = Meta.groupId
 version = Meta.version
 
+plugins {
+    kotlin("jvm") version "1.7.21"
+    kotlin("plugin.serialization") version "1.8.21"
+    id("org.owasp.dependencycheck") version "8.2.1"
+    id("com.vanniktech.maven.publish") version "0.25.2"
+}
 
 repositories {
     mavenCentral()

@@ -55,11 +55,12 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         if (application.pluginOrNull(Webjars) == null) {
             application.install(Webjars)
         }
-        val routes = routes(application, pluginConfig)
-        val schemaContext = schemaContext(pluginConfig, routes)
-        val exampleContext = exampleContext(pluginConfig, routes)
         try {
-            apiSpecJson = Json.pretty(builder(pluginConfig, schemaContext, exampleContext).build(routes))
+            val routes = routes(application, pluginConfig)
+            val schemaContext = schemaContext(pluginConfig, routes)
+            val exampleContext = exampleContext(pluginConfig, routes)
+            val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
+            apiSpecJson = Json.pretty(openApi)
         } catch (e: Exception) {
             logger.error("Error during openapi-generation", e)
         }
@@ -147,33 +148,3 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext,
         )
     )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
