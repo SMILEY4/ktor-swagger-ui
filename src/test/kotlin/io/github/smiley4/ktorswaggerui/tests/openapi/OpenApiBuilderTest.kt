@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
@@ -29,6 +30,7 @@ import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
@@ -102,7 +104,9 @@ class OpenApiBuilderTest : StringSpec({
                 config = pluginConfig,
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+                    ObjectMapper(),
+                    TypeOverwrites.get()
                 )
             ).build(routes)
         }

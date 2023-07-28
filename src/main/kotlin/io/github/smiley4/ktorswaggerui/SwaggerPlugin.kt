@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.smiley4.ktorswaggerui.dsl.SchemaType
+import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.ComponentsBuilder
@@ -30,6 +33,7 @@ import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin
@@ -41,6 +45,7 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json
 import mu.KotlinLogging
+import java.io.File
 
 /**
  * This version must match the version of the gradle dependency
@@ -83,7 +88,9 @@ private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<Rout
         config = pluginConfig,
         schemaBuilder = SchemaBuilder(
             definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-            schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+            schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+            ObjectMapper(),
+            TypeOverwrites.get()
         ),
     ).build(routes.toList())
 }

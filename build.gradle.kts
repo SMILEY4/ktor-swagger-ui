@@ -3,7 +3,7 @@ import com.vanniktech.maven.publish.SonatypeHost
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.2.2"
+    const val version = "2.2.3"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"

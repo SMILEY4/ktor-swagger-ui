@@ -1,9 +1,9 @@
 package io.github.smiley4.ktorswaggerui.tests.schema
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.victools.jsonschema.generator.Option
 import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
-import com.github.victools.jsonschema.generator.SchemaGeneratorConfig
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
@@ -16,6 +16,7 @@ import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -428,7 +429,9 @@ class SchemaContextTest : StringSpec({
                 config = pluginConfig,
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder()
+                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+                    ObjectMapper(),
+                    TypeOverwrites.get()
                 )
             ).build(routes)
         }
