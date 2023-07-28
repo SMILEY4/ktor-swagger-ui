@@ -19,15 +19,18 @@ data class SchemaDefinitions(
 
 class SchemaBuilder(
     private val definitionsField: String? = null,
-    private val schemaEncoder: SchemaEncoder
+    private val schemaEncoder: SchemaEncoder,
+    private val json: ObjectMapper,
+    private val typeOverwrites: Map<SchemaType, String>,
 ) {
 
     fun create(type: SchemaType): SchemaDefinitions {
-        return create(createJsonSchema(type))
+        val jsonSchema = typeOverwrites[type]?.let { json.readTree(it) } ?: createJsonSchema(type)
+        return create(jsonSchema)
     }
 
     fun create(jsonSchema: String): SchemaDefinitions {
-        return create(ObjectMapper().readTree(jsonSchema))
+        return create(json.readTree(jsonSchema))
     }
 
     fun create(jsonSchema: JsonNode): SchemaDefinitions {
@@ -43,7 +46,7 @@ class SchemaBuilder(
 
     private fun createJsonSchema(type: SchemaType): JsonNode {
         val str = schemaEncoder(type)
-        return ObjectMapper().readTree(str)
+        return json.readTree(str)
     }
 
     private fun normalizeRefs(jsonSchema: JsonNode, normalizer: (ref: String) -> String) {
@@ -82,7 +85,7 @@ class SchemaBuilder(
                 if (typeNode is ArrayNode && node is ObjectNode) {
                     val types = typeNode.asSequence().filterIsInstance<TextNode>().map { it.asText() }.toSet()
                     node.set<ObjectNode>("type", TextNode(types.first { it != "null" }))
-                    if(types.contains("null")){
+                    if (types.contains("null")) {
                         node.set<ObjectNode>("nullable", BooleanNode.TRUE)
                     }
                 }
