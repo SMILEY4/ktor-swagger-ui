@@ -14,6 +14,11 @@ class SwaggerUIDsl {
     var swaggerUrl: String = "swagger-ui"
 
     /**
+     * the path under which the KTOR app gets deployed. can be useful if reverse proxy is in use.
+     */
+    var rootHostPath: String = ""
+
+    /**
      * The name of the authentication to use for the swagger routes. Null to not protect the swagger-ui.
      */
     var authentication: String? = null

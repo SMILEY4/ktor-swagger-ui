@@ -35,6 +35,7 @@ private fun Application.myModule() {
         swagger {
             forwardRoot = false
             swaggerUrl = "/api/swagger-ui"
+            rootHostPath = "/my-ktor-web-app"
             authentication = "SwaggerAuth"
             disableSpecValidator()
             displayOperationId = true
