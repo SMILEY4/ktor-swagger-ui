@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests.schema
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.github.ricky12awesome.jss.encodeToSchema
 import com.github.victools.jsonschema.generator.Option
 import com.github.victools.jsonschema.generator.OptionPreset
@@ -14,6 +15,7 @@ import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaTypeAttributeOverride
+import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
@@ -23,13 +25,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
+import java.io.File
 import kotlin.reflect.jvm.javaType
 
 class SchemaBuilderTest : StringSpec({
 
-    //==== PRIMITIVE TYPE ==================================================
-
-    "test primitive (victools, all definitions)" {
+    "primitive (victools, all definitions)" {
         createSchemaVictools<Int>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("int")
             defs.root.also { schema ->
@@ -43,7 +44,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test primitive (victools, no definitions)" {
+    "primitive (victools, no definitions)" {
         createSchemaVictools<Int>(false).also { defs ->
             defs.definitions shouldHaveSize 0
             defs.root.also { schema ->
@@ -54,7 +55,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test primitive (kotlinx, definitions)" {
+    "primitive (kotlinx, definitions)" {
         createSchemaKotlinX<Int>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("x1xjd3yo2dbzzz")
             defs.root.also { schema ->
@@ -69,7 +70,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test primitive (kotlinx, no definitions)" {
+    "primitive (kotlinx, no definitions)" {
         createSchemaKotlinX<Int>(false).also { defs ->
             defs.definitions shouldHaveSize 0
             defs.root.also { schema ->
@@ -80,9 +81,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    //==== SIMPLE OBJECT ===================================================
-
-    "test simple object (victools, all definitions)" {
+    "simple object (victools, all definitions)" {
         createSchemaVictools<Pet>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("Pet")
             defs.root.also { schema ->
@@ -97,7 +96,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test simple object (victools, no definitions)" {
+    "simple object (victools, no definitions)" {
         createSchemaVictools<Pet>(false).also { defs ->
             println(defs)
             defs.definitions shouldHaveSize 0
@@ -121,7 +120,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test simple object (kotlinx, definitions)" {
+    "simple object (kotlinx, definitions)" {
         createSchemaKotlinX<Pet>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("1d8t6cs0dbcap", "x1xjd3yo2dbzzz", "xq0zwcprkn9j3")
             defs.root.also { schema ->
@@ -158,7 +157,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test simple object (kotlinx, no definitions)" {
+    "simple object (kotlinx, no definitions)" {
         createSchemaKotlinX<Pet>(false).also { defs ->
             defs.definitions shouldHaveSize 0
             defs.root.also { schema ->
@@ -183,7 +182,7 @@ class SchemaBuilderTest : StringSpec({
 
     //==== SIMPLE LIST =====================================================
 
-    "test simple list (victools, all definitions)" {
+    "simple list (victools, all definitions)" {
         createSchemaVictools<List<Pet>>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("List(Pet)", "Pet")
             defs.root.also { schema ->
@@ -208,7 +207,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test simple list (victools, no definitions)" {
+    "simple list (victools, no definitions)" {
         createSchemaVictools<List<Pet>>(false).also { defs ->
             defs.definitions shouldHaveSize 0
             defs.root.also { schema ->
@@ -239,7 +238,7 @@ class SchemaBuilderTest : StringSpec({
     }
 
 
-    "test simple list (kotlinx, definitions)" {
+    "simple list (kotlinx, definitions)" {
         createSchemaKotlinX<List<Pet>>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf(
                 "1tonzv7il5q0x",
@@ -292,7 +291,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test simple list (kotlinx, no definitions)" {
+    "simple list (kotlinx, no definitions)" {
         createSchemaKotlinX<List<Pet>>(false).also { defs ->
             defs.definitions shouldHaveSize 0
             defs.root.also { schema ->
@@ -322,7 +321,7 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
-    "test schema with Schema-Annotations" {
+    "schema with Schema-Annotations" {
         createSchemaVictools<Person>(false).also { defs ->
             defs.definitions shouldHaveSize 0
             defs.root.also { schema ->
@@ -350,6 +349,16 @@ class SchemaBuilderTest : StringSpec({
                     cityCode.format shouldBe "int32"
                     cityCode.example shouldBe 12345
                 }
+            }
+        }
+    }
+
+    "file type-overwrite" {
+        createSchemaVictools<File>(false).also { defs ->
+            defs.definitions shouldHaveSize 0
+            defs.root.also { schema ->
+                schema.type shouldBe "string"
+                schema.format shouldBe "binary"
             }
         }
     }
@@ -404,7 +413,7 @@ class SchemaBuilderTest : StringSpec({
             defs: String,
             noinline serializer: SchemaEncoder
         ): SchemaDefinitions {
-            return SchemaBuilder(defs, serializer).create(getSchemaType<T>())
+            return SchemaBuilder(defs, serializer, ObjectMapper(), TypeOverwrites.get()).create(getSchemaType<T>())
         }
 
         fun serializerVictools(definitions: Boolean): SchemaEncoder {
