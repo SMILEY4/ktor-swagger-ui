@@ -60,10 +60,14 @@ class SchemaContext {
     fun getComponentsSection(): Map<String, Schema<*>> = componentsSection
 
 
-    fun getSchema(type: SchemaType) = inlineSchemas[type] ?: throw NoSuchElementException ("No schema for type '$type'!")
+    fun getSchema(type: SchemaType) = getSchemaOrNull(type) ?: throw NoSuchElementException ("No schema for type '$type'!")
+
+    fun getSchemaOrNull(type: SchemaType) = inlineSchemas[type]
 
 
-    fun getSchema(ref: CustomSchemaRef) = inlineSchemasCustom[ref.schemaId] ?: throw NoSuchElementException("No schema for ref '$ref'!")
+    fun getSchema(ref: CustomSchemaRef) = getSchemaOrNull(ref) ?: throw NoSuchElementException("No schema for ref '$ref'!")
+
+    fun getSchemaOrNull(ref: CustomSchemaRef) = inlineSchemasCustom[ref.schemaId]
 
 
     fun finalize() {

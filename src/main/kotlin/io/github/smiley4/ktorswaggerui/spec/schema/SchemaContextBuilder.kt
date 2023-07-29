@@ -1,9 +1,9 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.BaseCustomSchema
 import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
-import io.github.smiley4.ktorswaggerui.dsl.CustomObjectSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
@@ -13,6 +13,7 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
 import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
+import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.swagger.v3.oas.models.media.Schema
 
@@ -24,6 +25,13 @@ class SchemaContextBuilder(
     fun build(routes: Collection<RouteMeta>): SchemaContext {
         return SchemaContext()
             .also { ctx -> routes.forEach { handle(ctx, it) } }
+            .also { ctx ->
+                if (config.getCustomSchemas().includeAll) {
+                    config.getCustomSchemas().getSchemas().forEach { (id, schema) ->
+                        ctx.addSchema(obj(id), createSchema(schema, false))
+                    }
+                }
+            }
             .also { ctx -> ctx.finalize() }
     }
 
@@ -33,6 +41,7 @@ class SchemaContextBuilder(
         route.documentation.getRequest().getParameters().forEach { handle(ctx, it) }
         route.documentation.getResponses().getResponses().forEach { handle(ctx, it) }
     }
+
 
     private fun handle(ctx: SchemaContext, response: OpenApiResponse) {
         response.getHeaders().forEach { (_, header) ->
@@ -84,45 +93,49 @@ class SchemaContextBuilder(
 
     private fun createSchema(customSchemaRef: CustomSchemaRef): SchemaDefinitions {
         val customSchema = config.getCustomSchemas().getSchema(customSchemaRef.schemaId)
-        if (customSchema == null) {
-            return SchemaDefinitions(
+        return if (customSchema == null) {
+            SchemaDefinitions(
                 root = Schema<Any>(),
                 definitions = emptyMap()
             )
         } else {
-            return when (customSchema) {
-                is CustomJsonSchema -> {
-                    schemaBuilder.create(customSchema.provider())
-                }
-                is CustomOpenApiSchema -> {
-                    SchemaDefinitions(
-                        // provided schema should not have a 'definitions'-section, i.e. schema should be inline-able as is.
-                        root = customSchema.provider(),
-                        definitions = emptyMap()
-                    )
-                }
-                is RemoteSchema -> {
-                    SchemaDefinitions(
-                        root = Schema<Any>().apply {
-                            type = "object"
-                            `$ref` = customSchema.url
-                        },
-                        definitions = emptyMap()
-                    )
-                }
-            }.let { schemaDefinitions ->
-                when (customSchemaRef) {
-                    is CustomObjectSchemaRef -> schemaDefinitions
-                    is CustomArraySchemaRef -> {
-                        SchemaDefinitions(
-                            root = Schema<Any>().apply {
-                                type = "array"
-                                items = schemaDefinitions.root
-                            },
-                            definitions = schemaDefinitions.definitions
-                        )
-                    }
-                }
+            createSchema(customSchema, customSchemaRef is CustomArraySchemaRef)
+        }
+    }
+
+
+    private fun createSchema(customSchema: BaseCustomSchema, isArray: Boolean): SchemaDefinitions {
+        return when (customSchema) {
+            is CustomJsonSchema -> {
+                schemaBuilder.create(customSchema.provider())
+            }
+            is CustomOpenApiSchema -> {
+                SchemaDefinitions(
+                    // provided schema should not have a 'definitions'-section, i.e. schema should be inline-able as is.
+                    root = customSchema.provider(),
+                    definitions = emptyMap()
+                )
+            }
+            is RemoteSchema -> {
+                SchemaDefinitions(
+                    root = Schema<Any>().apply {
+                        type = "object"
+                        `$ref` = customSchema.url
+                    },
+                    definitions = emptyMap()
+                )
+            }
+        }.let { schemaDefinitions ->
+            if (isArray) {
+                SchemaDefinitions(
+                    root = Schema<Any>().apply {
+                        type = "array"
+                        items = schemaDefinitions.root
+                    },
+                    definitions = schemaDefinitions.definitions
+                )
+            } else {
+                schemaDefinitions
             }
         }
     }
