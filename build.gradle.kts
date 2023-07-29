@@ -1,4 +1,5 @@
 import com.vanniktech.maven.publish.SonatypeHost
+import io.gitlab.arturbosch.detekt.Detekt
 
 object Meta {
     const val groupId = "io.github.smiley4"
@@ -18,10 +19,11 @@ group = Meta.groupId
 version = Meta.version
 
 plugins {
-    kotlin("jvm") version "1.7.21"
+    kotlin("jvm") version "1.8.21"
     kotlin("plugin.serialization") version "1.8.21"
     id("org.owasp.dependencycheck") version "8.2.1"
     id("com.vanniktech.maven.publish") version "0.25.2"
+    id("io.gitlab.arturbosch.detekt") version "1.23.0"
 }
 
 repositories {
@@ -83,6 +85,23 @@ kotlin {
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom("$projectDir/config/detekt.yml")
+    baseline = file("$projectDir/config/baseline.xml")
+}
+
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        md.required.set(true)
+        xml.required.set(false)
+        txt.required.set(false)
+        sarif.required.set(false)
+    }
 }
 
 mavenPublishing {
