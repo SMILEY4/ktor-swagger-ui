@@ -57,7 +57,8 @@ class OpenApiRoute {
 
     /**
      * Specifies whether this operation is protected.
-     * If not specified, the authentication state of the Ktor route will be used (i.e. whether it is surrounded by an [authenticate][io.ktor.server.auth.authenticate] block or not).
+     * If not specified, the authentication state of the Ktor route will be used
+     * (i.e. whether it is surrounded by an [authenticate][io.ktor.server.auth.authenticate] block or not).
      */
     var protected: Boolean? = null
 

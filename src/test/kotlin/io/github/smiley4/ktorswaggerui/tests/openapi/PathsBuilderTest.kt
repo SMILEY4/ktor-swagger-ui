@@ -104,7 +104,6 @@ class PathsBuilderTest : StringSpec({
 
         private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): ExampleContext {
             return ExampleContextBuilder(
-                config = pluginConfig,
                 exampleBuilder = ExampleBuilder(
                     config = pluginConfig
                 )

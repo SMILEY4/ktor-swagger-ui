@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.spec.example
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
@@ -13,7 +12,6 @@ import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.swagger.v3.oas.models.examples.Example
 
 class ExampleContextBuilder(
-    private val config: SwaggerUIPluginConfig,
     private val exampleBuilder: ExampleBuilder
 ) {
 

@@ -96,9 +96,11 @@ private fun Application.myModule() {
         }) {
             call.respondText("Hello World!")
         }
-        // route is not in an "authenticate"-block but sets the `protected` property -> security scheme (or default security scheme) will be used
+        // route is not in an "authenticate"-block but sets the `protected` property
+        // -> security scheme (or default security scheme) will be used
         get("hello-externally-protected", {
-            // mark the route as protected even though there is no "authenticate"-block (e.g. because the route is protected by an external proxy)
+            // mark the route as protected even though there is no "authenticate"-block
+            // (e.g. because the route is protected by an external proxy)
             protected = true
             // Set the security scheme to be used by this route
             securitySchemeName = "MyOtherSecurityScheme"

@@ -1,7 +1,18 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomObjectSchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
+import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
+import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
+import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.swagger.v3.oas.models.media.Schema
 
