@@ -1,4 +1,4 @@
-name: Build, Test and Verify
+name: Checks
 
 on: [ push, pull_request ]
 
