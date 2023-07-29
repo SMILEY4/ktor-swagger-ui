@@ -31,7 +31,7 @@ repositories {
 
 dependencies {
 
-    val ktorVersion = "2.3.1"
+    val ktorVersion = "2.3.0"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
