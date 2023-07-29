@@ -64,5 +64,4 @@ class OpenApiMultipartPart(
      */
     inline fun <reified TYPE> header(name: String, noinline block: OpenApiHeader.() -> Unit) = header(name, getSchemaType<TYPE>(), block)
 
-
 }

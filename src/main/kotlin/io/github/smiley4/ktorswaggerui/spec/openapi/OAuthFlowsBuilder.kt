@@ -22,11 +22,13 @@ class OAuthFlowsBuilder {
             authorizationUrl = flow.authorizationUrl
             tokenUrl = flow.tokenUrl
             refreshUrl = flow.refreshUrl
-            scopes = flow.scopes?.let { s ->
-                Scopes().apply {
-                    s.forEach { (k, v) -> addString(k, v) }
-                }
-            }
+            scopes = flow.scopes?.let { buildScopes(it) }
+        }
+    }
+
+    private fun buildScopes(scopes: Map<String,String>): Scopes {
+        return Scopes().apply {
+            scopes.forEach { (k, v) -> addString(k, v) }
         }
     }
 

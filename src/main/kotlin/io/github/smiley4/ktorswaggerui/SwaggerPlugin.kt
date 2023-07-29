@@ -97,7 +97,6 @@ private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<Rout
 
 private fun exampleContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): ExampleContext {
     return ExampleContextBuilder(
-        config = pluginConfig,
         exampleBuilder = ExampleBuilder(
             config = pluginConfig
         )

@@ -949,7 +949,6 @@ class OperationBuilderTest : StringSpec({
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): ExampleContext {
             return ExampleContextBuilder(
-                config = pluginConfig,
                 exampleBuilder = ExampleBuilder(
                     config = pluginConfig
                 )

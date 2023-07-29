@@ -6,6 +6,7 @@ import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSimpleArrayElementTypeName
 import io.github.smiley4.ktorswaggerui.dsl.getSimpleTypeName
 import io.swagger.v3.oas.models.media.Schema
+import java.lang.IllegalArgumentException
 import kotlin.collections.set
 
 
@@ -59,10 +60,10 @@ class SchemaContext {
     fun getComponentsSection(): Map<String, Schema<*>> = componentsSection
 
 
-    fun getSchema(type: SchemaType) = inlineSchemas[type] ?: throw Exception("No schema for type '$type'!")
+    fun getSchema(type: SchemaType) = inlineSchemas[type] ?: throw NoSuchElementException ("No schema for type '$type'!")
 
 
-    fun getSchema(ref: CustomSchemaRef) = inlineSchemasCustom[ref.schemaId] ?: throw Exception("No schema for ref '$ref'!")
+    fun getSchema(ref: CustomSchemaRef) = inlineSchemasCustom[ref.schemaId] ?: throw NoSuchElementException("No schema for ref '$ref'!")
 
 
     fun finalize() {
@@ -141,7 +142,7 @@ class SchemaContext {
         - definition:  inline
          */
         if (schemaDefinitions.definitions.size != 1) {
-            throw Exception("Unexpected amount of additional schema-definitions: ${schemaDefinitions.definitions.size}")
+            throw IllegalArgumentException("Unexpected amount of additional schema-definitions: ${schemaDefinitions.definitions.size}")
         }
         schemaDefinitions.definitions.entries.first()
             .also { addInline(key, it.value) }
@@ -172,7 +173,7 @@ class SchemaContext {
         - definitions: in components section
          */
         if (schemaDefinitions.root.items == null) {
-            throw Exception("Expected items for array-schema but items were 'null'.")
+            throw IllegalArgumentException("Expected items for array-schema but items were 'null'.")
         }
         schemaDefinitions.definitions.forEach { (name, schema) ->
             addToComponentsSection(name, schema)

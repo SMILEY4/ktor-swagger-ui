@@ -173,7 +173,6 @@ class ExampleTest : StringSpec({
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): ExampleContext {
             return ExampleContextBuilder(
-                config = pluginConfig,
                 exampleBuilder = ExampleBuilder(
                     config = pluginConfig
                 )
