@@ -33,7 +33,7 @@ class SwaggerRouting(
 
     private fun getApiSpecUrl(appConfig: ApplicationConfig): String {
         val rootPath = appConfig.propertyOrNull("ktor.deployment.rootPath")?.getString()?.let { "/${dropSlashes(it)}" } ?: ""
-        return "$rootPath/${dropSlashes(swaggerUiConfig.swaggerUrl)}/api.json"
+        return "$rootPath${swaggerUiConfig.rootHostPath}/${dropSlashes(swaggerUiConfig.swaggerUrl)}/api.json"
     }
 
     private fun dropSlashes(str: String): String {
@@ -54,7 +54,7 @@ class SwaggerRouting(
         app.routing {
             if (forwardRoot) {
                 get("/") {
-                    call.respondRedirect("$swaggerUrl/index.html")
+                    call.respondRedirect("${swaggerUiConfig.rootHostPath}/${dropSlashes(swaggerUrl)}/index.html")
                 }
             }
             if (authentication == null) {
@@ -71,7 +71,7 @@ class SwaggerRouting(
         val swaggerUrl = swaggerUiConfig.swaggerUrl
         route(swaggerUrl) {
             get {
-                call.respondRedirect("$swaggerUrl/index.html")
+                call.respondRedirect("${swaggerUiConfig.rootHostPath}/${dropSlashes(swaggerUrl)}/index.html")
             }
             get("api.json") {
                 controller.serveOpenApiSpec(call)
