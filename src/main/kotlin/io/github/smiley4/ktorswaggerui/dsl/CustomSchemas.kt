@@ -9,6 +9,7 @@ class CustomSchemas {
 
     fun getSchema(id: String): BaseCustomSchema? = schemas[id]
 
+    fun getSchemas() = schemas
 
     /**
      * Define the json-schema for an object/body with the given id
@@ -32,6 +33,12 @@ class CustomSchemas {
     fun remote(id: String, url: String) {
         schemas[id] = RemoteSchema(url)
     }
+
+
+    /**
+     * Whether to include all custom-schemas or only the ones directly used in any route-documentation
+     */
+    var includeAll = false
 
 }
 

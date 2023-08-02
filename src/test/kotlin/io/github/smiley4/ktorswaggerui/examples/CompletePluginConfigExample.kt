@@ -90,6 +90,7 @@ private fun Application.myModule() {
                 }
             }
             remote("customSchema3", "example.com/schema")
+            includeAll = false
         }
         encoding {
             schemaEncoder { type ->
