@@ -32,4 +32,3 @@ fun SchemaType.getSimpleArrayElementTypeName(): String {
 }
 
 fun KClass<*>.asSchemaType() = this.starProjectedType
-

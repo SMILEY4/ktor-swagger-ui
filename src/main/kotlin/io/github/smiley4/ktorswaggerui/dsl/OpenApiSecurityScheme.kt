@@ -1,17 +1,34 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.swagger.v3.oas.models.security.SecurityScheme
 
-enum class AuthType {
-    API_KEY, HTTP, OAUTH2, OPENID_CONNECT, MUTUAL_TLS
+
+enum class AuthType(val swaggerType: SecurityScheme.Type) {
+    API_KEY(SecurityScheme.Type.APIKEY),
+    HTTP(SecurityScheme.Type.HTTP),
+    OAUTH2(SecurityScheme.Type.OAUTH2),
+    OPENID_CONNECT(SecurityScheme.Type.OPENIDCONNECT),
+    MUTUAL_TLS(SecurityScheme.Type.MUTUALTLS)
 }
 
-enum class AuthKeyLocation {
-    QUERY, HEADER, COOKIE
+enum class AuthKeyLocation(val swaggerType: SecurityScheme.In) {
+    QUERY(SecurityScheme.In.QUERY),
+    HEADER(SecurityScheme.In.HEADER),
+    COOKIE(SecurityScheme.In.COOKIE)
 }
 
-enum class AuthScheme {
-    //  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
-    BASIC, BEARER, DIGEST, HOBA, MUTUAL, OAUTH, SCRAM_SHA_1, SCRAM_SHA_256, VAPID
+
+//  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
+enum class AuthScheme(val swaggerType: String) {
+    BASIC("Basic"),
+    BEARER("Bearer"),
+    DIGEST("Digest"),
+    HOBA("HOBA"),
+    MUTUAL("Mutual"),
+    OAUTH("OAuth"),
+    SCRAM_SHA_1("SCRAM-SHA-1"),
+    SCRAM_SHA_256("SCRAM-SHA-256"),
+    VAPID("vapid")
 }
 
 

@@ -113,7 +113,6 @@ class OpenApiBuilderTest : StringSpec({
 
         private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): ExampleContext {
             return ExampleContextBuilder(
-                config = pluginConfig,
                 exampleBuilder = ExampleBuilder(
                     config = pluginConfig
                 )

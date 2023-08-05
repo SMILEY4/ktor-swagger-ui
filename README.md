@@ -1,6 +1,7 @@
 # Ktor Swagger-UI
 
-[![](https://jitpack.io/v/SMILEY4/ktor-swagger-ui.svg)](https://jitpack.io/#SMILEY4/ktor-swagger-ui)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui)
+[![Checks Passing](https://github.com/SMILEY4/ktor-swagger-ui/actions/workflows/buildTestVerify.yml/badge.svg?branch=develop)](https://github.com/SMILEY4/ktor-swagger-ui/actions/workflows/buildTestVerify.yml)
 
 
 This library provides a Ktor plugin to document routes, generate an OpenApi Specification and serve a Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing application without requiring immediate changes to the code. Routes can then be gradually enhanced with documentation.
@@ -24,6 +25,18 @@ A wiki with a short documentation is available [here](https://github.com/SMILEY4
 
 
 ## Installation
+
+Starting with version 2.2.0, dependencies are published on maven central. Older versions (<2.2.0) are available on jitpack.io
+
+**Versions >= 2.2.0**
+
+```kotlin
+dependencies {
+    implementation "io.github.smiley4:ktor-swagger-ui:<VERSION>"
+}
+```
+
+**Versions < 2.2.0**
 
 1. Add the JitPack repository
 ```kotlin

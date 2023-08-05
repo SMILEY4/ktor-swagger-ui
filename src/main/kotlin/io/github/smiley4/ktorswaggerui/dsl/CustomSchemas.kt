@@ -5,16 +5,17 @@ import io.swagger.v3.oas.models.media.Schema
 @OpenApiDslMarker
 class CustomSchemas {
 
-    private val customSchemas = mutableMapOf<String, BaseCustomSchema>()
+    private val schemas = mutableMapOf<String, BaseCustomSchema>()
 
-    fun getSchema(id: String): BaseCustomSchema? = customSchemas[id]
+    fun getSchema(id: String): BaseCustomSchema? = schemas[id]
 
+    fun getSchemas() = schemas
 
     /**
      * Define the json-schema for an object/body with the given id
      */
     fun json(id: String, provider: () -> String) {
-        customSchemas[id] = CustomJsonSchema(provider)
+        schemas[id] = CustomJsonSchema(provider)
     }
 
 
@@ -22,7 +23,7 @@ class CustomSchemas {
      * Define the [Schema] for an object/body with the given id
      */
     fun openApi(id: String, provider: () -> Schema<Any>) {
-        customSchemas[id] = CustomOpenApiSchema(provider)
+        schemas[id] = CustomOpenApiSchema(provider)
     }
 
 
@@ -30,8 +31,14 @@ class CustomSchemas {
      * Define the external url for an object/body with the given id
      */
     fun remote(id: String, url: String) {
-        customSchemas[id] = RemoteSchema(url)
+        schemas[id] = RemoteSchema(url)
     }
+
+
+    /**
+     * Whether to include all custom-schemas or only the ones directly used in any route-documentation
+     */
+    var includeAll = false
 
 }
 

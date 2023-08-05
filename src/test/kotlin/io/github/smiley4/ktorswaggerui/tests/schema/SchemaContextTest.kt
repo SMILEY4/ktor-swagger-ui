@@ -20,6 +20,7 @@ import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
+import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -412,6 +413,60 @@ class SchemaContextTest : StringSpec({
         }
     }
 
+    "don't include unused custom schema" {
+        val config = SwaggerUIPluginConfig().also {
+            it.customSchemas {
+                includeAll = false
+                openApi("myCustomSchema") {
+                    Schema<Any>().also { schema ->
+                        schema.type = "object"
+                        schema.properties = mapOf(
+                            "custom" to Schema<Any>().also { prop ->
+                                prop.type = "string"
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        val schemaContext = schemaContext(emptyList(), config)
+        schemaContext.getSchemaOrNull(obj("myCustomSchema")) shouldBe null
+        schemaContext.getComponentsSection().also { components ->
+            components.keys  shouldHaveSize 0
+        }
+    }
+
+    "include unused custom schema" {
+        val config = SwaggerUIPluginConfig().also {
+            it.customSchemas {
+                includeAll = true
+                openApi("myCustomSchema") {
+                    Schema<Any>().also { schema ->
+                        schema.type = "object"
+                        schema.properties = mapOf(
+                            "custom" to Schema<Any>().also { prop ->
+                                prop.type = "string"
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        val schemaContext = schemaContext(emptyList(), config)
+        schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
+            schema.type shouldBe null
+            schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
+        }
+        schemaContext.getComponentsSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf(
+                "myCustomSchema",
+            )
+            components["myCustomSchema"]?.also { schema ->
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactlyInAnyOrder listOf("custom")
+            }
+        }
+    }
 
 }) {
 
