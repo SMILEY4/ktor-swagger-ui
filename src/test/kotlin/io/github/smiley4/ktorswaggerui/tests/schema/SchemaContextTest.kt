@@ -468,6 +468,30 @@ class SchemaContextTest : StringSpec({
         }
     }
 
+    "array with wildcard-generic" {
+        val routes = listOf(
+            route {
+                request {
+                    body<Array<*>>()
+                }
+            }
+        )
+        val schemaContext = schemaContext(routes)
+        schemaContext.getSchema(getType<Array<*>>()).also { schema ->
+            schema.type shouldBe "array"
+            schema.`$ref` shouldBe null
+            schema.items.also { item ->
+                item.`$ref` shouldBe "#/components/schemas/*"
+            }
+        }
+        schemaContext.getComponentsSection().also { components ->
+            components.keys shouldContainExactlyInAnyOrder listOf("*")
+            components["*"]?.also { schema ->
+                schema.type shouldBe "object"
+            }
+        }
+    }
+
 }) {
 
     companion object {

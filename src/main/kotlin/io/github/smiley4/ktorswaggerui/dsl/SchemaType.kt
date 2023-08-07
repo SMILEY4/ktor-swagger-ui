@@ -24,10 +24,12 @@ fun SchemaType.getSimpleTypeName(): String {
 }
 
 fun SchemaType.getSimpleArrayElementTypeName(): String {
-    if (this.arguments.size != 1 || this.arguments.first().type == null) {
+    if (this.arguments.size != 1) {
         throw IllegalArgumentException("Could not determine type of array-elements")
     } else {
-        return this.arguments[0].type!!.getSimpleTypeName()
+        return this.arguments.first().let { arg ->
+            arg.type?.getSimpleTypeName() ?: arg.toString()
+        }
     }
 }
 
