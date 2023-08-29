@@ -66,6 +66,10 @@ private fun Application.myModule() {
                 url = "example.com/license"
             }
         }
+        externalDocs {
+            url = "https://docs.example.com"
+            description = "Example external documentation description"
+        }
         server {
             url = "localhost:8080"
             description = "develop server"

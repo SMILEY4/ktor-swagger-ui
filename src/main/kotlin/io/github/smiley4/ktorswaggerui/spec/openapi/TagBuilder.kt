@@ -4,7 +4,7 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
 import io.swagger.v3.oas.models.tags.Tag
 
 class TagBuilder(
-    private val externalDocumentationBuilder: ExternalDocumentationBuilder
+    private val tagExternalDocumentationBuilder: TagExternalDocumentationBuilder
 ) {
 
     fun build(tag: OpenApiTag): Tag =
@@ -12,7 +12,7 @@ class TagBuilder(
             it.name = tag.name
             it.description = tag.description
             if(tag.externalDocUrl != null && tag.externalDocDescription != null) {
-                it.externalDocs = externalDocumentationBuilder.build(tag.externalDocUrl!!, tag.externalDocDescription!!)
+                it.externalDocs = tagExternalDocumentationBuilder.build(tag.externalDocUrl!!, tag.externalDocDescription!!)
             }
         }
 
