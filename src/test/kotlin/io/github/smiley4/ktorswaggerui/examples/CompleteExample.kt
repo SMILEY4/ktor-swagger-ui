@@ -66,6 +66,10 @@ private fun Application.myModule() {
             version = "latest"
             description = "Example API for testing and demonstration purposes."
         }
+        externalDocs {
+            url = "https://github.com/SMILEY4/ktor-swagger-ui/wiki"
+            description = "Sample external documentation object"
+        }
         server {
             url = "http://localhost:8080"
             description = "Development Server"

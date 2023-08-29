@@ -4,28 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ComponentsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExternalDocumentationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.InfoBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.LicenseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OAuthFlowsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OpenApiBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.PathBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.PathsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
@@ -47,6 +26,7 @@ class OpenApiBuilderTest : StringSpec({
             openapi.info shouldNotBe null
             openapi.extensions shouldBe null
             openapi.servers shouldHaveSize 0
+            openapi.externalDocs shouldNotBe null
             openapi.security shouldBe null
             openapi.tags shouldHaveSize 0
             openapi.paths shouldHaveSize 0
@@ -130,9 +110,10 @@ class OpenApiBuilderTest : StringSpec({
                     contactBuilder = ContactBuilder(),
                     licenseBuilder = LicenseBuilder()
                 ),
+                externalDocumentationBuilder = ExternalDocumentationBuilder(),
                 serverBuilder = ServerBuilder(),
                 tagBuilder = TagBuilder(
-                    externalDocumentationBuilder = ExternalDocumentationBuilder()
+                    tagExternalDocumentationBuilder = TagExternalDocumentationBuilder()
                 ),
                 pathsBuilder = PathsBuilder(
                     pathBuilder = PathBuilder(
