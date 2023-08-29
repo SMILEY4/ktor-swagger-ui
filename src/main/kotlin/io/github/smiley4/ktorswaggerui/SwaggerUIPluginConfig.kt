@@ -1,17 +1,8 @@
 package io.github.smiley4.ktorswaggerui
 
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
-import io.github.smiley4.ktorswaggerui.dsl.EncodingConfig
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.routing.RouteSelector
+import io.github.smiley4.ktorswaggerui.dsl.*
+import io.ktor.http.*
+import io.ktor.server.routing.*
 import kotlin.reflect.KClass
 
 /**
@@ -99,6 +90,18 @@ class SwaggerUIPluginConfig {
     private val servers = mutableListOf<OpenApiServer>()
 
     fun getServers(): List<OpenApiServer> = servers
+
+
+    /**
+     * OpenAPI external docs configuration - link and description of an external documentation
+     */
+    fun externalDocs(block: OpenApiExternalDocs.() -> Unit) {
+        externalDocs = OpenApiExternalDocs().apply(block)
+    }
+
+    private var externalDocs = OpenApiExternalDocs()
+
+    fun getExternalDocs() = externalDocs
 
 
     /**

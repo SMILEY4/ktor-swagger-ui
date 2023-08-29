@@ -1,32 +1,9 @@
 package io.github.smiley4.ktorswaggerui
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.dsl.SchemaType
-import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ComponentsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExternalDocumentationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.InfoBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.LicenseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OAuthFlowsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OpenApiBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.PathBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.PathsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
+import io.github.smiley4.ktorswaggerui.spec.openapi.*
 import io.github.smiley4.ktorswaggerui.spec.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
@@ -34,18 +11,12 @@ import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
-import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationStarted
-import io.ktor.server.application.createApplicationPlugin
-import io.ktor.server.application.hooks.MonitoringEvent
-import io.ktor.server.application.install
-import io.ktor.server.application.plugin
-import io.ktor.server.application.pluginOrNull
-import io.ktor.server.routing.Routing
-import io.ktor.server.webjars.Webjars
+import io.ktor.server.application.*
+import io.ktor.server.application.hooks.*
+import io.ktor.server.routing.*
+import io.ktor.server.webjars.*
 import io.swagger.v3.core.util.Json
 import mu.KotlinLogging
-import java.io.File
 
 /**
  * This version must match the version of the gradle dependency
@@ -112,9 +83,10 @@ private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext,
             contactBuilder = ContactBuilder(),
             licenseBuilder = LicenseBuilder()
         ),
+        externalDocumentationBuilder = ExternalDocumentationBuilder(),
         serverBuilder = ServerBuilder(),
         tagBuilder = TagBuilder(
-            externalDocumentationBuilder = ExternalDocumentationBuilder()
+            tagExternalDocumentationBuilder = TagExternalDocumentationBuilder()
         ),
         pathsBuilder = PathsBuilder(
             pathBuilder = PathBuilder(

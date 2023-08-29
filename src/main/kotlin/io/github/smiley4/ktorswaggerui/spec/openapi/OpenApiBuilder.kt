@@ -11,6 +11,7 @@ class OpenApiBuilder(
     private val schemaContext: SchemaContext,
     private val exampleContext: ExampleContext,
     private val infoBuilder: InfoBuilder,
+    private val externalDocumentationBuilder: ExternalDocumentationBuilder,
     private val serverBuilder: ServerBuilder,
     private val tagBuilder: TagBuilder,
     private val pathsBuilder: PathsBuilder,
@@ -20,6 +21,7 @@ class OpenApiBuilder(
     fun build(routes: Collection<RouteMeta>): OpenAPI {
         return OpenAPI().also {
             it.info = infoBuilder.build(config.getInfo())
+            it.externalDocs = externalDocumentationBuilder.build(config.getExternalDocs())
             it.servers = config.getServers().map { server -> serverBuilder.build(server) }
             it.tags = config.getTags().map { tag -> tagBuilder.build(tag) }
             it.paths = pathsBuilder.build(routes)
