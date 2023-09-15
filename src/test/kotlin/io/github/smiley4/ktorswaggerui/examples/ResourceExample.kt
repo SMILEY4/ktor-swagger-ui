@@ -18,7 +18,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 
 /**
- * Arbitrary examples to show (and test) as many features as possible (for authentication see "AuthExample")
+ * Example to showcase usage with the resources plugin
  */
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -94,10 +94,6 @@ private fun Application.myModule() {
             description = "Creates a new article"
             operationId = "createArticle"
             request {
-                pathParameter<String>("operation") {
-                    description = "the math operation to perform. Either 'add' or 'sub'"
-                    example = "add"
-                }
                 body<Article> {
                     example("First", Article("Ktor openapi resources", "ktor now support openapi for resources!")) {
                         description = "Create a ktor article"

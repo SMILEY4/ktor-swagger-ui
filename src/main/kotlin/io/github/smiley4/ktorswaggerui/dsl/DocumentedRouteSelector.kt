@@ -91,18 +91,6 @@ fun Route.get(
     return documentation(builder) { get(body) }
 }
 
-inline fun <reified T : Any> Route.get(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Get) {
-                handle(body)
-            }
-        }
-    }
-}
 
 //============================//
 //            POST            //
@@ -141,18 +129,6 @@ fun Route.post(
     return documentation(builder) { post(body) }
 }
 
-inline fun <reified T : Any> Route.post(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Post) {
-                handle(body)
-            }
-        }
-    }
-}
 
 //============================//
 //             PUT            //
@@ -190,18 +166,6 @@ inline fun <reified R : Any> Route.put(
     return documentation(builder) { put(path, body) }
 }
 
-inline fun <reified T : Any> Route.put(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Put) {
-                handle(body)
-            }
-        }
-    }
-}
 
 //============================//
 //           DELETE           //
@@ -222,18 +186,6 @@ fun Route.delete(
     return documentation(builder) { delete(body) }
 }
 
-inline fun <reified T : Any> Route.delete(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Delete) {
-                handle(body)
-            }
-        }
-    }
-}
 
 //============================//
 //            PATCH           //
@@ -274,18 +226,6 @@ inline fun <reified R : Any> Route.patch(
     return documentation(builder) { patch(path, body) }
 }
 
-inline fun <reified T : Any> Route.patch(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Patch) {
-                handle(body)
-            }
-        }
-    }
-}
 
 //============================//
 //           OPTIONS          //
@@ -306,18 +246,6 @@ fun Route.options(
     return documentation(builder) { options(body) }
 }
 
-inline fun <reified T : Any> Route.options(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Options) {
-                handle(body)
-            }
-        }
-    }
-}
 
 //============================//
 //            HEAD            //
@@ -336,17 +264,4 @@ fun Route.head(
     body: PipelineInterceptor<Unit, ApplicationCall>
 ): Route {
     return documentation(builder) { head(body) }
-}
-
-inline fun <reified T : Any> Route.head(
-    noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
-): Route {
-    return documentation(builder) {
-        resource<T> {
-            method(HttpMethod.Head) {
-                handle(body)
-            }
-        }
-    }
 }
