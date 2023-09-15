@@ -25,7 +25,7 @@ fun main() {
 }
 
 @Resource("articles")
-class ArticlesRoute() {}
+class ArticlesRoute
 
 data class Article(
     val title: String,
