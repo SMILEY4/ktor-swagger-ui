@@ -30,6 +30,35 @@ import kotlin.reflect.jvm.javaType
 
 class SchemaBuilderTest : StringSpec({
 
+    "victools field names".config(enabled = false) {
+        /**
+         * Test-case for https://github.com/SMILEY4/ktor-swagger-ui/issues/60.
+         * -> victools incorrectly ignores fields with is[A-Z]
+         */
+        createSchemaVictools<WithFieldNames>(false).also { defs ->
+            defs.root.also { schema ->
+                schema.`$ref` shouldBe null
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactly setOf("flag", "getAnotherText", "text", "isSomething", "isSomeText")
+                schema.properties["flag"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["isSomething"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["text"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["getAnotherText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["isSomeText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+            }
+        }
+    }
+
     "primitive (victools, all definitions)" {
         createSchemaVictools<Int>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("int")
@@ -401,6 +430,14 @@ class SchemaBuilderTest : StringSpec({
             )
             val cityCode: Int
 
+        )
+
+        data class WithFieldNames(
+            val flag: Boolean,
+            val isSomething: Boolean,
+            val text: String,
+            val isSomeText: String,
+            val getAnotherText: String
         )
 
         inline fun <reified T> createSchemaVictools(definitions: Boolean) =
