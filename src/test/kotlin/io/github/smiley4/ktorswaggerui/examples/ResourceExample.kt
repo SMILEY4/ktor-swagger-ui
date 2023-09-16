@@ -1,21 +1,24 @@
 package io.github.smiley4.ktorswaggerui.examples
 
-import io.ktor.server.application.Application
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.*
+import io.github.smiley4.ktorswaggerui.dsl.resources.get
+import io.github.smiley4.ktorswaggerui.dsl.resources.post
+import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.ktor.http.HttpStatusCode
-import io.ktor.resources.*
+import io.ktor.resources.Resource
 import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.resources.Resources
 import io.ktor.server.response.respond
-import io.ktor.server.routing.*
+import io.ktor.server.routing.routing
 
 /**
  * Example to showcase usage with the resources plugin
@@ -34,6 +37,7 @@ data class Article(
 
 private fun Application.myModule() {
 
+    install(Resources)
     install(SwaggerUI) {
         swagger {
             swaggerUrl = "swagger-ui"
@@ -57,7 +61,6 @@ private fun Application.myModule() {
         }
         generateTags { url -> listOf(url.firstOrNull()) }
     }
-
     install(ContentNegotiation) {
         jackson {
             configure(SerializationFeature.INDENT_OUTPUT, true)
@@ -94,6 +97,9 @@ private fun Application.myModule() {
             description = "Creates a new article"
             operationId = "createArticle"
             request {
+                pathParameter<String>("id") {
+                    description = "The id of the requested article"
+                }
                 body<Article> {
                     example("First", Article("Ktor openapi resources", "ktor now support openapi for resources!")) {
                         description = "Create a ktor article"

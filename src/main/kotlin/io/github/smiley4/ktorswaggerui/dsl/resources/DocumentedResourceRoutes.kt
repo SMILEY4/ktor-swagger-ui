@@ -1,11 +1,14 @@
-package io.github.smiley4.ktorswaggerui.dsl
+package io.github.smiley4.ktorswaggerui.dsl.resources
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.resources.*
-import io.ktor.server.routing.*
-import io.ktor.util.pipeline.*
-
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.documentation
+import io.github.smiley4.ktorswaggerui.dsl.method
+import io.ktor.http.HttpMethod
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.resources.handle
+import io.ktor.server.resources.resource
+import io.ktor.server.routing.Route
+import io.ktor.util.pipeline.PipelineContext
 
 //============================//
 //             GET            //
@@ -13,7 +16,7 @@ import io.ktor.util.pipeline.*
 
 inline fun <reified T : Any> Route.get(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -24,14 +27,13 @@ inline fun <reified T : Any> Route.get(
     }
 }
 
-
 //============================//
 //            POST            //
 //============================//
 
 inline fun <reified T : Any> Route.post(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -42,14 +44,13 @@ inline fun <reified T : Any> Route.post(
     }
 }
 
-
 //============================//
 //             PUT            //
 //============================//
 
 inline fun <reified T : Any> Route.put(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -60,14 +61,13 @@ inline fun <reified T : Any> Route.put(
     }
 }
 
-
 //============================//
 //           DELETE           //
 //============================//
 
 inline fun <reified T : Any> Route.delete(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -78,14 +78,13 @@ inline fun <reified T : Any> Route.delete(
     }
 }
 
-
 //============================//
 //            PATCH           //
 //============================//
 
 inline fun <reified T : Any> Route.patch(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -96,14 +95,13 @@ inline fun <reified T : Any> Route.patch(
     }
 }
 
-
 //============================//
 //           OPTIONS          //
 //============================//
 
 inline fun <reified T : Any> Route.options(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -114,14 +112,13 @@ inline fun <reified T : Any> Route.options(
     }
 }
 
-
 //============================//
 //            HEAD            //
 //============================//
 
 inline fun <reified T : Any> Route.head(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: PipelineInterceptor<Unit, ApplicationCall>
+    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
