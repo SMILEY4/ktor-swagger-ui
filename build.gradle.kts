@@ -37,6 +37,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-resources:$ktorVersion")
     testImplementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     testImplementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     testImplementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
