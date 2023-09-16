@@ -90,6 +90,7 @@ fun Route.get(
     return documentation(builder) { get(body) }
 }
 
+
 //============================//
 //            POST            //
 //============================//
@@ -127,6 +128,7 @@ fun Route.post(
     return documentation(builder) { post(body) }
 }
 
+
 //============================//
 //             PUT            //
 //============================//
@@ -163,6 +165,7 @@ inline fun <reified R : Any> Route.put(
     return documentation(builder) { put(path, body) }
 }
 
+
 //============================//
 //           DELETE           //
 //============================//
@@ -181,6 +184,7 @@ fun Route.delete(
 ): Route {
     return documentation(builder) { delete(body) }
 }
+
 
 //============================//
 //            PATCH           //
@@ -221,6 +225,7 @@ inline fun <reified R : Any> Route.patch(
     return documentation(builder) { patch(path, body) }
 }
 
+
 //============================//
 //           OPTIONS          //
 //============================//
@@ -239,6 +244,7 @@ fun Route.options(
 ): Route {
     return documentation(builder) { options(body) }
 }
+
 
 //============================//
 //            HEAD            //
