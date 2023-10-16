@@ -2,6 +2,7 @@ package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.dsl.get
+import io.github.smiley4.ktorswaggerui.dsl.route
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -12,6 +13,11 @@ import io.ktor.server.routing.routing
 
 /**
  * An example showcasing multiple openapi-specs in a single application
+ * - localhost:8080/swagger-ui/v1/index.html
+ *      * /v1/hello
+ * - localhost:8080/swagger-ui/v2/index.html
+ *      * /v2/hello
+ *      * /hi
  */
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -19,20 +25,34 @@ fun main() {
 
 private fun Application.myModule() {
     install(SwaggerUI) {
-        specAssigner = { _, tags -> tags.firstOrNull() ?: "other" }
+        specAssigner = { _, _ -> "v2" }
     }
     routing {
-        get("v1/hello", {
-            description = "Simple version 1 'Hello World'- Route"
-            tags = listOf("v1")
+        route("v1", {
+            specId = "v1"
         }) {
-            call.respondText("Hello World!")
+            get("hello", {
+                description = "Simple version 1 'Hello World'-Route"
+            }) {
+                call.respondText("Hello World!")
+            }
         }
-        get("v2/hello", {
-            description = "Simple version 2 'Hello World'- Route"
-            tags = listOf("v2")
+
+        route("v2", {
+            specId = "v2"
         }) {
-            call.respondText("Improved Hello World!")
+            get("hello", {
+                description = "Simple version 2 'Hello World'-Route"
+            }) {
+                call.respondText("Improved Hello World!")
+            }
         }
+
+        get("hi", {
+            description = "Alternative version of 'Hello World'-Route"
+        }) {
+            call.respondText("Alternative Hello World!")
+        }
+
     }
 }

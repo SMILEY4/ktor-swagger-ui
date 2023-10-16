@@ -9,6 +9,7 @@ import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.call
 import io.ktor.server.auth.authenticate
 import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.request.uri
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondRedirect
 import io.ktor.server.response.respondText
@@ -21,9 +22,13 @@ class SwaggerController(
     private val appConfig: ApplicationConfig,
     private val swaggerUiConfig: SwaggerUIDsl,
     private val swaggerWebjarVersion: String,
-    private val specName: String,
+    private val specName: String?,
     private val jsonSpec: String,
 ) {
+
+    companion object {
+        const val DEFAULT_SPEC_NAME: String = "api"
+    }
 
     fun setup(app: Application) {
         app.routing {
@@ -40,7 +45,7 @@ class SwaggerController(
     private fun Route.setup() {
         route(getSubUrl()) {
             get {
-                call.respondRedirect("${getSubUrl()}/index.html")
+                call.respondRedirect("${call.request.uri}/index.html")
             }
             get("{filename}") {
                 serveStaticResource(call.parameters["filename"]!!, call)
@@ -48,7 +53,7 @@ class SwaggerController(
             get("swagger-initializer.js") {
                 serveSwaggerInitializer(call)
             }
-            get("$specName.json") {
+            get("${specName ?: DEFAULT_SPEC_NAME}.json") {
                 serveOpenApiSpec(call)
             }
         }
@@ -66,7 +71,7 @@ class SwaggerController(
         val content = """
 			window.onload = function() {
 			  window.ui = SwaggerUIBundle({
-				url: "${getRootUrl(appConfig)}/$specName.json",
+				url: "${getRootUrl(appConfig)}/${specName ?: DEFAULT_SPEC_NAME}.json",
 				dom_id: '#swagger-ui',
 				deepLinking: true,
 				presets: [
@@ -102,19 +107,19 @@ class SwaggerController(
     }
 
     private fun getRootUrl(appConfig: ApplicationConfig): String {
-        val rootPath = appConfig.propertyOrNull("ktor.deployment.rootPath")?.getString()?.let { "/${dropSlashes(it)}" } ?: ""
-        return "$rootPath${swaggerUiConfig.rootHostPath}/${dropSlashes(swaggerUiConfig.swaggerUrl)}/$specName"
+        return "${ControllerUtils.getRootPath(appConfig)}${getSubUrl()}"
     }
 
     private fun getSubUrl(): String {
-        return "${swaggerUiConfig.rootHostPath}/${dropSlashes(swaggerUiConfig.swaggerUrl)}/$specName"
+        return "/" + listOf(
+            swaggerUiConfig.rootHostPath,
+            swaggerUiConfig.swaggerUrl,
+            specName
+        )
+            .filter { !it.isNullOrBlank() }
+            .map { ControllerUtils.dropSlashes(it!!) }
+            .joinToString("/")
     }
 
-    private fun dropSlashes(str: String): String {
-        var value = str
-        value = if (value.startsWith("/")) value.substring(1) else value
-        value = if (value.endsWith("/")) value.substring(0, value.length - 1) else value
-        return value
-    }
 
 }

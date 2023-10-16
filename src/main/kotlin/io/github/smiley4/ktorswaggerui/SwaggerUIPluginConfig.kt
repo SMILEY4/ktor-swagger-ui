@@ -21,15 +21,9 @@ import kotlin.reflect.KClass
 @OpenApiDslMarker
 class SwaggerUIPluginConfig {
 
-
-    fun config(name: String, config: SwaggerUIPluginConfig.() -> Unit) {
-        // todo: temp
+    companion object {
+        const val DEFAULT_SPEC_ID = "api"
     }
-
-
-    // todo: temp
-    var specAssigner: (url: String, tags: List<String>) -> String = { _, _ -> "api" }
-
 
     /**
      * Default response to automatically add to each protected route for the "Unauthorized"-Response-Code.
@@ -67,6 +61,12 @@ class SwaggerUIPluginConfig {
     private var tagGenerator: TagGenerator = { emptyList() }
 
     fun getTagGenerator() = tagGenerator
+
+
+    /**
+     * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute.specId] to a specified openapi-spec.
+     */
+    var specAssigner: (url: String, tags: List<String>) -> String = { _, _ -> DEFAULT_SPEC_ID }
 
 
     /**

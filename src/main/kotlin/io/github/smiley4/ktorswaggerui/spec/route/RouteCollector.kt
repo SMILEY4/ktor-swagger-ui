@@ -31,10 +31,6 @@ class RouteCollector(
                     protected = documentation.protected ?: isProtected(route)
                 )
             }
-            .filter { removeLeadingSlash(it.path) != removeLeadingSlash(config.getSwaggerUI().swaggerUrl) }
-            .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/api.json") }
-            .filter { removeLeadingSlash(it.path) != removeLeadingSlash("${config.getSwaggerUI().swaggerUrl}/{filename}") }
-            .filter { !config.getSwaggerUI().forwardRoot || it.path != "/" }
             .filter { !it.documentation.hidden }
             .filter { path ->
                 config.pathFilter
@@ -42,13 +38,6 @@ class RouteCollector(
                     ?: true
             }
     }
-
-    private fun removeLeadingSlash(str: String): String =
-        if (str.startsWith("/")) {
-            str.substring(1)
-        } else {
-            str
-        }
 
     private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
         var documentation = base

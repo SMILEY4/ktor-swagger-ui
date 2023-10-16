@@ -6,6 +6,7 @@ class RouteDocumentationMerger {
 
     fun merge(a: OpenApiRoute, b: OpenApiRoute): OpenApiRoute {
         return OpenApiRoute().apply {
+            specId = a.specId ?: b.specId
             tags = mutableListOf<String>().also {
                 it.addAll(a.tags)
                 it.addAll(b.tags)

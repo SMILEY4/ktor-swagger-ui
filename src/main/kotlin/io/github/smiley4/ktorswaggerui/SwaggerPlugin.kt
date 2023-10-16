@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
 import io.github.smiley4.ktorswaggerui.routing.SwaggerController
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
@@ -73,9 +74,13 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
                 applicationConfig!!,
                 pluginConfig.getSwaggerUI(),
                 SWAGGER_UI_WEBJARS_VERSION,
-                name,
+                if (apiSpecsJson.size > 1) name else null,
                 json
             ).setup(application)
+        }
+
+        if(apiSpecsJson.size == 1 && pluginConfig.getSwaggerUI().forwardRoot) {
+            ForwardRouteController(applicationConfig!!, pluginConfig.getSwaggerUI()).setup(application)
         }
 
     }
@@ -84,7 +89,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
 private fun buildOpenApiSpecs(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): Map<String, String> {
     val routesBySpec = buildMap<String, MutableList<RouteMeta>> {
         routes.forEach { route ->
-            val specName = pluginConfig.specAssigner(route.path, route.documentation.tags)
+            val specName = route.documentation.specId ?: pluginConfig.specAssigner(route.path, route.documentation.tags)
             computeIfAbsent(specName) { mutableListOf() }.add(route)
         }
     }
