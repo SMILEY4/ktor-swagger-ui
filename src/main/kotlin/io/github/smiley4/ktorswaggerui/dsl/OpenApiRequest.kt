@@ -110,11 +110,28 @@ class OpenApiRequest {
 
 
     /**
+     * The body returned with this request
+     */
+    fun body(typeDescriptor: BodyTypeDescriptor, block: OpenApiSimpleBody.() -> Unit) {
+        body = OpenApiSimpleBody(typeDescriptor).apply(block)
+    }
+
+    /**
+     * The body returned with this request
+     */
+    fun body(typeDescriptor: BodyTypeDescriptor) = body(typeDescriptor) {}
+
+    /**
      * The request body applicable for this operation
      */
-    fun body(type: SchemaType?, block: OpenApiSimpleBody.() -> Unit) {
-        body = OpenApiSimpleBody(type).apply(block)
-    }
+    fun body(type: SchemaType?, block: OpenApiSimpleBody.() -> Unit) = body(BodyTypeDescriptor.typeOf(type), block)
+
+
+    /**
+     * The request body applicable for this operation
+     */
+    fun body(type: KClass<*>) = body(type) {}
+
 
     /**
      * The request body applicable for this operation
@@ -132,47 +149,25 @@ class OpenApiRequest {
     /**
      * The request body applicable for this operation
      */
-    fun body(type: KClass<*>) = body(type) {}
-
-
-    /**
-     * The request body applicable for this operation
-     */
     inline fun <reified TYPE> body() = body(getSchemaType<TYPE>()) {}
 
 
     /**
      * The request body applicable for this operation
      */
-    fun body(block: OpenApiSimpleBody.() -> Unit) = body(null, block)
-
-
-    /**
-     * The body returned with this request
-     */
-    fun body(customSchema: CustomSchemaRef, block: OpenApiSimpleBody.() -> Unit) {
-        body = OpenApiSimpleBody(null).apply(block).apply {
-            this.customSchema = customSchema
-        }
-    }
-
-
-    /**
-     * The body returned with this request
-     */
-    fun body(customSchema: CustomSchemaRef) = body(customSchema) {}
-
-
-    /**
-     * The body returned with this request
-     */
-    fun body(customSchemaId: String, block: OpenApiSimpleBody.() -> Unit) = body(obj(customSchemaId), block)
+    fun body(block: OpenApiSimpleBody.() -> Unit) = body(BodyTypeDescriptor.empty(), block)
 
 
     /**
      * The body returned with this request
      */
     fun body(customSchemaId: String) = body(customSchemaId) {}
+
+
+    /**
+     * The body returned with this request
+     */
+    fun body(customSchemaId: String, block: OpenApiSimpleBody.() -> Unit) = body(BodyTypeDescriptor.custom(customSchemaId), block)
 
 
     /**
@@ -189,6 +184,5 @@ class OpenApiRequest {
     fun setBody(body: OpenApiBaseBody?) {
         this.body = body
     }
-
 
 }

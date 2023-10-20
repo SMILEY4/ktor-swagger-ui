@@ -14,14 +14,8 @@ class OpenApiMultipartPart(
      */
     val name: String,
 
-    val type: SchemaType?
+    val type: BodyTypeDescriptor
 ) {
-
-    /**
-     * reference to a custom schema (alternative to 'type')
-     */
-    var customSchema: CustomSchemaRef? = null
-
 
     /**
      * Set a specific content type for this part

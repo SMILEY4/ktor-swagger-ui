@@ -9,6 +9,12 @@ import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.builder.openapi.ExampleBuilder
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.CollectionBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.CustomRefBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.EmptyBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.OneOfBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.SchemaBodyTypeDescriptor
 import io.swagger.v3.oas.models.examples.Example
 
 class ExampleContextBuilder(
@@ -42,7 +48,18 @@ class ExampleContextBuilder(
 
     private fun handle(ctx: ExampleContext, body: OpenApiSimpleBody) {
         body.getExamples().forEach { (name, value) ->
-            ctx.addExample(body, name, createExample(body.type ?: getSchemaType<String>(), value))
+            val bodyType = getRelevantSchemaType(body.type, getSchemaType<String>())
+            ctx.addExample(body, name, createExample(bodyType, value))
+        }
+    }
+
+    private fun getRelevantSchemaType(typeDescriptor: BodyTypeDescriptor, fallback: SchemaType): SchemaType {
+        return when(typeDescriptor) {
+            is EmptyBodyTypeDescriptor -> fallback
+            is SchemaBodyTypeDescriptor -> typeDescriptor.schemaType
+            is CollectionBodyTypeDescriptor -> getRelevantSchemaType(typeDescriptor.schemaType, fallback)
+            is OneOfBodyTypeDescriptor -> fallback
+            is CustomRefBodyTypeDescriptor -> fallback
         }
     }
 

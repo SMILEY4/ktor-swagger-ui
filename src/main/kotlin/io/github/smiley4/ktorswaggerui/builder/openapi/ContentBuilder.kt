@@ -1,29 +1,23 @@
 package io.github.smiley4.ktorswaggerui.builder.openapi
 
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartPart
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.CollectionBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.CustomRefBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.EmptyBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.OneOfBodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartPart
+import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
+import io.github.smiley4.ktorswaggerui.dsl.SchemaBodyTypeDescriptor
 import io.ktor.http.ContentType
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.Encoding
 import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
-import kotlin.collections.Map
-import kotlin.collections.MutableMap
-import kotlin.collections.associateWith
-import kotlin.collections.filter
-import kotlin.collections.flatMap
-import kotlin.collections.forEach
-import kotlin.collections.ifEmpty
-import kotlin.collections.isNotEmpty
-import kotlin.collections.joinToString
-import kotlin.collections.mapValues
-import kotlin.collections.mutableMapOf
 import kotlin.collections.set
-import kotlin.collections.setOf
 
 class ContentBuilder(
     private val schemaContext: SchemaContext,
@@ -106,22 +100,37 @@ class ContentBuilder(
     }
 
     private fun getSchema(body: OpenApiSimpleBody): Schema<*>? {
-        return if (body.customSchema != null) {
-            schemaContext.getSchema(body.customSchema!!)
-        } else if (body.type != null) {
-            schemaContext.getSchema(body.type)
-        } else {
-            null
-        }
+        return getSchema(body.type)
     }
 
     private fun getSchema(part: OpenApiMultipartPart): Schema<*>? {
-        return if (part.customSchema != null) {
-            schemaContext.getSchema(part.customSchema!!)
-        } else if (part.type != null) {
-            schemaContext.getSchema(part.type)
-        } else {
-            null
+        return getSchema(part.type)
+    }
+
+    private fun getSchema(typeDescriptor: BodyTypeDescriptor): Schema<*>? {
+        return when (typeDescriptor) {
+            is EmptyBodyTypeDescriptor -> {
+                null
+            }
+            is SchemaBodyTypeDescriptor -> {
+                schemaContext.getSchema(typeDescriptor.schemaType)
+            }
+            is OneOfBodyTypeDescriptor -> {
+                Schema<Any>().also { schema ->
+                    typeDescriptor.elements.forEach {
+                        schema.addOneOfItem(getSchema(it))
+                    }
+                }
+            }
+            is CollectionBodyTypeDescriptor -> {
+                Schema<Any>().also { schema ->
+                    schema.type = "array"
+                    schema.items = getSchema(typeDescriptor.schemaType)
+                }
+            }
+            is CustomRefBodyTypeDescriptor -> {
+                schemaContext.getSchema(typeDescriptor.customSchemaId)
+            }
         }
     }
 

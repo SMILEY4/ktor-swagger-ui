@@ -9,15 +9,15 @@ import com.github.victools.jsonschema.generator.SchemaVersion
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.dsl.array
 import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
-import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.custom
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.multipleOf
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -307,12 +307,12 @@ class SchemaContextTest : StringSpec({
         val routes = listOf(
             route {
                 request {
-                    body(obj("myCustomSchema"))
+                    body(custom("myCustomSchema"))
                 }
             }
         )
         val schemaContext = schemaContext(routes, config)
-        schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
+        schemaContext.getSchema("myCustomSchema").also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
         }
@@ -345,19 +345,14 @@ class SchemaContextTest : StringSpec({
         val routes = listOf(
             route {
                 request {
-                    body(array("myCustomSchema"))
+                    body(multipleOf(custom("myCustomSchema")))
                 }
             }
         )
         val schemaContext = schemaContext(routes, config)
-        schemaContext.getSchema(array("myCustomSchema")).also { schema ->
-            schema.type shouldBe "array"
-            schema.`$ref` shouldBe null
-            schema.items
-                .also { it shouldNotBe null }
-                ?.also { items ->
-                    items.`$ref` shouldBe "#/components/schemas/myCustomSchema"
-                }
+        schemaContext.getSchema("myCustomSchema").also { schema ->
+            schema.type shouldBe null
+            schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
         }
         schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf(
@@ -431,7 +426,7 @@ class SchemaContextTest : StringSpec({
             }
         }
         val schemaContext = schemaContext(emptyList(), config)
-        schemaContext.getSchemaOrNull(obj("myCustomSchema")) shouldBe null
+        schemaContext.getSchemaOrNull("myCustomSchema") shouldBe null
         schemaContext.getComponentsSection().also { components ->
             components.keys  shouldHaveSize 0
         }
@@ -454,7 +449,7 @@ class SchemaContextTest : StringSpec({
             }
         }
         val schemaContext = schemaContext(emptyList(), config)
-        schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
+        schemaContext.getSchema("myCustomSchema").also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
         }
