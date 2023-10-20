@@ -19,6 +19,3 @@ data class InfoData(
         )
     }
 }
-
-
-

@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
@@ -130,6 +130,7 @@ class ApplicationTests {
             it.body.shouldNotBeEmpty()
         }
     }
+
 
     @Test
     fun forwardRootWithCustomSwaggerUrl() = swaggerUITestApplication({
@@ -305,7 +306,7 @@ class ApplicationTests {
 
     @Test
     fun multipleSwaggerUI() = swaggerUITestApplication({
-        specAssigner = {_, tags -> tags.firstOrNull() ?: "other"}
+        specAssigner = { _, tags -> tags.firstOrNull() ?: "other" }
     }) {
         get("hello").also {
             it.status shouldBe HttpStatusCode.OK
@@ -357,11 +358,44 @@ class ApplicationTests {
     }
 
 
+    @Test
+    fun multipleSwaggerUIWithDifferentAuthConfig() = swaggerUITestApplication({
+        specAssigner = { _, tags -> tags.firstOrNull() ?: "other" }
+        spec("hello") {
+            swagger {
+                authentication = null
+            }
+        }
+        spec("world") {
+            swagger {
+                authentication = "my-auth"
+            }
+        }
+    }) {
+        get("/swagger-ui/hello/index.html").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.contentType shouldBe ContentType.Text.Html
+            it.body.shouldNotBeEmpty()
+        }
+        get("/swagger-ui/hello/hello.json").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.body.shouldNotBeEmpty()
+        }
+        get("/swagger-ui/world/index.html").also {
+            it.status shouldBe HttpStatusCode.Unauthorized
+        }
+        get("/swagger-ui/world/world.json").also {
+            it.status shouldBe HttpStatusCode.Unauthorized
+        }
+    }
+
+
     private fun swaggerUITestApplication(block: suspend ApplicationTestBuilder.() -> Unit) {
         swaggerUITestApplication({}, block)
     }
 
-    private fun swaggerUITestApplication(pluginConfig: SwaggerUIPluginConfig.() -> Unit, block: suspend ApplicationTestBuilder.() -> Unit) {
+    private fun swaggerUITestApplication(pluginConfig: PluginConfigDsl.() -> Unit, block: suspend ApplicationTestBuilder.() -> Unit) {
         testApplication {
             application {
                 install(Authentication) {

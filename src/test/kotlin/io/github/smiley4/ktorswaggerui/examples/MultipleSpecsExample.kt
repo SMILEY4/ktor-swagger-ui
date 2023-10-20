@@ -6,6 +6,9 @@ import io.github.smiley4.ktorswaggerui.dsl.route
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.basic
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
@@ -24,12 +27,51 @@ fun main() {
 }
 
 private fun Application.myModule() {
-    install(SwaggerUI) {
-        specAssigner = { _, _ -> "v2" }
+
+    install(Authentication) {
+        basic("auth-swagger") {
+            realm = "Access to the Swagger UI"
+            validate { credentials ->
+                if (credentials.name == "user" && credentials.password == "pass") {
+                    UserIdPrincipal(credentials.name)
+                } else {
+                    null
+                }
+            }
+        }
     }
+
+    install(SwaggerUI) {
+        // general configuration
+        info {
+            title = "Example API"
+        }
+        specAssigner = { _, _ -> "v2" } // assign all unassigned routes to spec "v2" (here e.g. '/hi')
+
+        // configuration specific for spec "v1"
+        spec("v1") {
+            info {
+                version = "1.0"
+            }
+        }
+
+        // configuration specific for spec "v2"
+        spec("v2") {
+            info {
+                version = "2.0"
+            }
+            swagger {
+                authentication = "auth-swagger"
+            }
+        }
+    }
+
+
     routing {
+
+        // version 1.0 routes
         route("v1", {
-            specId = "v1"
+            specId = "v1" // assign all sub-routes to spec "v1"
         }) {
             get("hello", {
                 description = "Simple version 1 'Hello World'-Route"
@@ -38,8 +80,9 @@ private fun Application.myModule() {
             }
         }
 
+        // version 2.0 routes
         route("v2", {
-            specId = "v2"
+            specId = "v2" // assign all sub-routes to spec "v2"
         }) {
             get("hello", {
                 description = "Simple version 2 'Hello World'-Route"
@@ -48,6 +91,7 @@ private fun Application.myModule() {
             }
         }
 
+        // other routes
         get("hi", {
             description = "Alternative version of 'Hello World'-Route"
         }) {

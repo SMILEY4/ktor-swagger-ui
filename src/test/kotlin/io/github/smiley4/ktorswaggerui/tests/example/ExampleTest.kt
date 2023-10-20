@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests.example
 
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
@@ -167,11 +167,11 @@ class ExampleTest : StringSpec({
 
         }
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
         private fun exampleContext(
             routes: List<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(

@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
 import io.github.smiley4.ktorswaggerui.routing.SwaggerController
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
@@ -56,30 +56,31 @@ internal const val SWAGGER_UI_WEBJARS_VERSION = "4.15.0"
 
 private val logger = KotlinLogging.logger {}
 
-val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::SwaggerUIPluginConfig) {
+val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::PluginConfigDsl) {
 
     val config = pluginConfig.build(PluginConfigData.DEFAULT)
 
     on(MonitoringEvent(ApplicationStarted)) { application ->
 
-        val apiSpecsJson = mutableMapOf<String, String>()
+        if (application.pluginOrNull(Webjars) == null) {
+            application.install(Webjars)
+        }
 
+        val apiSpecsJson = mutableMapOf<String, String>()
         try {
-            if (application.pluginOrNull(Webjars) == null) {
-                application.install(Webjars)
-            }
             val routes = routes(application, config)
             apiSpecsJson.putAll(buildOpenApiSpecs(config, routes))
         } catch (e: Exception) {
             logger.error("Error during application startup in swagger-ui-plugin", e)
         }
 
-        apiSpecsJson.forEach { (name, json) ->
+        apiSpecsJson.forEach { (specId, json) ->
+            val specConfig = config.specConfigs[specId] ?: config
             SwaggerController(
                 applicationConfig!!,
-                config,
+                specConfig,
                 SWAGGER_UI_WEBJARS_VERSION,
-                if (apiSpecsJson.size > 1) name else null,
+                if (apiSpecsJson.size > 1) specId else null,
                 json
             ).setup(application)
         }
@@ -100,7 +101,8 @@ private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>)
     }
     return buildMap {
         routesBySpec.forEach { (specName, routes) ->
-            this[specName] = buildOpenApiSpec(config, routes)
+            val specConfig = config.specConfigs[specName] ?: config
+            this[specName] = buildOpenApiSpec(specConfig, routes)
         }
     }
 }

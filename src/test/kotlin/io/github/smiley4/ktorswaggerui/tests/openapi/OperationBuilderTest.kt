@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
@@ -96,7 +96,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "operation with auto-generated tags" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.generateTags { url -> listOf(url.firstOrNull()) }
         }
         val routeA = RouteMeta(
@@ -683,7 +683,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "automatic unauthorized response for protected route" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.defaultUnauthorizedResponse {
                 description = "Default unauthorized Response"
             }
@@ -717,7 +717,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "automatic unauthorized response for unprotected route" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.defaultUnauthorizedResponse {
                 description = "Default unauthorized Response"
             }
@@ -804,7 +804,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "custom body schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -861,7 +861,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "custom multipart-body schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -928,11 +928,11 @@ class OperationBuilderTest : StringSpec({
             val number: Int
         )
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
         private fun schemaContext(
             routes: List<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): SchemaContext {
             return SchemaContextBuilder(
                 config = pluginConfig.build(PluginConfigData.DEFAULT),
@@ -947,7 +947,7 @@ class OperationBuilderTest : StringSpec({
 
         private fun exampleContext(
             routes: List<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
@@ -961,7 +961,7 @@ class OperationBuilderTest : StringSpec({
             route: RouteMeta,
             schemaContext: SchemaContext,
             exampleContext: ExampleContext,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): Operation {
             val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return OperationBuilder(

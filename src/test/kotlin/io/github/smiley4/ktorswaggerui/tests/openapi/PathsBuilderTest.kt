@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
@@ -89,9 +89,9 @@ class PathsBuilderTest : StringSpec({
             protected = false
         )
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
-        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
+        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl = defaultPluginConfig): SchemaContext {
             return SchemaContextBuilder(
                 config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
@@ -103,7 +103,7 @@ class PathsBuilderTest : StringSpec({
             ).build(routes)
         }
 
-        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): ExampleContext {
+        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl = defaultPluginConfig): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
                     config = pluginConfig.build(PluginConfigData.DEFAULT)
@@ -115,7 +115,7 @@ class PathsBuilderTest : StringSpec({
             routes: Collection<RouteMeta>,
             schemaContext: SchemaContext,
             exampleContext: ExampleContext,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): Paths {
             val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return PathsBuilder(

@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.*
@@ -37,7 +37,7 @@ class OpenApiBuilderTest : StringSpec({
     }
 
     "multiple servers" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.server {
                 url = "http://localhost:8080"
                 description = "Development Server"
@@ -57,7 +57,7 @@ class OpenApiBuilderTest : StringSpec({
     }
 
     "multiple tags" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.tag("tag-1") {
                 description = "first test tag"
             }
@@ -78,9 +78,9 @@ class OpenApiBuilderTest : StringSpec({
 
     companion object {
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
-        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): SchemaContext {
+        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl): SchemaContext {
             return SchemaContextBuilder(
                 config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
@@ -92,7 +92,7 @@ class OpenApiBuilderTest : StringSpec({
             ).build(routes)
         }
 
-        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): ExampleContext {
+        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
                     config = pluginConfig.build(PluginConfigData.DEFAULT)
@@ -100,7 +100,7 @@ class OpenApiBuilderTest : StringSpec({
             ).build(routes.toList())
         }
 
-        private fun buildOpenApiObject(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): OpenAPI {
+        private fun buildOpenApiObject(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl = defaultPluginConfig): OpenAPI {
             val schemaContext = schemaContext(routes, pluginConfig)
             val exampleContext = exampleContext(routes, pluginConfig)
             val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)

@@ -2,7 +2,6 @@ package io.github.smiley4.ktorswaggerui.dsl
 
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
 import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeBoolean
-import io.github.smiley4.ktorswaggerui.data.ExternalDocsData
 import io.github.smiley4.ktorswaggerui.data.PathFilter
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.data.SecuritySchemeData
@@ -18,10 +17,17 @@ import kotlin.reflect.KClass
  * Main-Configuration of the "SwaggerUI"-Plugin
  */
 @OpenApiDslMarker
-class SwaggerUIPluginConfig {
+class PluginConfigDsl {
 
     companion object {
         const val DEFAULT_SPEC_ID = "api"
+    }
+
+
+    private val specConfigs = mutableMapOf<String, PluginConfigDsl>()
+
+    fun spec(specId: String, block: PluginConfigDsl.() -> Unit) {
+        specConfigs[specId] = PluginConfigDsl().apply(block)
     }
 
 
@@ -211,8 +217,13 @@ class SwaggerUIPluginConfig {
                 putAll(customSchemas.getSchemas())
             },
             includeAllCustomSchemas = mergeBoolean(base.includeAllCustomSchemas, customSchemas.includeAll),
-            encoding = encodingConfig.build(base.encoding)
-        )
+            encoding = encodingConfig.build(base.encoding),
+            specConfigs = mutableMapOf()
+        ).also {
+            specConfigs.forEach { (specId, config) ->
+                it.specConfigs[specId] = config.build(it)
+            }
+        }
     }
 
 }

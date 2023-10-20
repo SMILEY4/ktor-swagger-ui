@@ -1,5 +1,0 @@
-TODO:
-- test
-- separate plugin-configs for different specs (another feature/branch?)
-- manually serve swagger-files (another feature/branch?)
-    - add documented-route-selector to "internal" swagger-routes + hidden-flag ?
