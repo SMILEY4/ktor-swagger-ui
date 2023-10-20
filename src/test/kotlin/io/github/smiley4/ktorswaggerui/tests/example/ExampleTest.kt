@@ -1,13 +1,14 @@
 package io.github.smiley4.ktorswaggerui.tests.example
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ExampleBuilder
+import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
@@ -166,15 +167,15 @@ class ExampleTest : StringSpec({
 
         }
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
         private fun exampleContext(
             routes: List<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }

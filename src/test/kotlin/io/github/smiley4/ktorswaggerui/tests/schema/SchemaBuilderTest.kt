@@ -12,10 +12,10 @@ import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.Example
 import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaTypeAttributeOverride
-import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaDefinitions
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaTypeAttributeOverride
+import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
@@ -29,6 +29,35 @@ import java.io.File
 import kotlin.reflect.jvm.javaType
 
 class SchemaBuilderTest : StringSpec({
+
+    "victools field names".config(enabled = false) {
+        /**
+         * Test-case for https://github.com/SMILEY4/ktor-swagger-ui/issues/60.
+         * -> victools incorrectly ignores fields with is[A-Z]
+         */
+        createSchemaVictools<WithFieldNames>(false).also { defs ->
+            defs.root.also { schema ->
+                schema.`$ref` shouldBe null
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactly setOf("flag", "getAnotherText", "text", "isSomething", "isSomeText")
+                schema.properties["flag"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["isSomething"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["text"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["getAnotherText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["isSomeText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+            }
+        }
+    }
 
     "primitive (victools, all definitions)" {
         createSchemaVictools<Int>(true).also { defs ->
@@ -401,6 +430,14 @@ class SchemaBuilderTest : StringSpec({
             )
             val cityCode: Int
 
+        )
+
+        data class WithFieldNames(
+            val flag: Boolean,
+            val isSomething: Boolean,
+            val text: String,
+            val isSomeText: String,
+            val getAnotherText: String
         )
 
         inline fun <reified T> createSchemaVictools(definitions: Boolean) =

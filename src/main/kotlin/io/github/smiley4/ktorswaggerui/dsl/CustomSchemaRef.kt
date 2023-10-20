@@ -1,13 +1,14 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-sealed class CustomSchemaRef(
-	val schemaId: String
+@Deprecated(
+    "Use BodyTypeDescriptor instead",
+    ReplaceWith("BodyTypeDescriptor.custom(schemaId)")
 )
+fun obj(schemaId: String) = BodyTypeDescriptor.custom(schemaId)
 
-class CustomObjectSchemaRef(schemaId: String) : CustomSchemaRef(schemaId)
 
-class CustomArraySchemaRef(schemaId: String) : CustomSchemaRef(schemaId)
-
-fun obj(schemaId: String) = CustomObjectSchemaRef(schemaId)
-
-fun array(schemaId: String) = CustomArraySchemaRef(schemaId)
+@Deprecated(
+    "Use BodyTypeDescriptor instead",
+    ReplaceWith("BodyTypeDescriptor.multipleOf(BodyTypeDescriptor.custom(schemaId))")
+)
+fun array(schemaId: String) = BodyTypeDescriptor.multipleOf(BodyTypeDescriptor.custom(schemaId))

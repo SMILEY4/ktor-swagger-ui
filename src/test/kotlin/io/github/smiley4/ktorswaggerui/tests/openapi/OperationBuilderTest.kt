@@ -1,26 +1,28 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.dsl.obj
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
-import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ExampleBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.HeaderBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.OperationBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.OperationTagsBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ParameterBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.RequestBodyBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ResponseBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ResponsesBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.SecurityRequirementsBuilder
+import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.custom
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -95,7 +97,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "operation with auto-generated tags" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.generateTags { url -> listOf(url.firstOrNull()) }
         }
         val routeA = RouteMeta(
@@ -682,7 +684,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "automatic unauthorized response for protected route" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.defaultUnauthorizedResponse {
                 description = "Default unauthorized Response"
             }
@@ -716,7 +718,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "automatic unauthorized response for unprotected route" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.defaultUnauthorizedResponse {
                 description = "Default unauthorized Response"
             }
@@ -803,7 +805,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "custom body schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -822,7 +824,7 @@ class OperationBuilderTest : StringSpec({
             method = HttpMethod.Get,
             documentation = OpenApiRoute().also { route ->
                 route.request {
-                    body(obj("myCustomSchema"))
+                    body(custom("myCustomSchema"))
                 }
             },
             protected = false
@@ -860,7 +862,7 @@ class OperationBuilderTest : StringSpec({
     }
 
     "custom multipart-body schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -881,7 +883,7 @@ class OperationBuilderTest : StringSpec({
                 route.request {
                     multipartBody {
                         mediaType(ContentType.MultiPart.FormData)
-                        part("customData", obj("myCustomSchema"))
+                        part("customData", custom("myCustomSchema"))
                     }
                 }
             },
@@ -927,17 +929,18 @@ class OperationBuilderTest : StringSpec({
             val number: Int
         )
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
         private fun schemaContext(
             routes: List<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): SchemaContext {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfigData,
                 schemaBuilder = SchemaBuilder(
-                    definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+                    definitionsField = pluginConfigData.encoding.schemaDefsField,
+                    schemaEncoder = pluginConfigData.encoding.schemaEncoder,
                     ObjectMapper(),
                     TypeOverwrites.get()
                 )
@@ -946,11 +949,11 @@ class OperationBuilderTest : StringSpec({
 
         private fun exampleContext(
             routes: List<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }
@@ -960,10 +963,11 @@ class OperationBuilderTest : StringSpec({
             route: RouteMeta,
             schemaContext: SchemaContext,
             exampleContext: ExampleContext,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): Operation {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return OperationBuilder(
-                operationTagsBuilder = OperationTagsBuilder(pluginConfig),
+                operationTagsBuilder = OperationTagsBuilder(pluginConfigData),
                 parameterBuilder = ParameterBuilder(
                     schemaContext = schemaContext,
                     exampleContext = exampleContext
@@ -984,9 +988,9 @@ class OperationBuilderTest : StringSpec({
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),
-                    config = pluginConfig
+                    config = pluginConfigData
                 ),
-                securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfig),
+                securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
             ).build(route)
         }
 

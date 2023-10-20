@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.github.smiley4.ktorswaggerui.data.OpenIdOAuthFlowData
+import io.github.smiley4.ktorswaggerui.data.OpenIdOAuthFlowsData
+
 /**
  * An object containing configuration information for the oauth flow types supported
  */
@@ -17,9 +20,6 @@ class OpenIdOAuthFlows {
     }
 
 
-    fun getImplicit() = implicit
-
-
     private var password: OpenIdOAuthFlow? = null
 
 
@@ -29,9 +29,6 @@ class OpenIdOAuthFlows {
     fun password(block: OpenIdOAuthFlow.() -> Unit) {
         password = OpenIdOAuthFlow().apply(block)
     }
-
-
-    fun getPassword() = password
 
 
     private var clientCredentials: OpenIdOAuthFlow? = null
@@ -45,9 +42,6 @@ class OpenIdOAuthFlows {
     }
 
 
-    fun getClientCredentials() = clientCredentials
-
-
     private var authorizationCode: OpenIdOAuthFlow? = null
 
 
@@ -59,6 +53,11 @@ class OpenIdOAuthFlows {
     }
 
 
-    fun getAuthorizationCode() = authorizationCode
+    fun build(base: OpenIdOAuthFlowsData) = OpenIdOAuthFlowsData(
+        implicit = implicit?.build(base.implicit ?: OpenIdOAuthFlowData.DEFAULT) ?: base.implicit,
+        password = password?.build(base.password ?: OpenIdOAuthFlowData.DEFAULT) ?: base.password,
+        clientCredentials = clientCredentials?.build(base.clientCredentials ?: OpenIdOAuthFlowData.DEFAULT) ?: base.clientCredentials,
+        authorizationCode = authorizationCode?.build(base.authorizationCode ?: OpenIdOAuthFlowData.DEFAULT) ?: base.authorizationCode,
+    )
 
 }

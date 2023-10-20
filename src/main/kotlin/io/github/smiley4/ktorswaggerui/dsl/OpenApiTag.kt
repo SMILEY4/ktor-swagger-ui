@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
+import io.github.smiley4.ktorswaggerui.data.TagData
+
 /**
  * Adds metadata to a single tag.
  */
@@ -27,5 +30,13 @@ class OpenApiTag(
      *The URL for additional external documentation for this tag.
      */
     var externalDocUrl: String? = null
+
+
+    fun build(base: TagData) = TagData(
+        name = name,
+        description = merge(base.description, description),
+        externalDocDescription = merge(base.externalDocDescription, externalDocDescription),
+        externalDocUrl = merge(base.externalDocUrl, externalDocUrl)
+    )
 
 }

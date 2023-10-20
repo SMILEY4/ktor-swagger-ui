@@ -18,9 +18,21 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, type: SchemaType, block: OpenApiMultipartPart.() -> Unit) {
+    fun part(name: String, type: BodyTypeDescriptor, block: OpenApiMultipartPart.() -> Unit) {
         parts.add(OpenApiMultipartPart(name, type).apply(block))
     }
+
+
+    /**
+     * One part of a multipart-body
+     */
+    fun part(name: String, type: BodyTypeDescriptor) = part(name, type) {}
+
+
+    /**
+     * One part of a multipart-body
+     */
+    fun part(name: String, type: SchemaType, block: OpenApiMultipartPart.() -> Unit) = part(name, BodyTypeDescriptor.typeOf(type), block)
 
 
     /**
@@ -44,23 +56,8 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     /**
      * One part of a multipart-body
      */
-    fun part(name: String, customSchema: CustomSchemaRef, block: OpenApiMultipartPart.() -> Unit) {
-        parts.add(OpenApiMultipartPart(name, null).apply(block).apply {
-            this.customSchema = customSchema
-        })
-    }
-
-
-    /**
-     * One part of a multipart-body
-     */
-    fun part(name: String, customSchema: CustomSchemaRef) = part(name, customSchema) {}
-
-
-    /**
-     * One part of a multipart-body
-     */
-    fun part(name: String, customSchemaId: String, block: OpenApiMultipartPart.() -> Unit) = part(name, obj(customSchemaId), block)
+    fun part(name: String, customSchemaId: String, block: OpenApiMultipartPart.() -> Unit) =
+        part(name, BodyTypeDescriptor.custom(customSchemaId), block)
 
 
     /**

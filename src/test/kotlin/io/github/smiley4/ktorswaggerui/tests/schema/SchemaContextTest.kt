@@ -6,17 +6,18 @@ import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.dsl.array
 import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
-import io.github.smiley4.ktorswaggerui.dsl.obj
-import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.custom
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.multipleOf
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -289,7 +290,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "custom schema object" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -306,12 +307,12 @@ class SchemaContextTest : StringSpec({
         val routes = listOf(
             route {
                 request {
-                    body(obj("myCustomSchema"))
+                    body(custom("myCustomSchema"))
                 }
             }
         )
         val schemaContext = schemaContext(routes, config)
-        schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
+        schemaContext.getSchema("myCustomSchema").also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
         }
@@ -327,7 +328,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "custom schema array" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -344,19 +345,14 @@ class SchemaContextTest : StringSpec({
         val routes = listOf(
             route {
                 request {
-                    body(array("myCustomSchema"))
+                    body(multipleOf(custom("myCustomSchema")))
                 }
             }
         )
         val schemaContext = schemaContext(routes, config)
-        schemaContext.getSchema(array("myCustomSchema")).also { schema ->
-            schema.type shouldBe "array"
-            schema.`$ref` shouldBe null
-            schema.items
-                .also { it shouldNotBe null }
-                ?.also { items ->
-                    items.`$ref` shouldBe "#/components/schemas/myCustomSchema"
-                }
+        schemaContext.getSchema("myCustomSchema").also { schema ->
+            schema.type shouldBe null
+            schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
         }
         schemaContext.getComponentsSection().also { components ->
             components.keys shouldContainExactlyInAnyOrder listOf(
@@ -378,7 +374,7 @@ class SchemaContextTest : StringSpec({
                 .with(Option.ALLOF_CLEANUP_AT_THE_END)
                 .build()
         )
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.encoding {
                 schemaEncoder { type ->
                     generator.generateSchema(type.javaType).toString()
@@ -414,7 +410,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "don't include unused custom schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 includeAll = false
                 openApi("myCustomSchema") {
@@ -430,14 +426,14 @@ class SchemaContextTest : StringSpec({
             }
         }
         val schemaContext = schemaContext(emptyList(), config)
-        schemaContext.getSchemaOrNull(obj("myCustomSchema")) shouldBe null
+        schemaContext.getSchemaOrNull("myCustomSchema") shouldBe null
         schemaContext.getComponentsSection().also { components ->
             components.keys  shouldHaveSize 0
         }
     }
 
     "include unused custom schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 includeAll = true
                 openApi("myCustomSchema") {
@@ -453,7 +449,7 @@ class SchemaContextTest : StringSpec({
             }
         }
         val schemaContext = schemaContext(emptyList(), config)
-        schemaContext.getSchema(obj("myCustomSchema")).also { schema ->
+        schemaContext.getSchema("myCustomSchema").also { schema ->
             schema.type shouldBe null
             schema.`$ref` shouldBe "#/components/schemas/myCustomSchema"
         }
@@ -498,17 +494,18 @@ class SchemaContextTest : StringSpec({
 
         inline fun <reified T> getType() = getSchemaType<T>()
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
         private fun schemaContext(
             routes: Collection<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): SchemaContext {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfigData,
                 schemaBuilder = SchemaBuilder(
-                    definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+                    definitionsField = pluginConfigData.encoding.schemaDefsField,
+                    schemaEncoder = pluginConfigData.encoding.schemaEncoder,
                     ObjectMapper(),
                     TypeOverwrites.get()
                 )

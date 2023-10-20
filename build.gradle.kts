@@ -4,7 +4,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.5.0"
+    const val version = "2.6.0"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"
@@ -68,7 +68,7 @@ dependencies {
     val versionMockk = "1.12.7"
     testImplementation("io.mockk:mockk:$versionMockk")
 
-    val versionKotest = "5.4.2"
+    val versionKotest = "5.7.2"
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
 

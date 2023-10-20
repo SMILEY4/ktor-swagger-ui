@@ -1,27 +1,37 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
+import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeBoolean
+import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeDefault
+import io.github.smiley4.ktorswaggerui.data.SwaggerUIData
+
+
 @OpenApiDslMarker
 class SwaggerUIDsl {
 
     /**
      * Whether to forward the root-url to the swagger-url
      */
-    var forwardRoot: Boolean = false
+    var forwardRoot: Boolean = SwaggerUIData.DEFAULT.forwardRoot
+
 
     /**
      * the url to the swagger-ui
      */
-    var swaggerUrl: String = "swagger-ui"
+    var swaggerUrl: String = SwaggerUIData.DEFAULT.swaggerUrl
+
 
     /**
      * the path under which the KTOR app gets deployed. can be useful if reverse proxy is in use.
      */
-    var rootHostPath: String = ""
+    var rootHostPath: String = SwaggerUIData.DEFAULT.rootHostPath
+
 
     /**
      * The name of the authentication to use for the swagger routes. Null to not protect the swagger-ui.
      */
-    var authentication: String? = null
+    var authentication: String? = SwaggerUIData.DEFAULT.authentication
+
 
     /**
      * Swagger UI can attempt to validate specs against swagger.io's online validator.
@@ -30,7 +40,7 @@ class SwaggerUIDsl {
      * Validation is disabled when the url of the api-spec-file contains localhost.
      * (see https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md#network)
      */
-    private var validatorUrl: String? = null
+    private var validatorUrl: String? = SwaggerUIData.DEFAULT.validatorUrl
 
     fun disableSpecValidator() {
         validatorUrl = null
@@ -46,50 +56,44 @@ class SwaggerUIDsl {
 
     fun getSpecValidatorUrl() = validatorUrl
 
+
     /**
      * Whether to show the operation-id of endpoints in the list
      */
-    var displayOperationId = false
+    var displayOperationId = SwaggerUIData.DEFAULT.displayOperationId
+
 
     /**
      * Whether the top bar will show an edit box that you can use to filter the tagged operations.
      */
-    var showTagFilterInput = false
+    var showTagFilterInput = SwaggerUIData.DEFAULT.showTagFilterInput
+
 
     /**
      * Apply a sort to the operation list of each API
      */
-    var sort = SwaggerUiSort.NONE
+    var sort = SwaggerUIData.DEFAULT.sort
+
 
     /**
      * Syntax coloring theme to use
      */
-    var syntaxHighlight = SwaggerUiSyntaxHighlight.AGATE
+    var syntaxHighlight = SwaggerUIData.DEFAULT.syntaxHighlight
+
+
+    internal fun build(base: SwaggerUIData): SwaggerUIData {
+        return SwaggerUIData(
+            forwardRoot = mergeBoolean(base.forwardRoot, this.forwardRoot),
+            swaggerUrl = mergeDefault(base.swaggerUrl, this.swaggerUrl, SwaggerUIData.DEFAULT.swaggerUrl),
+            rootHostPath = mergeDefault(base.rootHostPath, this.rootHostPath, SwaggerUIData.DEFAULT.rootHostPath),
+            authentication = merge(base.authentication, this.authentication),
+            validatorUrl = merge(base.validatorUrl, this.validatorUrl),
+            displayOperationId = mergeBoolean(base.displayOperationId, this.displayOperationId),
+            showTagFilterInput = mergeBoolean(base.showTagFilterInput, this.showTagFilterInput),
+            sort = mergeDefault(base.sort, this.sort, SwaggerUIData.DEFAULT.sort),
+            syntaxHighlight = mergeDefault(base.syntaxHighlight, this.syntaxHighlight, SwaggerUIData.DEFAULT.syntaxHighlight)
+        )
+    }
 
 }
 
-enum class SwaggerUiSort(val value: String) {
-    /**
-     * The order returned by the server unchanged
-     */
-    NONE("undefined"),
-
-    /**
-     * sort by paths alphanumerically
-     */
-    ALPHANUMERICALLY("alpha"),
-
-    /**
-     * sort by HTTP method
-     */
-    HTTP_METHOD("method")
-}
-
-enum class SwaggerUiSyntaxHighlight(val value: String) {
-    AGATE("agate"),
-    ARTA("arta"),
-    MONOKAI("monokai"),
-    NORD("nord"),
-    OBSIDIAN("obsidian"),
-    TOMORROW_NIGHT("tomorrow-night")
-}

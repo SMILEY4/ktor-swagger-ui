@@ -3,11 +3,12 @@ package io.github.smiley4.ktorswaggerui.examples
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
-import io.github.smiley4.ktorswaggerui.dsl.AuthType
+import io.github.smiley4.ktorswaggerui.data.AuthScheme
+import io.github.smiley4.ktorswaggerui.data.AuthType
+import io.github.smiley4.ktorswaggerui.data.EncodingData
+import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
+import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
 import io.github.smiley4.ktorswaggerui.dsl.EncodingConfig
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSort
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSyntaxHighlight
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -98,7 +99,7 @@ private fun Application.myModule() {
         }
         encoding {
             schemaEncoder { type ->
-                SchemaGenerator(EncodingConfig.schemaGeneratorConfigBuilder().build())
+                SchemaGenerator(EncodingData.schemaGeneratorConfigBuilder().build())
                     .generateSchema(type.javaType)
                     .toPrettyString()
             }

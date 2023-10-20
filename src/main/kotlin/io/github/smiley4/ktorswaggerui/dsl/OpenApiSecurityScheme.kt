@@ -1,35 +1,11 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
-import io.swagger.v3.oas.models.security.SecurityScheme
-
-
-enum class AuthType(val swaggerType: SecurityScheme.Type) {
-    API_KEY(SecurityScheme.Type.APIKEY),
-    HTTP(SecurityScheme.Type.HTTP),
-    OAUTH2(SecurityScheme.Type.OAUTH2),
-    OPENID_CONNECT(SecurityScheme.Type.OPENIDCONNECT),
-    MUTUAL_TLS(SecurityScheme.Type.MUTUALTLS)
-}
-
-enum class AuthKeyLocation(val swaggerType: SecurityScheme.In) {
-    QUERY(SecurityScheme.In.QUERY),
-    HEADER(SecurityScheme.In.HEADER),
-    COOKIE(SecurityScheme.In.COOKIE)
-}
-
-
-//  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
-enum class AuthScheme(val swaggerType: String) {
-    BASIC("Basic"),
-    BEARER("Bearer"),
-    DIGEST("Digest"),
-    HOBA("HOBA"),
-    MUTUAL("Mutual"),
-    OAUTH("OAuth"),
-    SCRAM_SHA_1("SCRAM-SHA-1"),
-    SCRAM_SHA_256("SCRAM-SHA-256"),
-    VAPID("vapid")
-}
+import io.github.smiley4.ktorswaggerui.data.AuthKeyLocation
+import io.github.smiley4.ktorswaggerui.data.AuthScheme
+import io.github.smiley4.ktorswaggerui.data.AuthType
+import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
+import io.github.smiley4.ktorswaggerui.data.OpenIdOAuthFlowsData
+import io.github.smiley4.ktorswaggerui.data.SecuritySchemeData
 
 
 /**
@@ -83,9 +59,6 @@ class OpenApiSecurityScheme(
     }
 
 
-    fun getFlows() = flows
-
-
     /**
      * OpenId Connect URL to discover OAuth2 configuration values.
      * Required for type [AuthType.OPENID_CONNECT]
@@ -98,4 +71,15 @@ class OpenApiSecurityScheme(
      */
     var description: String? = null
 
+
+    fun build(base: SecuritySchemeData) = SecuritySchemeData(
+        name = name,
+        type = merge(base.type, type),
+        location = merge(base.location, location),
+        scheme = merge(base.scheme, scheme),
+        bearerFormat = merge(base.bearerFormat, bearerFormat),
+        flows = flows?.build(base.flows ?: OpenIdOAuthFlowsData.DEFAULT) ?: base.flows,
+        openIdConnectUrl = merge(base.openIdConnectUrl, openIdConnectUrl),
+        description = merge(base.description, description),
+    )
 }

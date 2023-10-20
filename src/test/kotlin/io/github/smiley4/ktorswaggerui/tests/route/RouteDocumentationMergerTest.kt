@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests.route
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
+import io.github.smiley4.ktorswaggerui.builder.route.RouteDocumentationMerger
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -37,6 +37,7 @@ class RouteDocumentationMergerTest : StringSpec({
     "merge complete routes" {
         merge(
             route {
+                specId = "test-spec-a"
                 tags = listOf("a1", "a2")
                 summary = "Summary A"
                 description = "Description A"
@@ -60,6 +61,7 @@ class RouteDocumentationMergerTest : StringSpec({
                 }
             },
             route {
+                specId = "test-spec-b"
                 tags = listOf("b1", "b2")
                 summary = "Summary B"
                 description = "Description B"
@@ -83,6 +85,7 @@ class RouteDocumentationMergerTest : StringSpec({
                 }
             }
         ).also { route ->
+            route.specId shouldBe "test-spec-a"
             route.tags shouldContainExactlyInAnyOrder listOf("a1", "a2", "b1", "b2")
             route.summary shouldBe "Summary A"
             route.description shouldBe "Description A"
