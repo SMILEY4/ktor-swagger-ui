@@ -20,9 +20,6 @@ class OpenIdOAuthFlows {
     }
 
 
-    fun getImplicit() = implicit
-
-
     private var password: OpenIdOAuthFlow? = null
 
 
@@ -32,9 +29,6 @@ class OpenIdOAuthFlows {
     fun password(block: OpenIdOAuthFlow.() -> Unit) {
         password = OpenIdOAuthFlow().apply(block)
     }
-
-
-    fun getPassword() = password
 
 
     private var clientCredentials: OpenIdOAuthFlow? = null
@@ -48,9 +42,6 @@ class OpenIdOAuthFlows {
     }
 
 
-    fun getClientCredentials() = clientCredentials
-
-
     private var authorizationCode: OpenIdOAuthFlow? = null
 
 
@@ -61,8 +52,6 @@ class OpenIdOAuthFlows {
         authorizationCode = OpenIdOAuthFlow().apply(block)
     }
 
-
-    fun getAuthorizationCode() = authorizationCode
 
     fun build(base: OpenIdOAuthFlowsData) = OpenIdOAuthFlowsData(
         implicit = implicit?.build(base.implicit ?: OpenIdOAuthFlowData.DEFAULT) ?: base.implicit,

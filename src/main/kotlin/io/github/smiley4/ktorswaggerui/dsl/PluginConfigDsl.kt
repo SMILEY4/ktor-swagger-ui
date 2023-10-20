@@ -41,8 +41,6 @@ class PluginConfigDsl {
 
     private var defaultUnauthorizedResponse: OpenApiResponse? = PluginConfigData.DEFAULT.defaultUnauthorizedResponse
 
-    fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
-
 
     /**
      * The name of the security scheme to use for the protected paths
@@ -65,8 +63,6 @@ class PluginConfigDsl {
     }
 
     private var tagGenerator: TagGenerator? = PluginConfigData.DEFAULT.tagGenerator
-
-    fun getTagGenerator() = tagGenerator
 
 
     /**
@@ -91,8 +87,6 @@ class PluginConfigDsl {
 
     private var swaggerUI = SwaggerUIDsl()
 
-    fun getSwaggerUI() = swaggerUI
-
 
     /**
      * OpenAPI info configuration - provides metadata about the API
@@ -102,8 +96,6 @@ class PluginConfigDsl {
     }
 
     private var info = OpenApiInfo()
-
-    fun getInfo() = info
 
 
     /**
@@ -115,8 +107,6 @@ class PluginConfigDsl {
 
     private val servers = mutableListOf<OpenApiServer>()
 
-    fun getServers(): List<OpenApiServer> = servers
-
 
     /**
      * OpenAPI external docs configuration - link and description of an external documentation
@@ -126,8 +116,6 @@ class PluginConfigDsl {
     }
 
     private var externalDocs = OpenApiExternalDocs()
-
-    fun getExternalDocs() = externalDocs
 
 
     /**
@@ -139,8 +127,6 @@ class PluginConfigDsl {
 
     private val securitySchemes = mutableListOf<OpenApiSecurityScheme>()
 
-    fun getSecuritySchemes(): List<OpenApiSecurityScheme> = securitySchemes
-
 
     /**
      * Tags used by the specification with additional metadata. Not all tags that are used must be declared
@@ -151,8 +137,6 @@ class PluginConfigDsl {
 
     private val tags = mutableListOf<OpenApiTag>()
 
-    fun getTags(): List<OpenApiTag> = tags
-
 
     /**
      * Custom schemas to reference via [io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef]
@@ -162,8 +146,6 @@ class PluginConfigDsl {
     }
 
     private var customSchemas = CustomSchemas()
-
-    fun getCustomSchemas() = customSchemas
 
 
     /**

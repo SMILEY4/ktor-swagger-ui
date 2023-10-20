@@ -23,8 +23,6 @@ class EncodingConfig {
 
     private var exampleEncoder: ExampleEncoder = EncodingData.DEFAULT.exampleEncoder
 
-    fun getExampleEncoder() = exampleEncoder
-
 
     /**
      * Encode the given type into a valid json-schema.
@@ -35,8 +33,6 @@ class EncodingConfig {
     }
 
     private var schemaEncoder: SchemaEncoder = EncodingData.DEFAULT.schemaEncoder
-
-    fun getSchemaEncoder() = schemaEncoder
 
 
     /**

@@ -42,8 +42,6 @@ class OpenApiInfo {
         contact = OpenApiContact().apply(block)
     }
 
-    fun getContact() = contact
-
 
     private var license: OpenApiLicense? = null
 
@@ -54,8 +52,6 @@ class OpenApiInfo {
     fun license(block: OpenApiLicense.() -> Unit) {
         license = OpenApiLicense().apply(block)
     }
-
-    fun getLicense() = license
 
     fun build(base: InfoData): InfoData {
         return InfoData(

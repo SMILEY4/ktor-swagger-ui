@@ -81,11 +81,12 @@ class OpenApiBuilderTest : StringSpec({
         private val defaultPluginConfig = PluginConfigDsl()
 
         private fun schemaContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl): SchemaContext {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return SchemaContextBuilder(
-                config = pluginConfig.build(PluginConfigData.DEFAULT),
+                config =pluginConfigData,
                 schemaBuilder = SchemaBuilder(
-                    definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-                    schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+                    definitionsField = pluginConfigData.encoding.schemaDefsField,
+                    schemaEncoder = pluginConfigData.encoding.schemaEncoder,
                     ObjectMapper(),
                     TypeOverwrites.get()
                 )
