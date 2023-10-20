@@ -1,9 +1,11 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.dsl.array
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.custom
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.multipleOf
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.oneOf
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.typeOf
 import io.github.smiley4.ktorswaggerui.dsl.get
-import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -14,6 +16,7 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
+import java.awt.SystemColor.text
 
 /**
  * An example for defining custom json-schemas
@@ -32,6 +35,20 @@ private fun Application.myModule() {
     data class MyResponseData(
         val someText: String,
         val someNumber: Long
+    )
+
+    data class Rectangle(
+        val width: Int,
+        val height: Int
+    )
+
+    data class Circle(
+        val radius: Int
+    )
+
+    data class Point(
+        val x: Int,
+        val y: Int
     )
 
     install(SwaggerUI) {
@@ -64,12 +81,12 @@ private fun Application.myModule() {
         get("something", {
             request {
                 // body referencing the custom schema with id 'myRequestData'
-                body(obj("myRequestData"))
+                body("myRequestData")
             }
             response {
                 HttpStatusCode.OK to {
                     // body referencing the custom schema with id 'myResponseData'
-                    body(obj("myResponseData"))
+                    body("myResponseData")
                 }
             }
         }) {
@@ -80,17 +97,34 @@ private fun Application.myModule() {
         get("something/many", {
             request {
                 // body referencing the custom schema with id 'myRequestData'
-                body(array("myRequestData"))
+                body(multipleOf(custom("myRequestData")))
             }
             response {
                 HttpStatusCode.OK to {
                     // body referencing the custom schema with id 'myResponseData'
-                    body(array("myResponseData"))
+                    body(multipleOf(custom("myResponseData")))
                 }
             }
         }) {
             val text = call.receive<MyRequestData>().someText
             call.respond(HttpStatusCode.OK, MyResponseData(text, 42))
+        }
+
+        get("oneof/shapes", {
+            request {
+                // body allowing a mixed list of rectangles, circles and points
+                body(
+                    multipleOf(
+                        oneOf(
+                            typeOf(Rectangle::class),
+                            typeOf(Circle::class),
+                            typeOf(Point::class),
+                        )
+                    )
+                )
+            }
+        }) {
+            call.respond(HttpStatusCode.OK, Unit)
         }
 
         // (external) endpoint providing a json-schema

@@ -1,12 +1,10 @@
 package io.github.smiley4.ktorswaggerui.builder.schema
 
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSimpleArrayElementTypeName
 import io.github.smiley4.ktorswaggerui.dsl.getSimpleTypeName
 import io.swagger.v3.oas.models.media.Schema
-import java.lang.IllegalArgumentException
 import kotlin.collections.set
 
 
@@ -52,22 +50,24 @@ class SchemaContext {
     }
 
 
-    fun addSchema(ref: CustomSchemaRef, schema: SchemaDefinitions) {
-        schemasCustom[ref.schemaId] = schema
+    fun addSchema(customSchemaId: String, schema: SchemaDefinitions) {
+        schemasCustom[customSchemaId] = schema
     }
 
 
     fun getComponentsSection(): Map<String, Schema<*>> = componentsSection
 
 
-    fun getSchema(type: SchemaType) = getSchemaOrNull(type) ?: throw NoSuchElementException ("No schema for type '$type'!")
+    fun getSchema(type: SchemaType) = getSchemaOrNull(type)
+        ?: throw NoSuchElementException("No schema for type '$type'!")
 
     fun getSchemaOrNull(type: SchemaType) = inlineSchemas[type]
 
 
-    fun getSchema(ref: CustomSchemaRef) = getSchemaOrNull(ref) ?: throw NoSuchElementException("No schema for ref '$ref'!")
+    fun getSchema(customSchemaId: String) = getSchemaOrNull(customSchemaId)
+        ?: throw NoSuchElementException("No schema for ref '$customSchemaId'!")
 
-    fun getSchemaOrNull(ref: CustomSchemaRef) = inlineSchemasCustom[ref.schemaId]
+    fun getSchemaOrNull(customSchemaId: String) = inlineSchemasCustom[customSchemaId]
 
 
     fun finalize() {

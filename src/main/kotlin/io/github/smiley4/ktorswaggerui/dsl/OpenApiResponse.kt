@@ -61,9 +61,21 @@ class OpenApiResponse(val statusCode: String) {
     /**
      * The body returned with this response
      */
-    fun body(type: SchemaType?, block: OpenApiSimpleBody.() -> Unit) {
+    fun body(type: BodyTypeDescriptor, block: OpenApiSimpleBody.() -> Unit) {
         body = OpenApiSimpleBody(type).apply(block)
     }
+
+
+    /**
+     * The body returned with this response
+     */
+    fun body(type: BodyTypeDescriptor) = body(type) {}
+
+
+    /**
+     * The body returned with this response
+     */
+    fun body(type: SchemaType?, block: OpenApiSimpleBody.() -> Unit) = body(BodyTypeDescriptor.typeOf(type), block)
 
 
     /**
@@ -96,27 +108,10 @@ class OpenApiResponse(val statusCode: String) {
      */
     fun body(block: OpenApiSimpleBody.() -> Unit) = body(null, block)
 
-
     /**
      * The body returned with this response
      */
-    fun body(customSchema: CustomSchemaRef, block: OpenApiSimpleBody.() -> Unit) {
-        body = OpenApiSimpleBody(null).apply(block).apply {
-            this.customSchema = customSchema
-        }
-    }
-
-
-    /**
-     * The body returned with this response
-     */
-    fun body(customSchema: CustomSchemaRef) = body(customSchema) {}
-
-
-    /**
-     * The body returned with this response
-     */
-    fun body(customSchemaId: String, block: OpenApiSimpleBody.() -> Unit) = body(obj(customSchemaId), block)
+    fun body(customSchemaId: String, block: OpenApiSimpleBody.() -> Unit) = body(BodyTypeDescriptor.custom(customSchemaId), block)
 
 
     /**

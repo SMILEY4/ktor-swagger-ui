@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
@@ -22,6 +21,8 @@ import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor
+import io.github.smiley4.ktorswaggerui.dsl.BodyTypeDescriptor.Companion.custom
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -823,7 +824,7 @@ class OperationBuilderTest : StringSpec({
             method = HttpMethod.Get,
             documentation = OpenApiRoute().also { route ->
                 route.request {
-                    body(obj("myCustomSchema"))
+                    body(custom("myCustomSchema"))
                 }
             },
             protected = false
@@ -882,7 +883,7 @@ class OperationBuilderTest : StringSpec({
                 route.request {
                     multipartBody {
                         mediaType(ContentType.MultiPart.FormData)
-                        part("customData", obj("myCustomSchema"))
+                        part("customData", custom("myCustomSchema"))
                     }
                 }
             },

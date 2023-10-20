@@ -9,14 +9,8 @@ class OpenApiSimpleBody(
     /**
      * The type defining the schema used for the body.
      */
-    val type: SchemaType?,
+    val type: BodyTypeDescriptor,
 ) : OpenApiBaseBody() {
-
-    /**
-     * reference to a custom schema (alternative to 'type')
-     */
-    var customSchema: CustomSchemaRef? = null
-
 
     /**
      * Examples for this body
