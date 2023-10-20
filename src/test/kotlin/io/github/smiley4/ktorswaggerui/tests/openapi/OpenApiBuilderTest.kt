@@ -1,7 +1,8 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.*
@@ -81,7 +82,7 @@ class OpenApiBuilderTest : StringSpec({
 
         private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): SchemaContext {
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
                     schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
@@ -94,7 +95,7 @@ class OpenApiBuilderTest : StringSpec({
         private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }
@@ -102,8 +103,9 @@ class OpenApiBuilderTest : StringSpec({
         private fun buildOpenApiObject(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): OpenAPI {
             val schemaContext = schemaContext(routes, pluginConfig)
             val exampleContext = exampleContext(routes, pluginConfig)
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return OpenApiBuilder(
-                config = pluginConfig,
+                config = pluginConfigData,
                 schemaContext = schemaContext,
                 exampleContext = exampleContext,
                 infoBuilder = InfoBuilder(
@@ -118,7 +120,7 @@ class OpenApiBuilderTest : StringSpec({
                 pathsBuilder = PathsBuilder(
                     pathBuilder = PathBuilder(
                         operationBuilder = OperationBuilder(
-                            operationTagsBuilder = OperationTagsBuilder(pluginConfig),
+                            operationTagsBuilder = OperationTagsBuilder(pluginConfigData),
                             parameterBuilder = ParameterBuilder(
                                 schemaContext = schemaContext,
                                 exampleContext = exampleContext
@@ -139,14 +141,14 @@ class OpenApiBuilderTest : StringSpec({
                                         headerBuilder = HeaderBuilder(schemaContext)
                                     )
                                 ),
-                                config = pluginConfig
+                                config = pluginConfigData
                             ),
-                            securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfig),
+                            securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
                         )
                     )
                 ),
                 componentsBuilder = ComponentsBuilder(
-                    config = pluginConfig,
+                    config = pluginConfigData,
                     securitySchemesBuilder = SecuritySchemesBuilder(
                         oAuthFlowsBuilder = OAuthFlowsBuilder()
                     )

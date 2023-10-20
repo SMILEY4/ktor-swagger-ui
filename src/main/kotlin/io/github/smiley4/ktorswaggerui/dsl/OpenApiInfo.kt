@@ -1,5 +1,11 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.github.smiley4.ktorswaggerui.data.ContactData
+import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
+import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeDefault
+import io.github.smiley4.ktorswaggerui.data.InfoData
+import io.github.smiley4.ktorswaggerui.data.LicenseData
+
 @OpenApiDslMarker
 class OpenApiInfo {
 
@@ -26,8 +32,8 @@ class OpenApiInfo {
      */
     var termsOfService: String? = null
 
-
     private var contact: OpenApiContact? = null
+
 
     /**
      * The contact information for the exposed API.
@@ -41,6 +47,7 @@ class OpenApiInfo {
 
     private var license: OpenApiLicense? = null
 
+
     /**
      * The license information for the exposed API.
      */
@@ -49,5 +56,16 @@ class OpenApiInfo {
     }
 
     fun getLicense() = license
+
+    fun build(base: InfoData): InfoData {
+        return InfoData(
+            title = mergeDefault(base.title, this.title, InfoData.DEFAULT.title),
+            version = merge(base.version, this.version),
+            description = merge(base.description, this.description),
+            termsOfService = merge(base.termsOfService, this.termsOfService),
+            contact = contact?.build(base.contact ?: ContactData.DEFAULT) ?: base.contact,
+            license = license?.build(base.license ?: LicenseData.DEFAULT) ?: base.license
+        )
+    }
 
 }

@@ -1,7 +1,8 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
@@ -92,7 +93,7 @@ class PathsBuilderTest : StringSpec({
 
         private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
                     schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
@@ -105,7 +106,7 @@ class PathsBuilderTest : StringSpec({
         private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }
@@ -116,10 +117,11 @@ class PathsBuilderTest : StringSpec({
             exampleContext: ExampleContext,
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): Paths {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return PathsBuilder(
                 pathBuilder = PathBuilder(
                     operationBuilder = OperationBuilder(
-                        operationTagsBuilder = OperationTagsBuilder(pluginConfig),
+                        operationTagsBuilder = OperationTagsBuilder(pluginConfigData),
                         parameterBuilder = ParameterBuilder(
                             schemaContext = schemaContext,
                             exampleContext = exampleContext
@@ -140,9 +142,9 @@ class PathsBuilderTest : StringSpec({
                                     headerBuilder = HeaderBuilder(schemaContext)
                                 )
                             ),
-                            config = pluginConfig
+                            config = pluginConfigData
                         ),
-                        securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfig),
+                        securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
                     )
                 )
             ).build(routes)

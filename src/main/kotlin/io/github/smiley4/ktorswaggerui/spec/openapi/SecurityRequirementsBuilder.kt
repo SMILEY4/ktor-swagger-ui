@@ -1,11 +1,11 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.swagger.v3.oas.models.security.SecurityRequirement
 
 class SecurityRequirementsBuilder(
-    private val config: SwaggerUIPluginConfig
+    private val config: PluginConfigData
 ) {
 
     fun build(route: RouteMeta): List<SecurityRequirement> {
@@ -14,8 +14,7 @@ class SecurityRequirementsBuilder(
             route.documentation.securitySchemeNames?.also { schemes.addAll(it) }
         }
         if (securitySchemes.isEmpty()) {
-            config.defaultSecuritySchemeName?.also { securitySchemes.add(it) }
-            config.defaultSecuritySchemeNames?.also { securitySchemes.addAll(it) }
+            config.defaultSecuritySchemeNames.also { securitySchemes.addAll(it) }
         }
         return securitySchemes.map {
             SecurityRequirement().apply {

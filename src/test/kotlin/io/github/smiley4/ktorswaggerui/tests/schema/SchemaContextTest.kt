@@ -6,7 +6,8 @@ import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.array
 import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
@@ -505,7 +506,7 @@ class SchemaContextTest : StringSpec({
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): SchemaContext {
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
                     schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),

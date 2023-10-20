@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain

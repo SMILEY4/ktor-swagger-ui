@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.spec.route
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.DocumentedRouteSelector
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpMethod
@@ -19,7 +20,7 @@ class RouteCollector(
     /**
      * Collect all routes from the given application
      */
-    fun collectRoutes(routeProvider: () -> Route, config: SwaggerUIPluginConfig): Sequence<RouteMeta> {
+    fun collectRoutes(routeProvider: () -> Route, config: PluginConfigData): Sequence<RouteMeta> {
         return allRoutes(routeProvider())
             .asSequence()
             .map { route ->
@@ -32,11 +33,7 @@ class RouteCollector(
                 )
             }
             .filter { !it.documentation.hidden }
-            .filter { path ->
-                config.pathFilter
-                    ?.let { it(path.method, path.path.split("/").filter { it.isNotEmpty() }) }
-                    ?: true
-            }
+            .filter { path -> config.pathFilter(path.method, path.path.split("/").filter { it.isNotEmpty() }) }
     }
 
     private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
@@ -56,7 +53,7 @@ class RouteCollector(
         return (route.selector as HttpMethodRouteSelector).method
     }
 
-    private fun getPath(route: Route, config: SwaggerUIPluginConfig): String {
+    private fun getPath(route: Route, config: PluginConfigData): String {
         val selector = route.selector
         return if (isIgnoredSelector(selector, config)) {
             route.parent?.let { getPath(it, config) } ?: ""
@@ -72,7 +69,7 @@ class RouteCollector(
         }
     }
 
-    private fun isIgnoredSelector(selector: RouteSelector, config: SwaggerUIPluginConfig): Boolean {
+    private fun isIgnoredSelector(selector: RouteSelector, config: PluginConfigData): Boolean {
         return when (selector) {
             is TrailingSlashRouteSelector -> false
             is RootRouteSelector -> false

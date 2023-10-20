@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui.routing
 
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.config.ApplicationConfig
@@ -10,7 +10,7 @@ import io.ktor.server.routing.routing
 
 class ForwardRouteController(
     private val appConfig: ApplicationConfig,
-    private val swaggerUiConfig: SwaggerUIDsl,
+    private val swaggerUiConfig: PluginConfigData,
 ) {
 
     fun setup(app: Application) {
@@ -24,8 +24,8 @@ class ForwardRouteController(
     private fun getRootUrl(): String {
         return "/" + listOf(
             ControllerUtils.getRootPath(appConfig),
-            swaggerUiConfig.rootHostPath,
-            swaggerUiConfig.swaggerUrl,
+            swaggerUiConfig.swaggerUI.rootHostPath,
+            swaggerUiConfig.swaggerUI.swaggerUrl,
         )
             .filter { it.isNotBlank() }
             .map { ControllerUtils.dropSlashes(it) }

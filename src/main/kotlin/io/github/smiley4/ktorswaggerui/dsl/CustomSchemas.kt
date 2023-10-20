@@ -1,5 +1,9 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.github.smiley4.ktorswaggerui.data.BaseCustomSchema
+import io.github.smiley4.ktorswaggerui.data.CustomJsonSchema
+import io.github.smiley4.ktorswaggerui.data.CustomOpenApiSchema
+import io.github.smiley4.ktorswaggerui.data.RemoteSchema
 import io.swagger.v3.oas.models.media.Schema
 
 @OpenApiDslMarker
@@ -43,10 +47,3 @@ class CustomSchemas {
 }
 
 
-sealed class BaseCustomSchema
-
-class CustomJsonSchema(val provider: () -> String) : BaseCustomSchema()
-
-class CustomOpenApiSchema(val provider: () -> Schema<Any>) : BaseCustomSchema()
-
-class RemoteSchema(val url: String) : BaseCustomSchema()

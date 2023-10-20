@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.routing
 
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUiSort
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -20,7 +20,7 @@ import io.ktor.server.routing.routing
 
 class SwaggerController(
     private val appConfig: ApplicationConfig,
-    private val swaggerUiConfig: SwaggerUIDsl,
+    private val pluginConfig: PluginConfigData,
     private val swaggerWebjarVersion: String,
     private val specName: String?,
     private val jsonSpec: String,
@@ -32,10 +32,10 @@ class SwaggerController(
 
     fun setup(app: Application) {
         app.routing {
-            if (swaggerUiConfig.authentication == null) {
+            if (pluginConfig.swaggerUI.authentication == null) {
                 setup()
             } else {
-                authenticate(swaggerUiConfig.authentication) {
+                authenticate(pluginConfig.swaggerUI.authentication) {
                     setup()
                 }
             }
@@ -60,8 +60,9 @@ class SwaggerController(
     }
 
     private suspend fun serveSwaggerInitializer(call: ApplicationCall) {
+        val swaggerUiConfig = pluginConfig.swaggerUI
         // see https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md for reference
-        val propValidatorUrl = swaggerUiConfig.getSpecValidatorUrl()?.let { "validatorUrl: \"$it\"" } ?: "validatorUrl: false"
+        val propValidatorUrl = swaggerUiConfig.validatorUrl?.let { "validatorUrl: \"$it\"" } ?: "validatorUrl: false"
         val propDisplayOperationId = "displayOperationId: ${swaggerUiConfig.displayOperationId}"
         val propFilter = "filter: ${swaggerUiConfig.showTagFilterInput}"
         val propSort = "operationsSorter: " +
@@ -112,8 +113,8 @@ class SwaggerController(
 
     private fun getSubUrl(): String {
         return "/" + listOf(
-            swaggerUiConfig.rootHostPath,
-            swaggerUiConfig.swaggerUrl,
+            pluginConfig.swaggerUI.rootHostPath,
+            pluginConfig.swaggerUI.swaggerUrl,
             specName
         )
             .filter { !it.isNullOrBlank() }

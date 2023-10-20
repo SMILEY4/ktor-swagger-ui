@@ -1,12 +1,12 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExample
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.swagger.v3.oas.models.examples.Example
 
 class ExampleBuilder(
-    private val config: SwaggerUIPluginConfig
+    private val config: PluginConfigData
 ) {
 
     fun build(type: SchemaType?, example: OpenApiExample): Example =
@@ -17,7 +17,7 @@ class ExampleBuilder(
         }
 
     fun buildExampleValue(type: SchemaType?, value: Any): String {
-        return config.encodingConfig.getExampleEncoder()(type, value) ?: value.toString()
+        return config.encoding.exampleEncoder(type, value) ?: value.toString()
     }
 
 }

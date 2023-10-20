@@ -1,16 +1,15 @@
-package io.github.smiley4.ktorswaggerui
+package io.github.smiley4.ktorswaggerui.dsl
 
-import io.github.smiley4.ktorswaggerui.dsl.CustomSchemas
-import io.github.smiley4.ktorswaggerui.dsl.EncodingConfig
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiExternalDocs
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIDsl
-import io.ktor.http.HttpMethod
+import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
+import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeBoolean
+import io.github.smiley4.ktorswaggerui.data.ExternalDocsData
+import io.github.smiley4.ktorswaggerui.data.PathFilter
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.data.SecuritySchemeData
+import io.github.smiley4.ktorswaggerui.data.ServerData
+import io.github.smiley4.ktorswaggerui.data.SpecAssigner
+import io.github.smiley4.ktorswaggerui.data.TagData
+import io.github.smiley4.ktorswaggerui.data.TagGenerator
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.routing.RouteSelector
 import kotlin.reflect.KClass
@@ -25,6 +24,7 @@ class SwaggerUIPluginConfig {
         const val DEFAULT_SPEC_ID = "api"
     }
 
+
     /**
      * Default response to automatically add to each protected route for the "Unauthorized"-Response-Code.
      * Generated response can be overwritten with custom response.
@@ -33,7 +33,7 @@ class SwaggerUIPluginConfig {
         defaultUnauthorizedResponse = OpenApiResponse(HttpStatusCode.Unauthorized.value.toString()).apply(block)
     }
 
-    private var defaultUnauthorizedResponse: OpenApiResponse? = null
+    private var defaultUnauthorizedResponse: OpenApiResponse? = PluginConfigData.DEFAULT.defaultUnauthorizedResponse
 
     fun getDefaultUnauthorizedResponse() = defaultUnauthorizedResponse
 
@@ -47,7 +47,7 @@ class SwaggerUIPluginConfig {
     /**
      * The names of the security schemes available for use for the protected paths
      */
-    var defaultSecuritySchemeNames: Collection<String>? = null
+    var defaultSecuritySchemeNames: Collection<String>? = PluginConfigData.DEFAULT.defaultSecuritySchemeNames
 
 
     /**
@@ -58,7 +58,7 @@ class SwaggerUIPluginConfig {
         tagGenerator = generator
     }
 
-    private var tagGenerator: TagGenerator = { emptyList() }
+    private var tagGenerator: TagGenerator? = PluginConfigData.DEFAULT.tagGenerator
 
     fun getTagGenerator() = tagGenerator
 
@@ -66,14 +66,14 @@ class SwaggerUIPluginConfig {
     /**
      * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute.specId] to a specified openapi-spec.
      */
-    var specAssigner: (url: String, tags: List<String>) -> String = { _, _ -> DEFAULT_SPEC_ID }
+    var specAssigner: SpecAssigner? = PluginConfigData.DEFAULT.specAssigner
 
 
     /**
      * Filter to apply to all routes. Return 'false' for routes to not include them in the OpenApi-Spec and Swagger-UI.
      * The url of the paths are already split at '/'.
      */
-    var pathFilter: ((method: HttpMethod, url: List<String>) -> Boolean)? = null
+    var pathFilter: PathFilter? = PluginConfigData.DEFAULT.pathFilter
 
 
     /**
@@ -173,12 +173,46 @@ class SwaggerUIPluginConfig {
     /**
      * List of all [RouteSelector] types in that should be ignored in the resulting url of any route.
      */
-    var ignoredRouteSelectors: List<KClass<*>> = listOf()
+    var ignoredRouteSelectors: Set<KClass<*>> = PluginConfigData.DEFAULT.ignoredRouteSelectors
+
+
+    internal fun build(base: PluginConfigData): PluginConfigData {
+        return PluginConfigData(
+            defaultUnauthorizedResponse = merge(base.defaultUnauthorizedResponse, defaultUnauthorizedResponse),
+            defaultSecuritySchemeNames = buildSet {
+                addAll(base.defaultSecuritySchemeNames)
+                defaultSecuritySchemeNames?.also { addAll(it) }
+                defaultSecuritySchemeName?.also { add(it) }
+            },
+            tagGenerator = merge(base.tagGenerator, tagGenerator) ?: PluginConfigData.DEFAULT.tagGenerator,
+            specAssigner = merge(base.specAssigner, specAssigner) ?: PluginConfigData.DEFAULT.specAssigner,
+            pathFilter = merge(base.pathFilter, pathFilter) ?: PluginConfigData.DEFAULT.pathFilter,
+            ignoredRouteSelectors = buildSet {
+                addAll(base.ignoredRouteSelectors)
+                addAll(ignoredRouteSelectors)
+            },
+            swaggerUI = swaggerUI.build(base.swaggerUI),
+            info = info.build(base.info),
+            servers = buildList {
+                addAll(base.servers)
+                addAll(servers.map { it.build(ServerData.DEFAULT) })
+            },
+            externalDocs = externalDocs.build(base.externalDocs),
+            securitySchemes = buildList {
+                addAll(base.securitySchemes)
+                addAll(securitySchemes.map { it.build(SecuritySchemeData.DEFAULT) })
+            },
+            tags = buildList {
+                addAll(base.tags)
+                addAll(tags.map { it.build(TagData.DEFAULT) })
+            },
+            customSchemas = buildMap {
+                putAll(base.customSchemas)
+                putAll(customSchemas.getSchemas())
+            },
+            includeAllCustomSchemas = mergeBoolean(base.includeAllCustomSchemas, customSchemas.includeAll),
+            encoding = encodingConfig.build(base.encoding)
+        )
+    }
 
 }
-
-/**
- * url - the parts of the route-url split at all `/`.
- * return a collection of tags. "Null"-entries will be ignored.
- */
-typealias TagGenerator = (url: List<String>) -> Collection<String?>

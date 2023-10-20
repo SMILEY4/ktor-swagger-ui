@@ -1,7 +1,8 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
@@ -934,7 +935,7 @@ class OperationBuilderTest : StringSpec({
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): SchemaContext {
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
                     schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
@@ -950,7 +951,7 @@ class OperationBuilderTest : StringSpec({
         ): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }
@@ -962,8 +963,9 @@ class OperationBuilderTest : StringSpec({
             exampleContext: ExampleContext,
             pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
         ): Operation {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return OperationBuilder(
-                operationTagsBuilder = OperationTagsBuilder(pluginConfig),
+                operationTagsBuilder = OperationTagsBuilder(pluginConfigData),
                 parameterBuilder = ParameterBuilder(
                     schemaContext = schemaContext,
                     exampleContext = exampleContext
@@ -984,9 +986,9 @@ class OperationBuilderTest : StringSpec({
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),
-                    config = pluginConfig
+                    config = pluginConfigData
                 ),
-                securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfig),
+                securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
             ).build(route)
         }
 

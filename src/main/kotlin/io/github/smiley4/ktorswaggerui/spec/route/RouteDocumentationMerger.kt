@@ -4,6 +4,9 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 
 class RouteDocumentationMerger {
 
+    /**
+     * Merges "a" with "b" and returns the result as a new [OpenApiRoute]. "a" has priority over "b".
+     */
     fun merge(a: OpenApiRoute, b: OpenApiRoute): OpenApiRoute {
         return OpenApiRoute().apply {
             specId = a.specId ?: b.specId

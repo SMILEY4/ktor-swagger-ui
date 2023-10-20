@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests.example
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
@@ -174,7 +175,7 @@ class ExampleTest : StringSpec({
         ): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }

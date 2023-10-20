@@ -1,6 +1,8 @@
 package io.github.smiley4.ktorswaggerui
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.SwaggerUIPluginConfig
 import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
 import io.github.smiley4.ktorswaggerui.routing.SwaggerController
 import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
@@ -55,6 +57,9 @@ internal const val SWAGGER_UI_WEBJARS_VERSION = "4.15.0"
 private val logger = KotlinLogging.logger {}
 
 val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration = ::SwaggerUIPluginConfig) {
+
+    val config = pluginConfig.build(PluginConfigData.DEFAULT)
+
     on(MonitoringEvent(ApplicationStarted)) { application ->
 
         val apiSpecsJson = mutableMapOf<String, String>()
@@ -63,8 +68,8 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
             if (application.pluginOrNull(Webjars) == null) {
                 application.install(Webjars)
             }
-            val routes = routes(application, pluginConfig)
-            apiSpecsJson.putAll(buildOpenApiSpecs(pluginConfig, routes))
+            val routes = routes(application, config)
+            apiSpecsJson.putAll(buildOpenApiSpecs(config, routes))
         } catch (e: Exception) {
             logger.error("Error during application startup in swagger-ui-plugin", e)
         }
@@ -72,35 +77,35 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         apiSpecsJson.forEach { (name, json) ->
             SwaggerController(
                 applicationConfig!!,
-                pluginConfig.getSwaggerUI(),
+                config,
                 SWAGGER_UI_WEBJARS_VERSION,
                 if (apiSpecsJson.size > 1) name else null,
                 json
             ).setup(application)
         }
 
-        if(apiSpecsJson.size == 1 && pluginConfig.getSwaggerUI().forwardRoot) {
-            ForwardRouteController(applicationConfig!!, pluginConfig.getSwaggerUI()).setup(application)
+        if (apiSpecsJson.size == 1 && config.swaggerUI.forwardRoot) {
+            ForwardRouteController(applicationConfig!!, config).setup(application)
         }
 
     }
 }
 
-private fun buildOpenApiSpecs(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): Map<String, String> {
+private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>): Map<String, String> {
     val routesBySpec = buildMap<String, MutableList<RouteMeta>> {
         routes.forEach { route ->
-            val specName = route.documentation.specId ?: pluginConfig.specAssigner(route.path, route.documentation.tags)
+            val specName = route.documentation.specId ?: config.specAssigner(route.path, route.documentation.tags)
             computeIfAbsent(specName) { mutableListOf() }.add(route)
         }
     }
     return buildMap {
         routesBySpec.forEach { (specName, routes) ->
-            this[specName] = buildOpenApiSpec(pluginConfig, routes)
+            this[specName] = buildOpenApiSpec(config, routes)
         }
     }
 }
 
-private fun buildOpenApiSpec(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): String {
+private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
     return try {
         val schemaContext = schemaContext(pluginConfig, routes)
         val exampleContext = exampleContext(pluginConfig, routes)
@@ -112,33 +117,33 @@ private fun buildOpenApiSpec(pluginConfig: SwaggerUIPluginConfig, routes: List<R
     }
 }
 
-private fun routes(application: Application, pluginConfig: SwaggerUIPluginConfig): List<RouteMeta> {
+private fun routes(application: Application, config: PluginConfigData): List<RouteMeta> {
     return RouteCollector(RouteDocumentationMerger())
-        .collectRoutes({ application.plugin(Routing) }, pluginConfig)
+        .collectRoutes({ application.plugin(Routing) }, config)
         .toList()
 }
 
-private fun schemaContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): SchemaContext {
+private fun schemaContext(config: PluginConfigData, routes: List<RouteMeta>): SchemaContext {
     return SchemaContextBuilder(
-        config = pluginConfig,
+        config = config,
         schemaBuilder = SchemaBuilder(
-            definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
-            schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
+            definitionsField = config.encoding.schemaDefsField,
+            schemaEncoder = config.encoding.schemaEncoder,
             ObjectMapper(),
             TypeOverwrites.get()
         ),
     ).build(routes.toList())
 }
 
-private fun exampleContext(pluginConfig: SwaggerUIPluginConfig, routes: List<RouteMeta>): ExampleContext {
+private fun exampleContext(config: PluginConfigData, routes: List<RouteMeta>): ExampleContext {
     return ExampleContextBuilder(
         exampleBuilder = ExampleBuilder(
-            config = pluginConfig
+            config = config
         )
     ).build(routes.toList())
 }
 
-private fun builder(config: SwaggerUIPluginConfig, schemaContext: SchemaContext, exampleContext: ExampleContext): OpenApiBuilder {
+private fun builder(config: PluginConfigData, schemaContext: SchemaContext, exampleContext: ExampleContext): OpenApiBuilder {
     return OpenApiBuilder(
         config = config,
         schemaContext = schemaContext,

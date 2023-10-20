@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
+import io.github.smiley4.ktorswaggerui.data.InfoData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
 import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
 import io.github.smiley4.ktorswaggerui.spec.openapi.InfoBuilder
@@ -72,7 +73,7 @@ class InfoBuilderTest : StringSpec({
             return InfoBuilder(
                 contactBuilder = ContactBuilder(),
                 licenseBuilder = LicenseBuilder()
-            ).build(OpenApiInfo().apply(builder))
+            ).build(OpenApiInfo().apply(builder).build(InfoData.DEFAULT))
         }
 
     }

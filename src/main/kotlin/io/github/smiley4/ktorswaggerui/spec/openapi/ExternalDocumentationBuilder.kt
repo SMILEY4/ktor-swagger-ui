@@ -1,11 +1,11 @@
 package io.github.smiley4.ktorswaggerui.spec.openapi
 
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiExternalDocs
+import io.github.smiley4.ktorswaggerui.data.ExternalDocsData
 import io.swagger.v3.oas.models.ExternalDocumentation
 
 class ExternalDocumentationBuilder {
 
-    fun build(externalDocs: OpenApiExternalDocs): ExternalDocumentation =
+    fun build(externalDocs: ExternalDocsData): ExternalDocumentation =
         ExternalDocumentation().also {
             it.url = externalDocs.url
             it.description = externalDocs.description

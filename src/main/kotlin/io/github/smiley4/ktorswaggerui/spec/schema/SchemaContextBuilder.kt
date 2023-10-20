@@ -1,24 +1,24 @@
 package io.github.smiley4.ktorswaggerui.spec.schema
 
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
-import io.github.smiley4.ktorswaggerui.dsl.BaseCustomSchema
+import io.github.smiley4.ktorswaggerui.data.BaseCustomSchema
+import io.github.smiley4.ktorswaggerui.data.CustomJsonSchema
+import io.github.smiley4.ktorswaggerui.data.CustomOpenApiSchema
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.data.RemoteSchema
 import io.github.smiley4.ktorswaggerui.dsl.CustomArraySchemaRef
-import io.github.smiley4.ktorswaggerui.dsl.CustomJsonSchema
-import io.github.smiley4.ktorswaggerui.dsl.CustomOpenApiSchema
 import io.github.smiley4.ktorswaggerui.dsl.CustomSchemaRef
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiBaseBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiMultipartBody
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRequestParameter
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSimpleBody
-import io.github.smiley4.ktorswaggerui.dsl.RemoteSchema
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
 import io.github.smiley4.ktorswaggerui.dsl.obj
 import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
 import io.swagger.v3.oas.models.media.Schema
 
 class SchemaContextBuilder(
-    private val config: SwaggerUIPluginConfig,
+    private val config: PluginConfigData,
     private val schemaBuilder: SchemaBuilder
 ) {
 
@@ -26,8 +26,8 @@ class SchemaContextBuilder(
         return SchemaContext()
             .also { ctx -> routes.forEach { handle(ctx, it) } }
             .also { ctx ->
-                if (config.getCustomSchemas().includeAll) {
-                    config.getCustomSchemas().getSchemas().forEach { (id, schema) ->
+                if (config.includeAllCustomSchemas) {
+                    config.customSchemas.forEach { (id, schema) ->
                         ctx.addSchema(obj(id), createSchema(schema, false))
                     }
                 }
@@ -92,7 +92,7 @@ class SchemaContextBuilder(
 
 
     private fun createSchema(customSchemaRef: CustomSchemaRef): SchemaDefinitions {
-        val customSchema = config.getCustomSchemas().getSchema(customSchemaRef.schemaId)
+        val customSchema = config.customSchemas[customSchemaRef.schemaId]
         return if (customSchema == null) {
             SchemaDefinitions(
                 root = Schema<Any>(),

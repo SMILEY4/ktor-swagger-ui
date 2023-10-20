@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
+import io.github.smiley4.ktorswaggerui.data.ServerData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
 import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
 import io.kotest.core.spec.style.StringSpec
@@ -35,7 +36,7 @@ class ServersBuilderTest : StringSpec({
     companion object {
 
         private fun buildServerObject(builder: OpenApiServer.() -> Unit): Server {
-            return ServerBuilder().build(OpenApiServer().apply(builder))
+            return ServerBuilder().build(OpenApiServer().apply(builder).build(ServerData.DEFAULT))
         }
 
     }
