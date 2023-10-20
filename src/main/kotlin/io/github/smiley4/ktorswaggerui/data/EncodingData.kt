@@ -11,7 +11,7 @@ import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.ExampleEncoder
 import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
 import io.github.smiley4.ktorswaggerui.dsl.SchemaType
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaTypeAttributeOverride
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaTypeAttributeOverride
 import kotlin.reflect.jvm.javaType
 
 data class EncodingData(

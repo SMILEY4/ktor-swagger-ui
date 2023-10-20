@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.data.ExternalDocsData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiExternalDocs
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExternalDocumentationBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ExternalDocumentationBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.swagger.v3.oas.models.ExternalDocumentation

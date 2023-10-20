@@ -2,9 +2,9 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.data.InfoData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiInfo
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContactBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.InfoBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.LicenseBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ContactBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.InfoBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.LicenseBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

@@ -2,8 +2,8 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.data.TagData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.TagExternalDocumentationBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.TagBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.TagExternalDocumentationBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe

@@ -12,10 +12,10 @@ import com.github.victools.jsonschema.module.swagger2.Swagger2Module
 import io.github.smiley4.ktorswaggerui.dsl.Example
 import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaDefinitions
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaTypeAttributeOverride
-import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaDefinitions
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaTypeAttributeOverride
+import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize

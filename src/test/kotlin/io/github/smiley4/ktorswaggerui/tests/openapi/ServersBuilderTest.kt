@@ -2,7 +2,7 @@ package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import io.github.smiley4.ktorswaggerui.data.ServerData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiServer
-import io.github.smiley4.ktorswaggerui.spec.openapi.ServerBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ServerBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import io.swagger.v3.oas.models.servers.Server

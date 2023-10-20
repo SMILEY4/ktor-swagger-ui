@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.tests.route
 
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.spec.route.RouteDocumentationMerger
+import io.github.smiley4.ktorswaggerui.builder.route.RouteDocumentationMerger
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
