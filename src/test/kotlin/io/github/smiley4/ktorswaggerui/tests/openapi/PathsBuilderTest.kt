@@ -1,27 +1,28 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContext
-import io.github.smiley4.ktorswaggerui.spec.example.ExampleContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.PathBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.PathsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecurityRequirementsBuilder
-import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ExampleBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.HeaderBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.OperationBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.OperationTagsBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ParameterBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.PathBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.PathsBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.RequestBodyBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ResponseBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ResponsesBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.SecurityRequirementsBuilder
+import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldHaveSize
@@ -88,11 +89,11 @@ class PathsBuilderTest : StringSpec({
             protected = false
         )
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
-        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): SchemaContext {
+        private fun schemaContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl = defaultPluginConfig): SchemaContext {
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
                     schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),
@@ -102,10 +103,10 @@ class PathsBuilderTest : StringSpec({
             ).build(routes)
         }
 
-        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig): ExampleContext {
+        private fun exampleContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl = defaultPluginConfig): ExampleContext {
             return ExampleContextBuilder(
                 exampleBuilder = ExampleBuilder(
-                    config = pluginConfig
+                    config = pluginConfig.build(PluginConfigData.DEFAULT)
                 )
             ).build(routes.toList())
         }
@@ -114,12 +115,13 @@ class PathsBuilderTest : StringSpec({
             routes: Collection<RouteMeta>,
             schemaContext: SchemaContext,
             exampleContext: ExampleContext,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): Paths {
+            val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return PathsBuilder(
                 pathBuilder = PathBuilder(
                     operationBuilder = OperationBuilder(
-                        operationTagsBuilder = OperationTagsBuilder(pluginConfig),
+                        operationTagsBuilder = OperationTagsBuilder(pluginConfigData),
                         parameterBuilder = ParameterBuilder(
                             schemaContext = schemaContext,
                             exampleContext = exampleContext
@@ -140,9 +142,9 @@ class PathsBuilderTest : StringSpec({
                                     headerBuilder = HeaderBuilder(schemaContext)
                                 )
                             ),
-                            config = pluginConfig
+                            config = pluginConfigData
                         ),
-                        securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfig),
+                        securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
                     )
                 )
             ).build(routes)

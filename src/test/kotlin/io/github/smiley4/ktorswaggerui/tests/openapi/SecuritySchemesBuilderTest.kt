@@ -1,11 +1,12 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
-import io.github.smiley4.ktorswaggerui.dsl.AuthKeyLocation
-import io.github.smiley4.ktorswaggerui.dsl.AuthScheme
-import io.github.smiley4.ktorswaggerui.dsl.AuthType
+import io.github.smiley4.ktorswaggerui.data.AuthKeyLocation
+import io.github.smiley4.ktorswaggerui.data.AuthScheme
+import io.github.smiley4.ktorswaggerui.data.AuthType
+import io.github.smiley4.ktorswaggerui.data.SecuritySchemeData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiSecurityScheme
-import io.github.smiley4.ktorswaggerui.spec.openapi.OAuthFlowsBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.SecuritySchemesBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.OAuthFlowsBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.SecuritySchemesBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.maps.shouldBeEmpty
@@ -191,7 +192,7 @@ class SecuritySchemesBuilderTest : StringSpec({
         private fun buildSecuritySchemeObjects(builders: Map<String, OpenApiSecurityScheme.() -> Unit>): Map<String, SecurityScheme> {
             return SecuritySchemesBuilder(
                 oAuthFlowsBuilder = OAuthFlowsBuilder()
-            ).build(builders.map { (name, entry) -> OpenApiSecurityScheme(name).apply(entry) })
+            ).build(builders.map { (name, entry) -> OpenApiSecurityScheme(name).apply(entry).build(SecuritySchemeData.DEFAULT) })
         }
 
     }

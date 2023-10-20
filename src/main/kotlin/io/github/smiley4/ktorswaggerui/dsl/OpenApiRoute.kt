@@ -4,6 +4,11 @@ package io.github.smiley4.ktorswaggerui.dsl
 class OpenApiRoute {
 
     /**
+     * the id of the openapi-spec this route belongs to. 'Null' to use default spec.
+     */
+    var specId: String? = null
+
+    /**
      * A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier
      */
     var tags: List<String> = emptyList()

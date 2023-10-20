@@ -6,17 +6,18 @@ import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
-import io.github.smiley4.ktorswaggerui.SwaggerUIPluginConfig
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.array
 import io.github.smiley4.ktorswaggerui.dsl.asSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.dsl.obj
-import io.github.smiley4.ktorswaggerui.spec.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContext
-import io.github.smiley4.ktorswaggerui.spec.schema.SchemaContextBuilder
-import io.github.smiley4.ktorswaggerui.spec.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
+import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
@@ -289,7 +290,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "custom schema object" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -327,7 +328,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "custom schema array" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 openApi("myCustomSchema") {
                     Schema<Any>().also { schema ->
@@ -378,7 +379,7 @@ class SchemaContextTest : StringSpec({
                 .with(Option.ALLOF_CLEANUP_AT_THE_END)
                 .build()
         )
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.encoding {
                 schemaEncoder { type ->
                     generator.generateSchema(type.javaType).toString()
@@ -414,7 +415,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "don't include unused custom schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 includeAll = false
                 openApi("myCustomSchema") {
@@ -437,7 +438,7 @@ class SchemaContextTest : StringSpec({
     }
 
     "include unused custom schema" {
-        val config = SwaggerUIPluginConfig().also {
+        val config = PluginConfigDsl().also {
             it.customSchemas {
                 includeAll = true
                 openApi("myCustomSchema") {
@@ -498,14 +499,14 @@ class SchemaContextTest : StringSpec({
 
         inline fun <reified T> getType() = getSchemaType<T>()
 
-        private val defaultPluginConfig = SwaggerUIPluginConfig()
+        private val defaultPluginConfig = PluginConfigDsl()
 
         private fun schemaContext(
             routes: Collection<RouteMeta>,
-            pluginConfig: SwaggerUIPluginConfig = defaultPluginConfig
+            pluginConfig: PluginConfigDsl = defaultPluginConfig
         ): SchemaContext {
             return SchemaContextBuilder(
-                config = pluginConfig,
+                config = pluginConfig.build(PluginConfigData.DEFAULT),
                 schemaBuilder = SchemaBuilder(
                     definitionsField = pluginConfig.encodingConfig.schemaDefinitionsField,
                     schemaEncoder = pluginConfig.encodingConfig.getSchemaEncoder(),

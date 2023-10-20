@@ -1,8 +1,9 @@
 package io.github.smiley4.ktorswaggerui.tests.openapi
 
+import io.github.smiley4.ktorswaggerui.data.TagData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiTag
-import io.github.smiley4.ktorswaggerui.spec.openapi.TagBuilder
-import io.github.smiley4.ktorswaggerui.spec.openapi.TagExternalDocumentationBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.TagBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.TagExternalDocumentationBuilder
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -46,7 +47,7 @@ class TagsBuilderTest : StringSpec({
         private fun buildTagObject(name: String, builder: OpenApiTag.() -> Unit): Tag {
             return TagBuilder(
                 tagExternalDocumentationBuilder = TagExternalDocumentationBuilder()
-            ).build(OpenApiTag(name).apply(builder))
+            ).build(OpenApiTag(name).apply(builder).build(TagData.DEFAULT))
         }
 
     }
