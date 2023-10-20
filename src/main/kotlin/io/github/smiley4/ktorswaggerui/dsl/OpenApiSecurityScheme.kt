@@ -59,9 +59,6 @@ class OpenApiSecurityScheme(
     }
 
 
-    fun getFlows() = flows
-
-
     /**
      * OpenId Connect URL to discover OAuth2 configuration values.
      * Required for type [AuthType.OPENID_CONNECT]
