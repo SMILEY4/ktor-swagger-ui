@@ -7,15 +7,14 @@ import com.github.victools.jsonschema.generator.OptionPreset
 import com.github.victools.jsonschema.generator.SchemaGenerator
 import com.github.victools.jsonschema.generator.SchemaGeneratorConfigBuilder
 import com.github.victools.jsonschema.generator.SchemaVersion
-import com.github.victools.jsonschema.module.jackson.JacksonModule
 import com.github.victools.jsonschema.module.swagger2.Swagger2Module
-import io.github.smiley4.ktorswaggerui.dsl.Example
-import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
-import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaDefinitions
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaTypeAttributeOverride
 import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
+import io.github.smiley4.ktorswaggerui.dsl.Example
+import io.github.smiley4.ktorswaggerui.dsl.SchemaEncoder
+import io.github.smiley4.ktorswaggerui.dsl.getSchemaType
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.maps.shouldHaveSize
@@ -29,35 +28,6 @@ import java.io.File
 import kotlin.reflect.jvm.javaType
 
 class SchemaBuilderTest : StringSpec({
-
-    "victools field names".config(enabled = false) {
-        /**
-         * Test-case for https://github.com/SMILEY4/ktor-swagger-ui/issues/60.
-         * -> victools incorrectly ignores fields with is[A-Z]
-         */
-        createSchemaVictools<WithFieldNames>(false).also { defs ->
-            defs.root.also { schema ->
-                schema.`$ref` shouldBe null
-                schema.type shouldBe "object"
-                schema.properties.keys shouldContainExactly setOf("flag", "getAnotherText", "text", "isSomething", "isSomeText")
-                schema.properties["flag"]!!.also { prop ->
-                    prop.type shouldBe "boolean"
-                }
-                schema.properties["isSomething"]!!.also { prop ->
-                    prop.type shouldBe "boolean"
-                }
-                schema.properties["text"]!!.also { prop ->
-                    prop.type shouldBe "string"
-                }
-                schema.properties["getAnotherText"]!!.also { prop ->
-                    prop.type shouldBe "string"
-                }
-                schema.properties["isSomeText"]!!.also { prop ->
-                    prop.type shouldBe "string"
-                }
-            }
-        }
-    }
 
     "primitive (victools, all definitions)" {
         createSchemaVictools<Int>(true).also { defs ->
@@ -149,6 +119,31 @@ class SchemaBuilderTest : StringSpec({
         }
     }
 
+    "object with special field names (victools)" {
+        createSchemaVictools<WithFieldNames>(false).also { defs ->
+            defs.root.also { schema ->
+                schema.`$ref` shouldBe null
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactly setOf("flag", "getAnotherText", "text", "isSomething", "isSomeText")
+                schema.properties["flag"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["isSomething"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["text"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["getAnotherText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["isSomeText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+            }
+        }
+    }
+
     "simple object (kotlinx, definitions)" {
         createSchemaKotlinX<Pet>(true).also { defs ->
             defs.definitions.keys shouldContainExactly setOf("1d8t6cs0dbcap", "x1xjd3yo2dbzzz", "xq0zwcprkn9j3")
@@ -203,6 +198,31 @@ class SchemaBuilderTest : StringSpec({
                 }
                 schema.properties["tag"]!!.also { prop ->
                     prop.`$ref` shouldBe null
+                    prop.type shouldBe "string"
+                }
+            }
+        }
+    }
+
+    "object with special field names (kotlinx)" {
+        createSchemaKotlinX<WithFieldNames>(false).also { defs ->
+            defs.root.also { schema ->
+                schema.`$ref` shouldBe null
+                schema.type shouldBe "object"
+                schema.properties.keys shouldContainExactly setOf("flag", "getAnotherText", "text", "isSomething", "isSomeText")
+                schema.properties["flag"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["isSomething"]!!.also { prop ->
+                    prop.type shouldBe "boolean"
+                }
+                schema.properties["text"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["getAnotherText"]!!.also { prop ->
+                    prop.type shouldBe "string"
+                }
+                schema.properties["isSomeText"]!!.also { prop ->
                     prop.type shouldBe "string"
                 }
             }
@@ -432,7 +452,8 @@ class SchemaBuilderTest : StringSpec({
 
         )
 
-        data class WithFieldNames(
+        @Serializable
+        class WithFieldNames(
             val flag: Boolean,
             val isSomething: Boolean,
             val text: String,
@@ -457,7 +478,6 @@ class SchemaBuilderTest : StringSpec({
             return { type ->
                 SchemaGenerator(
                     SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-                        .with(JacksonModule())
                         .with(Swagger2Module())
                         .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
                         .with(Option.ALLOF_CLEANUP_AT_THE_END)
