@@ -11,7 +11,7 @@ class ResourceContent(private val resource: URL) : OutgoingContent.ByteArrayCont
         "html" to ContentType.Text.Html,
         "css" to ContentType.Text.CSS,
         "js" to ContentType.Application.JavaScript,
-        "json" to ContentType.Application.Json.withCharset(Charsets.UTF_8),
+        "json" to ContentType.Application.Json,
         "png" to ContentType.Image.PNG
     )
 
