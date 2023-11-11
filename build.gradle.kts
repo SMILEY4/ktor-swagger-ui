@@ -51,7 +51,7 @@ dependencies {
     val swaggerParserVersion = "2.1.13"
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
 
-    val jsonSchemaGeneratorVersion = "4.28.0"
+    val jsonSchemaGeneratorVersion = "4.32.0"
     implementation("com.github.victools:jsonschema-generator:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
