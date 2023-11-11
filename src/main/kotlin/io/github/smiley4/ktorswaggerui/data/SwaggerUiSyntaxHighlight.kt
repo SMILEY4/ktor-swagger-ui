@@ -6,5 +6,6 @@ enum class SwaggerUiSyntaxHighlight(val value: String) {
     MONOKAI("monokai"),
     NORD("nord"),
     OBSIDIAN("obsidian"),
-    TOMORROW_NIGHT("tomorrow-night")
+    TOMORROW_NIGHT("tomorrow-night"),
+    IDEA("idea")
 }

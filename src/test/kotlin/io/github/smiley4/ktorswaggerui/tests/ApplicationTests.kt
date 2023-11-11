@@ -46,12 +46,12 @@ class ApplicationTests {
         }
         get("/swagger-ui/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.JavaScript.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/swagger-ui/api.json\""
         }
         get("/swagger-ui/api.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
     }
@@ -82,13 +82,13 @@ class ApplicationTests {
         }
         get("my-root/swagger-ui/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.JavaScript.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/my-root/swagger-ui/api.json\""
 
         }
         get("my-root/swagger-ui/api.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
     }
@@ -121,12 +121,12 @@ class ApplicationTests {
         }
         get("/swagger-ui/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.JavaScript.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/swagger-ui/api.json\""
         }
         get("/swagger-ui/api.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
     }
@@ -251,13 +251,13 @@ class ApplicationTests {
         }
         get("/test-swagger/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.JavaScript.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/test-swagger/api.json\""
 
         }
         get("/test-swagger/api.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
     }
@@ -327,12 +327,12 @@ class ApplicationTests {
         }
         get("/swagger-ui/hello/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.JavaScript.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/swagger-ui/hello/hello.json\""
         }
         get("/swagger-ui/hello/hello.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
         get("/swagger-ui/world").also {
@@ -347,12 +347,12 @@ class ApplicationTests {
         }
         get("/swagger-ui/world/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.JavaScript.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/swagger-ui/world/world.json\""
         }
         get("/swagger-ui/world/world.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
     }
@@ -379,7 +379,7 @@ class ApplicationTests {
         }
         get("/swagger-ui/hello/hello.json").also {
             it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Application.Json.withCharset(Charsets.UTF_8)
+            it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
         get("/swagger-ui/world/index.html").also {

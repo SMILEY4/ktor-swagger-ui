@@ -82,7 +82,6 @@ data class EncodingData(
          */
         fun schemaGeneratorConfigBuilder(): SchemaGeneratorConfigBuilder =
             SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON)
-                .with(JacksonModule())
                 .with(Swagger2Module())
                 .with(Option.EXTRA_OPEN_API_FORMAT_VALUES)
                 .with(Option.ALLOF_CLEANUP_AT_THE_END)
