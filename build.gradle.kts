@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
 
-    val ktorVersion = "2.3.3"
+    val ktorVersion = "2.3.6"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
@@ -45,10 +45,10 @@ dependencies {
     testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
-    val swaggerUiVersion = "4.15.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
+    val swaggerUiVersion = "5.9.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
     implementation("org.webjars:swagger-ui:$swaggerUiVersion")
 
-    val swaggerParserVersion = "2.1.13"
+    val swaggerParserVersion = "2.1.18"
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
 
     val jsonSchemaGeneratorVersion = "4.32.0"
@@ -56,28 +56,28 @@ dependencies {
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
 
-    val jacksonVersion = "2.14.2"
+    val jacksonVersion = "2.15.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
 
-    val kotlinLoggingVersion = "2.1.23"
+    val kotlinLoggingVersion = "3.0.5"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
-    val logbackVersion = "1.4.5"
+    val logbackVersion = "1.4.11"
     testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
 
-    val versionMockk = "1.12.7"
+    val versionMockk = "1.13.8"
     testImplementation("io.mockk:mockk:$versionMockk")
 
-    val versionKotest = "5.7.2"
+    val versionKotest = "5.8.0"
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
 
-    val versionKotlinTest = "1.7.21"
+    val versionKotlinTest = "1.8.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 }
 
 kotlin {
