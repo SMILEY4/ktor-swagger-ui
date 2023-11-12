@@ -28,7 +28,7 @@ fun main() {
 }
 
 @Resource("articles")
-class ArticlesRoute
+class ArticlesRoute(val sorting: String)
 
 data class Article(
     val title: String,
@@ -76,6 +76,11 @@ private fun Application.myModule() {
             tags = listOf("articles")
             description = "Articles endpoint"
             operationId = "get-articles"
+            request {
+                queryParameter<String>("sorting") {
+                    description = "Sorting applied to articles"
+                }
+            }
             response {
                 default {
                     description = "Default Response"
