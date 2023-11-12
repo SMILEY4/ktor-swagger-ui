@@ -74,6 +74,9 @@ class RouteCollector(
             is DocumentedRouteSelector -> true
             is HttpMethodRouteSelector -> true
             is AuthenticationRouteSelector -> true
+            is ParameterRouteSelector -> true
+            is ConstantParameterRouteSelector -> true
+            is OptionalParameterRouteSelector -> true
             else -> config.ignoredRouteSelectors.any { selector::class.isSubclassOf(it) }
         }
     }
