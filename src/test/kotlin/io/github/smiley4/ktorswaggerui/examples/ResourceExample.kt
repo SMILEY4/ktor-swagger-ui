@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.dsl.resources.get
 import io.github.smiley4.ktorswaggerui.dsl.resources.post
-import io.github.smiley4.ktorswaggerui.dsl.resources.delete
 import io.ktor.http.HttpStatusCode
 import io.ktor.resources.Resource
 import io.ktor.serialization.jackson.jackson
@@ -28,7 +27,7 @@ fun main() {
 }
 
 @Resource("articles")
-class ArticlesRoute(val sorting: String)
+class ArticlesRoute(val sorting: String?)
 
 data class Article(
     val title: String,
@@ -77,8 +76,8 @@ private fun Application.myModule() {
             description = "Articles endpoint"
             operationId = "get-articles"
             request {
-                queryParameter<String>("sorting") {
-                    description = "Sorting applied to articles"
+                queryParameter<String?>("sorting") {
+                    description = "Optional sorting applied to articles"
                 }
             }
             response {
@@ -94,7 +93,10 @@ private fun Application.myModule() {
                 }
             }
         }) {
-            call.respond(HttpStatusCode.OK, "No articles yet")
+            if (it.sorting != null)
+                call.respond(HttpStatusCode.OK, "No articles yet (with ${it.sorting} sorting)")
+            else
+                call.respond(HttpStatusCode.OK, "No articles yet")
         }
 
         post<ArticlesRoute>({
