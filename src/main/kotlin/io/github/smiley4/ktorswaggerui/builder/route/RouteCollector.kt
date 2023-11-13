@@ -5,11 +5,7 @@ import io.github.smiley4.ktorswaggerui.dsl.DocumentedRouteSelector
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
 import io.ktor.http.HttpMethod
 import io.ktor.server.auth.AuthenticationRouteSelector
-import io.ktor.server.routing.HttpMethodRouteSelector
-import io.ktor.server.routing.RootRouteSelector
-import io.ktor.server.routing.Route
-import io.ktor.server.routing.RouteSelector
-import io.ktor.server.routing.TrailingSlashRouteSelector
+import io.ktor.server.routing.*
 import kotlin.reflect.full.isSubclassOf
 
 class RouteCollector(
@@ -52,6 +48,7 @@ class RouteCollector(
         return (route.selector as HttpMethodRouteSelector).method
     }
 
+    @Suppress("CyclomaticComplexMethod")
     private fun getPath(route: Route, config: PluginConfigData): String {
         val selector = route.selector
         return if (isIgnoredSelector(selector, config)) {
@@ -63,6 +60,9 @@ class RouteCollector(
                 is DocumentedRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is HttpMethodRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is AuthenticationRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
+                is ParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
+                is ConstantParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
+                is OptionalParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 else -> (route.parent?.let { getPath(it, config) } ?: "") + "/" + route.selector.toString()
             }
         }
@@ -75,6 +75,9 @@ class RouteCollector(
             is DocumentedRouteSelector -> true
             is HttpMethodRouteSelector -> true
             is AuthenticationRouteSelector -> true
+            is ParameterRouteSelector -> true
+            is ConstantParameterRouteSelector -> true
+            is OptionalParameterRouteSelector -> true
             else -> config.ignoredRouteSelectors.any { selector::class.isSubclassOf(it) }
         }
     }
