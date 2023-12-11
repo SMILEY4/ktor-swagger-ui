@@ -1,8 +1,9 @@
 package io.github.smiley4.ktorswaggerui.data
 
 data class SecuritySchemeData(
-    val name: String,
+    val schemeName: String,
     val type: AuthType?,
+    val name: String?,
     val location: AuthKeyLocation?,
     val scheme: AuthScheme?,
     val bearerFormat: String?,
@@ -13,8 +14,9 @@ data class SecuritySchemeData(
 
     companion object {
         val DEFAULT = SecuritySchemeData(
-            name = "",
+            schemeName = "",
             type = null,
+            name = null,
             location = null,
             scheme = null,
             bearerFormat = null,

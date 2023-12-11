@@ -28,7 +28,7 @@ class SecuritySchemesBuilderTest : StringSpec({
             schemes["TestAuth"]!!.also { scheme ->
                 scheme.type shouldBe null
                 scheme.description shouldBe null
-                scheme.name shouldBe "TestAuth"
+                scheme.name shouldBe null
                 scheme.`$ref` shouldBe null
                 scheme.`in` shouldBe null
                 scheme.scheme shouldBe null
@@ -47,20 +47,30 @@ class SecuritySchemesBuilderTest : StringSpec({
                 scheme = AuthScheme.BASIC
             },
             "TestAuth2" to {
-                type = AuthType.HTTP
-                scheme = AuthScheme.BASIC
+                type = AuthType.API_KEY
+                location = AuthKeyLocation.COOKIE
+            },
+            "TestAuth3" to {
+                type = AuthType.API_KEY
+                location = AuthKeyLocation.QUERY
+                name = "myQueryParam"
             }
         )).also { schemes ->
-            schemes.keys shouldContainExactlyInAnyOrder listOf("TestAuth1", "TestAuth2")
+            schemes.keys shouldContainExactlyInAnyOrder listOf("TestAuth1", "TestAuth2", "TestAuth3")
             schemes["TestAuth1"]!!.also { scheme ->
-                scheme.name shouldBe "TestAuth1"
+                scheme.name shouldBe null
                 scheme.type shouldBe SecurityScheme.Type.HTTP
                 scheme.scheme shouldBe "Basic"
             }
             schemes["TestAuth2"]!!.also { scheme ->
                 scheme.name shouldBe "TestAuth2"
-                scheme.type shouldBe SecurityScheme.Type.HTTP
-                scheme.scheme shouldBe "Basic"
+                scheme.type shouldBe SecurityScheme.Type.APIKEY
+                scheme.scheme shouldBe null
+            }
+            schemes["TestAuth3"]!!.also { scheme ->
+                scheme.name shouldBe "myQueryParam"
+                scheme.type shouldBe SecurityScheme.Type.APIKEY
+                scheme.scheme shouldBe null
             }
         }
     }
@@ -114,7 +124,7 @@ class SecuritySchemesBuilderTest : StringSpec({
         })).also { schemes ->
             schemes.keys shouldContainExactlyInAnyOrder listOf("TestAuth")
             schemes["TestAuth"]!!.also { scheme ->
-                scheme.name shouldBe "TestAuth"
+                scheme.name shouldBe null
                 scheme.type shouldBe SecurityScheme.Type.HTTP
                 scheme.`in` shouldBe SecurityScheme.In.COOKIE
                 scheme.scheme shouldBe "Basic"
