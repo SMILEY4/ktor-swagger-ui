@@ -15,10 +15,9 @@ import io.github.smiley4.ktorswaggerui.data.SecuritySchemeData
 @OpenApiDslMarker
 class OpenApiSecurityScheme(
     /**
-     * The name of the header, query or cookie parameter to be used.
-     * Required for type [AuthType.API_KEY]
+     * The name of the security scheme.
      */
-    val name: String
+    val schemeName: String
 ) {
 
     /**
@@ -26,6 +25,10 @@ class OpenApiSecurityScheme(
      */
     var type: AuthType? = null
 
+    /**
+     * The name scheme and of the header, query or cookie parameter to be used.
+     */
+    var name: String? = null
 
     /**
      * The location of the API key (OpenAPI 'in').
@@ -73,8 +76,9 @@ class OpenApiSecurityScheme(
 
 
     fun build(base: SecuritySchemeData) = SecuritySchemeData(
-        name = name,
+        schemeName = schemeName,
         type = merge(base.type, type),
+        name = merge(base.name, name),
         location = merge(base.location, location),
         scheme = merge(base.scheme, scheme),
         bearerFormat = merge(base.bearerFormat, bearerFormat),
