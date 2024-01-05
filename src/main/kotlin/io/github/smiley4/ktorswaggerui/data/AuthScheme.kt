@@ -3,7 +3,7 @@ package io.github.smiley4.ktorswaggerui.data
 //  https://www.iana.org/assignments/http-authschemes/http-authschemes.xhtml
 enum class AuthScheme(val swaggerType: String) {
     BASIC("Basic"),
-    BEARER("Bearer"),
+    BEARER("bearer"),
     DIGEST("Digest"),
     HOBA("HOBA"),
     MUTUAL("Mutual"),
