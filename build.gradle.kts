@@ -33,7 +33,7 @@ repositories {
 
 dependencies {
 
-    val ktorVersion = "2.3.6"
+    val ktorVersion = "2.3.7"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")
@@ -48,7 +48,7 @@ dependencies {
     val swaggerUiVersion = "5.9.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
     implementation("org.webjars:swagger-ui:$swaggerUiVersion")
 
-    val swaggerParserVersion = "2.1.18"
+    val swaggerParserVersion = "2.1.19"
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
 
     val jsonSchemaGeneratorVersion = "4.32.0"
