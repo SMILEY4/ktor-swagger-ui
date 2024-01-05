@@ -1,13 +1,10 @@
-import Build_gradle.Meta.description
-import Build_gradle.Meta.name
-import Build_gradle.Meta.version
 import com.vanniktech.maven.publish.SonatypeHost
 import io.gitlab.arturbosch.detekt.Detekt
 
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.7.3-SNAPSHOT"
+    const val version = "2.7.3-test1"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"
