@@ -6,12 +6,12 @@ import io.github.smiley4.ktorswaggerui.dsl.get
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
+import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
-import io.ktor.http.withCharset
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.auth.Authentication
@@ -19,7 +19,6 @@ import io.ktor.server.auth.UserIdPrincipal
 import io.ktor.server.auth.basic
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
-import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlin.test.Test
 
@@ -58,11 +57,14 @@ class ApplicationTests {
 
 
     @Test
-    fun customRootHost() = swaggerUITestApplication({
-        swagger {
-            rootHostPath = "my-root"
-        }
-    }) {
+    fun customRootHost() = swaggerUITestApplication(
+        {
+            swagger {
+                rootHostPath = "my-root"
+            }
+        },
+        followRedirects = false,
+    ) {
         get("hello").also {
             it.status shouldBe HttpStatusCode.OK
             it.body shouldBe "Hello Test"
@@ -70,23 +72,21 @@ class ApplicationTests {
         get("/").also {
             it.status shouldBe HttpStatusCode.NotFound
         }
-        get("my-root/swagger-ui").also {
+        get("swagger-ui").also {
+            it.status shouldBe HttpStatusCode.Found
+            it.redirect shouldBe "my-root/swagger-ui/index.html"
+        }
+        get("swagger-ui/index.html").also {
             it.status shouldBe HttpStatusCode.OK
             it.contentType shouldBe ContentType.Text.Html
             it.body.shouldNotBeEmpty()
         }
-        get("my-root/swagger-ui/index.html").also {
-            it.status shouldBe HttpStatusCode.OK
-            it.contentType shouldBe ContentType.Text.Html
-            it.body.shouldNotBeEmpty()
-        }
-        get("my-root/swagger-ui/swagger-initializer.js").also {
+        get("swagger-ui/swagger-initializer.js").also {
             it.status shouldBe HttpStatusCode.OK
             it.contentType shouldBe ContentType.Application.JavaScript
             it.body shouldContain "url: \"/my-root/swagger-ui/api.json\""
-
         }
-        get("my-root/swagger-ui/api.json").also {
+        get("swagger-ui/api.json").also {
             it.status shouldBe HttpStatusCode.OK
             it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
@@ -391,12 +391,19 @@ class ApplicationTests {
     }
 
 
-    private fun swaggerUITestApplication(block: suspend ApplicationTestBuilder.() -> Unit) {
-        swaggerUITestApplication({}, block)
+    private fun swaggerUITestApplication(followRedirects: Boolean = true, block: suspend TestContext.() -> Unit) {
+        swaggerUITestApplication({}, followRedirects, block)
     }
 
-    private fun swaggerUITestApplication(pluginConfig: PluginConfigDsl.() -> Unit, block: suspend ApplicationTestBuilder.() -> Unit) {
+    private fun swaggerUITestApplication(
+        pluginConfig: PluginConfigDsl.() -> Unit,
+        followRedirects: Boolean = true,
+        block: suspend TestContext.() -> Unit
+    ) {
         testApplication {
+            val client = createClient {
+                this.followRedirects = followRedirects
+            }
             application {
                 install(Authentication) {
                     basic("my-auth") {
@@ -436,32 +443,39 @@ class ApplicationTests {
                 }
                 Thread.sleep(500)
             }
-            block()
+            TestContext(client).apply { block() }
         }
     }
 
-    private suspend fun ApplicationTestBuilder.get(path: String): GetResult {
-        return client.get(path)
-            .let {
-                GetResult(
-                    path = path,
-                    status = it.status,
-                    contentType = it.contentType(),
-                    body = it.bodyAsText()
-                )
-            }
-            .also { it.print() }
+    class TestContext(private val client: HttpClient) {
+
+        suspend fun get(path: String): GetResult {
+            return client.get(path)
+                .let {
+                    GetResult(
+                        path = path,
+                        status = it.status,
+                        contentType = it.contentType(),
+                        body = it.bodyAsText(),
+                        redirect = it.headers["Location"]
+                    )
+                }
+                .also { it.print() }
+        }
+
+
+        private fun GetResult.print() {
+            println("GET ${this.path}  =>  ${this.status} (${this.contentType}): ${this.body}")
+        }
     }
 
-    private data class GetResult(
+
+    data class GetResult(
         val path: String,
         val status: HttpStatusCode,
         val contentType: ContentType?,
         val body: String,
+        val redirect: String?
     )
-
-    private fun GetResult.print() {
-        println("GET ${this.path}  =>  ${this.status} (${this.contentType}): ${this.body}")
-    }
 
 }

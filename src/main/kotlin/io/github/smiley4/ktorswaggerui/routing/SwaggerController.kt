@@ -45,7 +45,10 @@ class SwaggerController(
     private fun Route.setup() {
         route(getSubUrl()) {
             get {
-                call.respondRedirect("${call.request.uri}/index.html")
+                val rootHostPath = if (pluginConfig.swaggerUI.rootHostPath.isNotBlank()) {
+                    ControllerUtils.dropSlashes("/${pluginConfig.swaggerUI.rootHostPath}")
+                } else ""
+                call.respondRedirect("$rootHostPath${call.request.uri}/index.html")
             }
             get("{filename}") {
                 serveStaticResource(call.parameters["filename"]!!, call)
@@ -108,17 +111,17 @@ class SwaggerController(
     }
 
     private fun getRootUrl(appConfig: ApplicationConfig): String {
-        return "${ControllerUtils.getRootPath(appConfig)}${getSubUrl()}"
+        return "${ControllerUtils.getRootPath(appConfig)}${getSubUrl(true)}"
     }
 
-    private fun getSubUrl(): String {
-        return "/" + listOf(
-            pluginConfig.swaggerUI.rootHostPath,
+    private fun getSubUrl(withRootHostPath: Boolean = false): String {
+        return "/" + listOfNotNull(
+            if (withRootHostPath) pluginConfig.swaggerUI.rootHostPath else null,
             pluginConfig.swaggerUI.swaggerUrl,
             specName
         )
-            .filter { !it.isNullOrBlank() }
-            .map { ControllerUtils.dropSlashes(it!!) }
+            .filter { it.isNotBlank() }
+            .map { ControllerUtils.dropSlashes(it) }
             .joinToString("/")
     }
 
