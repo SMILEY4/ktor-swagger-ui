@@ -4,7 +4,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.7.4"
+    const val version = "2.8.0"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"
@@ -51,7 +51,7 @@ dependencies {
     val swaggerParserVersion = "2.1.19"
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
 
-    val jsonSchemaGeneratorVersion = "4.32.0"
+    val jsonSchemaGeneratorVersion = "4.33.1"
     implementation("com.github.victools:jsonschema-generator:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
     implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
