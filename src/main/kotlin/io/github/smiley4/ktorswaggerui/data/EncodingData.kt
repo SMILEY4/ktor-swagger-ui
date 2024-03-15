@@ -87,6 +87,7 @@ data class EncodingData(
                 .with(Option.ALLOF_CLEANUP_AT_THE_END)
                 .with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES)
                 .with(Option.DEFINITIONS_FOR_ALL_OBJECTS)
+                .with(Option.INLINE_NULLABLE_SCHEMAS)
                 .without(Option.INLINE_ALL_SCHEMAS)
                 .also {
                     it.forTypesInGeneral()
