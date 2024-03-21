@@ -112,6 +112,7 @@ private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteM
         val schemaContext = schemaContext(pluginConfig, routes)
         val exampleContext = exampleContext(pluginConfig, routes)
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
+        pluginConfig.whenBuildOpenApiSpecs?.invoke(openApi)
         Json.pretty(openApi)
     } catch (e: Exception) {
         logger.error("Error during openapi-generation", e)

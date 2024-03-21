@@ -9,8 +9,9 @@ import io.github.smiley4.ktorswaggerui.data.ServerData
 import io.github.smiley4.ktorswaggerui.data.SpecAssigner
 import io.github.smiley4.ktorswaggerui.data.TagData
 import io.github.smiley4.ktorswaggerui.data.TagGenerator
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.ktor.server.routing.RouteSelector
+import io.swagger.v3.oas.models.OpenAPI
 import kotlin.reflect.KClass
 
 /**
@@ -163,6 +164,7 @@ class PluginConfigDsl {
      */
     var ignoredRouteSelectors: Set<KClass<*>> = PluginConfigData.DEFAULT.ignoredRouteSelectors
 
+    var whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs? = null
 
     internal fun build(base: PluginConfigData): PluginConfigData {
         return PluginConfigData(
@@ -200,12 +202,14 @@ class PluginConfigDsl {
             },
             includeAllCustomSchemas = mergeBoolean(base.includeAllCustomSchemas, customSchemas.includeAll),
             encoding = encodingConfig.build(base.encoding),
-            specConfigs = mutableMapOf()
+            specConfigs = mutableMapOf(),
+            whenBuildOpenApiSpecs = whenBuildOpenApiSpecs,
         ).also {
             specConfigs.forEach { (specId, config) ->
                 it.specConfigs[specId] = config.build(it)
             }
         }
     }
-
 }
+
+typealias WhenBuildOpenApiSpecs = (openApi: OpenAPI) -> Unit
