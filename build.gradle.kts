@@ -24,6 +24,7 @@ plugins {
     id("org.owasp.dependencycheck") version "8.2.1"
     id("com.vanniktech.maven.publish") version "0.25.2"
     id("io.gitlab.arturbosch.detekt") version "1.23.0"
+    `maven-publish`
 }
 
 repositories {
@@ -105,31 +106,31 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
-mavenPublishing {
-    publishToMavenCentral(SonatypeHost.S01)
-    signAllPublications()
-    coordinates(Meta.groupId, Meta.artifactId, Meta.version)
-    pom {
-        name.set(Meta.name)
-        description.set(Meta.description)
-        url.set(Meta.scmUrl)
-        licenses {
-            license {
-                name.set(Meta.licenseName)
-                url.set(Meta.licenseUrl)
-                distribution.set(Meta.licenseUrl)
-            }
-        }
-        scm {
-            url.set(Meta.scmUrl)
-            connection.set(Meta.scmConnection)
-        }
-        developers {
-            developer {
-                id.set(Meta.developerName)
-                name.set(Meta.developerName)
-                url.set(Meta.developerUrl)
-            }
-        }
-    }
-}
+// mavenPublishing {
+//     publishToMavenCentral(SonatypeHost.S01)
+//     signAllPublications()
+//     coordinates(Meta.groupId, Meta.artifactId, Meta.version)
+//     pom {
+//         name.set(Meta.name)
+//         description.set(Meta.description)
+//         url.set(Meta.scmUrl)
+//         licenses {
+//             license {
+//                 name.set(Meta.licenseName)
+//                 url.set(Meta.licenseUrl)
+//                 distribution.set(Meta.licenseUrl)
+//             }
+//         }
+//         scm {
+//             url.set(Meta.scmUrl)
+//             connection.set(Meta.scmConnection)
+//         }
+//         developers {
+//             developer {
+//                 id.set(Meta.developerName)
+//                 name.set(Meta.developerName)
+//                 url.set(Meta.developerUrl)
+//             }
+//         }
+//     }
+// }
