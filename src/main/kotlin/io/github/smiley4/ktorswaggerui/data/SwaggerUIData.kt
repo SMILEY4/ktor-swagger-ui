@@ -9,7 +9,8 @@ data class SwaggerUIData(
     val displayOperationId: Boolean,
     val showTagFilterInput: Boolean,
     val sort: SwaggerUiSort,
-    val syntaxHighlight: SwaggerUiSyntaxHighlight
+    val syntaxHighlight: SwaggerUiSyntaxHighlight,
+    val withCredentials: Boolean,
 ) {
 
     companion object {
@@ -22,7 +23,8 @@ data class SwaggerUIData(
             displayOperationId = false,
             showTagFilterInput = false,
             sort = SwaggerUiSort.NONE,
-            syntaxHighlight = SwaggerUiSyntaxHighlight.AGATE
+            syntaxHighlight = SwaggerUiSyntaxHighlight.AGATE,
+            withCredentials = false,
         )
     }
 
