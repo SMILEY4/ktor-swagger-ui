@@ -16,6 +16,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
+import io.swagger.v3.oas.models.servers.Server
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -59,6 +60,21 @@ private fun Application.myModule() {
         securityScheme("MyOtherSecurityScheme") {
             type = AuthType.HTTP
             scheme = AuthScheme.BASIC
+        }
+        whenBuildOpenApiSpecs = {
+            it.paths.forEach { t, u ->
+                println("$t $u")
+                if (t == "/hello") {
+                    u.servers ?: run {
+                        u.servers = mutableListOf()
+                    }
+                    u.servers.add(
+                        Server().apply {
+                            url = "http://local.api"
+                        }
+                    )
+                }
+            }
         }
     }
 
