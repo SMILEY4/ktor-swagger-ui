@@ -1,8 +1,7 @@
 package io.github.smiley4.ktorswaggerui.data
 
-import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
-import io.github.smiley4.ktorswaggerui.dsl.WhenBuildOpenApiSpecs
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import kotlin.reflect.KClass
 
 data class PluginConfigData(
