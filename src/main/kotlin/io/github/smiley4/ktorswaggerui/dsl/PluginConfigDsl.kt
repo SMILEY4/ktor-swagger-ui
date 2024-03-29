@@ -169,7 +169,12 @@ class PluginConfigDsl {
      */
     var ignoredRouteSelectors: Set<KClass<*>> = PluginConfigData.DEFAULT.ignoredRouteSelectors
 
+
+    /**
+     * Invoked after generating the openapi-spec. Can be to e.g. further customize the spec.
+     */
     var whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs? = null
+
 
     internal fun build(base: PluginConfigData): PluginConfigData {
         return PluginConfigData(

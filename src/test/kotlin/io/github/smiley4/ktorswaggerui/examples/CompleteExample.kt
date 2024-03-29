@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.examples
 
-import io.ktor.server.application.Application
 import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -13,6 +12,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.jackson.jackson
+import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
@@ -21,8 +21,11 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
-import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
+import io.swagger.v3.oas.models.Operation
+import io.swagger.v3.oas.models.PathItem
+import io.swagger.v3.oas.models.responses.ApiResponse
+import io.swagger.v3.oas.models.responses.ApiResponses
 import java.util.Random
 
 /**
@@ -81,6 +84,17 @@ private fun Application.myModule() {
             description = "Routes for math related operations"
         }
         generateTags { url -> listOf(url.firstOrNull()) }
+        whenBuildOpenApiSpecs = { spec ->
+            spec.paths.addPathItem("customPath", PathItem().also { path ->
+                path.get = Operation().also { op ->
+                    op.description = "This path was added after generating the openapi-spec"
+                    op.responses = ApiResponses().also { responses ->
+                        responses.addApiResponse("200", ApiResponse())
+                        responses.addApiResponse("404", ApiResponse())
+                    }
+                }
+            })
+        }
     }
 
     install(ContentNegotiation) {
@@ -259,14 +273,14 @@ private fun Application.myModule() {
                     body<List<List<Int>>>()
                 }
             }
-        }){
+        }) {
             call.respond(HttpStatusCode.NotImplemented, "...")
         }
 
         get("hidden", {
             hidden = true
             description = "This route is hidden and not visible in swagger"
-        }){
+        }) {
             call.respond(HttpStatusCode.NotImplemented, "...")
         }
 

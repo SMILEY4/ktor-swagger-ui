@@ -61,21 +61,6 @@ private fun Application.myModule() {
             type = AuthType.HTTP
             scheme = AuthScheme.BASIC
         }
-        whenBuildOpenApiSpecs = {
-            it.paths.forEach { t, u ->
-                println("$t $u")
-                if (t == "/hello") {
-                    u.servers ?: run {
-                        u.servers = mutableListOf()
-                    }
-                    u.servers.add(
-                        Server().apply {
-                            url = "http://local.api"
-                        }
-                    )
-                }
-            }
-        }
     }
 
     // configure routes
