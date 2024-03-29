@@ -1,16 +1,22 @@
 package io.github.smiley4.ktorswaggerui.dsl
 
+import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
 import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeBoolean
-import io.github.smiley4.ktorswaggerui.data.PathFilter
-import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.data.SecuritySchemeData
-import io.github.smiley4.ktorswaggerui.data.ServerData
-import io.github.smiley4.ktorswaggerui.data.SpecAssigner
-import io.github.smiley4.ktorswaggerui.data.TagData
-import io.github.smiley4.ktorswaggerui.data.TagGenerator
-import io.ktor.http.HttpStatusCode
-import io.ktor.server.routing.RouteSelector
+import io.ktor.http.*
+import io.ktor.server.routing.*
+import kotlin.collections.Collection
+import kotlin.collections.Set
+import kotlin.collections.buildList
+import kotlin.collections.buildMap
+import kotlin.collections.buildSet
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.forEach
+import kotlin.collections.map
+import kotlin.collections.mutableListOf
+import kotlin.collections.mutableMapOf
+import kotlin.collections.set
 import kotlin.reflect.KClass
 
 /**
@@ -164,6 +170,12 @@ class PluginConfigDsl {
     var ignoredRouteSelectors: Set<KClass<*>> = PluginConfigData.DEFAULT.ignoredRouteSelectors
 
 
+    /**
+     * Invoked after generating the openapi-spec. Can be to e.g. further customize the spec.
+     */
+    var whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs? = null
+
+
     internal fun build(base: PluginConfigData): PluginConfigData {
         return PluginConfigData(
             defaultUnauthorizedResponse = merge(base.defaultUnauthorizedResponse, defaultUnauthorizedResponse),
@@ -200,12 +212,12 @@ class PluginConfigDsl {
             },
             includeAllCustomSchemas = mergeBoolean(base.includeAllCustomSchemas, customSchemas.includeAll),
             encoding = encodingConfig.build(base.encoding),
-            specConfigs = mutableMapOf()
+            specConfigs = mutableMapOf(),
+            whenBuildOpenApiSpecs = whenBuildOpenApiSpecs,
         ).also {
             specConfigs.forEach { (specId, config) ->
                 it.specConfigs[specId] = config.build(it)
             }
         }
     }
-
 }

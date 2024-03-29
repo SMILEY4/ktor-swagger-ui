@@ -80,6 +80,10 @@ class SwaggerUIDsl {
      */
     var syntaxHighlight = SwaggerUIData.DEFAULT.syntaxHighlight
 
+    /**
+     * Bring cookies when initiating network requests
+     */
+    var withCredentials: Boolean = false
 
     internal fun build(base: SwaggerUIData): SwaggerUIData {
         return SwaggerUIData(
@@ -91,7 +95,8 @@ class SwaggerUIDsl {
             displayOperationId = mergeBoolean(base.displayOperationId, this.displayOperationId),
             showTagFilterInput = mergeBoolean(base.showTagFilterInput, this.showTagFilterInput),
             sort = mergeDefault(base.sort, this.sort, SwaggerUIData.DEFAULT.sort),
-            syntaxHighlight = mergeDefault(base.syntaxHighlight, this.syntaxHighlight, SwaggerUIData.DEFAULT.syntaxHighlight)
+            syntaxHighlight = mergeDefault(base.syntaxHighlight, this.syntaxHighlight, SwaggerUIData.DEFAULT.syntaxHighlight),
+            withCredentials = base.withCredentials
         )
     }
 

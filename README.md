@@ -26,32 +26,11 @@ A wiki with a short documentation is available [here](https://github.com/SMILEY4
 
 ## Installation
 
-Starting with version 2.2.0, dependencies are published on maven central. Older versions (<2.2.0) are available on jitpack.io
-
-**Versions >= 2.2.0**
-
 ```kotlin
 dependencies {
     implementation "io.github.smiley4:ktor-swagger-ui:<VERSION>"
 }
 ```
-
-**Versions < 2.2.0**
-
-1. Add the JitPack repository
-```kotlin
-repositories {
-    maven { url = uri("https://jitpack.io") }
-}
-```
-
-2. Add the dependency
-```kotlin
-dependencies {
-    implementation "io.github.smiley4:ktor-swagger-ui:<VERSION>"
-}
-```
-
 
 ## Example
 Full examples can be found in [src/test/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/develop/src/test/kotlin/io/github/smiley4/ktorswaggerui/examples).

@@ -86,6 +86,7 @@ class SwaggerController(
 				  SwaggerUIBundle.plugins.DownloadUrl
 				],
 				layout: "StandaloneLayout",
+				withCredentials: ${swaggerUiConfig.withCredentials},
 				$propValidatorUrl,
   				$propDisplayOperationId,
     		    $propFilter,

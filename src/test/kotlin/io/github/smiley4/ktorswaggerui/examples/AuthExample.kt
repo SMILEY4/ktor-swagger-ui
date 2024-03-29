@@ -16,6 +16,7 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.routing
+import io.swagger.v3.oas.models.servers.Server
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)

@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.data
 
-import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import kotlin.reflect.KClass
 
 data class PluginConfigData(
@@ -20,7 +20,8 @@ data class PluginConfigData(
     val customSchemas: Map<String, BaseCustomSchema>,
     val includeAllCustomSchemas: Boolean,
     val encoding: EncodingData,
-    val specConfigs: MutableMap<String,PluginConfigData>
+    val specConfigs: MutableMap<String, PluginConfigData>,
+    val whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs?
 ) {
 
     companion object {
@@ -40,7 +41,8 @@ data class PluginConfigData(
             customSchemas = emptyMap(),
             includeAllCustomSchemas = false,
             encoding = EncodingData.DEFAULT,
-            specConfigs = mutableMapOf()
+            specConfigs = mutableMapOf(),
+            whenBuildOpenApiSpecs = null
         )
     }
 
