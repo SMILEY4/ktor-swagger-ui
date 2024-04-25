@@ -10,6 +10,12 @@ import io.github.smiley4.ktorswaggerui.data.SwaggerUIData
 class SwaggerUIDsl {
 
     /**
+     * Whether to use the automatic swagger-ui router or create swagger-ui router manually.
+     * 'false' results in [forwardRoot], [swaggerUrl], [rootHostPath], [authentication] being ignored.
+     */
+    var automaticRouter: Boolean = SwaggerUIData.DEFAULT.automaticRouter
+
+    /**
      * Whether to forward the root-url to the swagger-url
      */
     var forwardRoot: Boolean = SwaggerUIData.DEFAULT.forwardRoot
@@ -87,6 +93,7 @@ class SwaggerUIDsl {
 
     internal fun build(base: SwaggerUIData): SwaggerUIData {
         return SwaggerUIData(
+            automaticRouter = automaticRouter,
             forwardRoot = mergeBoolean(base.forwardRoot, this.forwardRoot),
             swaggerUrl = mergeDefault(base.swaggerUrl, this.swaggerUrl, SwaggerUIData.DEFAULT.swaggerUrl),
             rootHostPath = mergeDefault(base.rootHostPath, this.rootHostPath, SwaggerUIData.DEFAULT.rootHostPath),
