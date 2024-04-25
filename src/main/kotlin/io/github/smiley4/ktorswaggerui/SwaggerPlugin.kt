@@ -1,35 +1,9 @@
 package io.github.smiley4.ktorswaggerui
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
-import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
-import io.github.smiley4.ktorswaggerui.routing.SwaggerController
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ComponentsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ContactBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ExampleBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ExternalDocumentationBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.InfoBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.LicenseBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.OAuthFlowsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.OpenApiBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.PathBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.PathsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.SecurityRequirementsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.SecuritySchemesBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ServerBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.TagBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.TagExternalDocumentationBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.*
 import io.github.smiley4.ktorswaggerui.builder.route.RouteCollector
 import io.github.smiley4.ktorswaggerui.builder.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
@@ -37,17 +11,20 @@ import io.github.smiley4.ktorswaggerui.builder.schema.SchemaBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextBuilder
 import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
-import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationStarted
-import io.ktor.server.application.createApplicationPlugin
-import io.ktor.server.application.hooks.MonitoringEvent
-import io.ktor.server.application.install
-import io.ktor.server.application.plugin
-import io.ktor.server.application.pluginOrNull
-import io.ktor.server.routing.Routing
-import io.ktor.server.webjars.Webjars
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
+import io.github.smiley4.ktorswaggerui.routing.ApiSpec
+import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
+import io.github.smiley4.ktorswaggerui.routing.SwaggerController
+import io.ktor.server.application.*
+import io.ktor.server.application.hooks.*
+import io.ktor.server.routing.*
+import io.ktor.server.webjars.*
 import io.swagger.v3.core.util.Json
 import mu.KotlinLogging
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 
 /**
  * This version must match the version of the gradle dependency
@@ -66,27 +43,27 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
             application.install(Webjars)
         }
 
-        val apiSpecsJson = mutableMapOf<String, String>()
         try {
             val routes = routes(application, config)
-            apiSpecsJson.putAll(buildOpenApiSpecs(config, routes))
+            ApiSpec.setAll(buildOpenApiSpecs(config, routes))
         } catch (e: Exception) {
             logger.error("Error during application startup in swagger-ui-plugin", e)
         }
 
-        apiSpecsJson.forEach { (specId, json) ->
-            val specConfig = config.specConfigs[specId] ?: config
-            SwaggerController(
-                applicationConfig!!,
-                specConfig,
-                SWAGGER_UI_WEBJARS_VERSION,
-                if (apiSpecsJson.size > 1) specId else null,
-                json
-            ).setup(application)
-        }
-
-        if (apiSpecsJson.size == 1 && config.swaggerUI.forwardRoot) {
-            ForwardRouteController(applicationConfig!!, config).setup(application)
+        if (config.swaggerUI.automaticRouter) {
+            ApiSpec.getAll().forEach { (specId, json) ->
+                val specConfig = config.specConfigs[specId] ?: config
+                SwaggerController(
+                    applicationConfig!!,
+                    specConfig,
+                    SWAGGER_UI_WEBJARS_VERSION,
+                    if (ApiSpec.getAll().size > 1) specId else null,
+                    json
+                ).setup(application)
+                if (ApiSpec.getAll().size == 1 && config.swaggerUI.forwardRoot) {
+                    ForwardRouteController(applicationConfig!!, config).setup(application)
+                }
+            }
         }
 
     }
@@ -146,7 +123,11 @@ private fun exampleContext(config: PluginConfigData, routes: List<RouteMeta>): E
     ).build(routes.toList())
 }
 
-private fun builder(config: PluginConfigData, schemaContext: SchemaContext, exampleContext: ExampleContext): OpenApiBuilder {
+private fun builder(
+    config: PluginConfigData,
+    schemaContext: SchemaContext,
+    exampleContext: ExampleContext
+): OpenApiBuilder {
     return OpenApiBuilder(
         config = config,
         schemaContext = schemaContext,

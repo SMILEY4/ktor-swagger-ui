@@ -47,6 +47,21 @@ fun Route.documentation(
 //============================//
 
 fun Route.route(
+    builder: OpenApiRoute.() -> Unit = { },
+    build: Route.() -> Unit
+): Route {
+    return documentation(builder) { route("", build) }
+}
+
+fun Route.route(
+    method: HttpMethod,
+    builder: OpenApiRoute.() -> Unit = { },
+    build: Route.() -> Unit
+): Route {
+    return documentation(builder) { route("", method, build) }
+}
+
+fun Route.route(
     path: String,
     builder: OpenApiRoute.() -> Unit = { },
     build: Route.() -> Unit
