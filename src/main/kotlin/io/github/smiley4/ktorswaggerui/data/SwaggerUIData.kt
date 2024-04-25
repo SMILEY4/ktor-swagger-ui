@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.data
 
 data class SwaggerUIData(
+    val automaticRouter: Boolean,
     val forwardRoot: Boolean,
     val swaggerUrl: String,
     val rootHostPath: String,
@@ -15,6 +16,7 @@ data class SwaggerUIData(
 
     companion object {
         val DEFAULT = SwaggerUIData(
+            automaticRouter = true,
             forwardRoot = false,
             swaggerUrl = "swagger-ui",
             rootHostPath = "",
