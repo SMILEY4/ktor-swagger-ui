@@ -1,0 +1,6 @@
+- clean separation between /data and /dsl
+- cleanup /dsl -> remove no longer required getters, make fields private, etc.
+- cleaner handling of custom schemas, etc
+- cleaner handling of schema generation -> schema-kenerator + nicer config
+- drop automatic routing
+- general cleanup

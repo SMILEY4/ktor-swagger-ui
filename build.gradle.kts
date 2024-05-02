@@ -4,7 +4,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 object Meta {
     const val groupId = "io.github.smiley4"
     const val artifactId = "ktor-swagger-ui"
-    const val version = "2.10.0"
+    const val version = "3.0.0-indev"
     const val name = "Ktor Swagger-UI"
     const val description = "Ktor plugin to document routes and provide Swagger UI"
     const val licenseName = "The Apache License, Version 2.0"
@@ -28,6 +28,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven(url = "https://raw.githubusercontent.com/glureau/json-schema-serialization/mvn-repo")
 }
 
@@ -51,10 +52,10 @@ dependencies {
     val swaggerParserVersion = "2.1.19"
     implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
 
-    val jsonSchemaGeneratorVersion = "4.33.1"
-    implementation("com.github.victools:jsonschema-generator:$jsonSchemaGeneratorVersion")
-    implementation("com.github.victools:jsonschema-module-jackson:$jsonSchemaGeneratorVersion")
-    implementation("com.github.victools:jsonschema-module-swagger-2:$jsonSchemaGeneratorVersion")
+    val schemaKeneratorVersion = "0.1"
+    implementation("io.github.smiley4:schema-kenerator-core:$schemaKeneratorVersion")
+    implementation("io.github.smiley4:schema-kenerator-reflection:$schemaKeneratorVersion")
+    implementation("io.github.smiley4:schema-kenerator-swagger:$schemaKeneratorVersion")
 
     val jacksonVersion = "2.15.3"
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")

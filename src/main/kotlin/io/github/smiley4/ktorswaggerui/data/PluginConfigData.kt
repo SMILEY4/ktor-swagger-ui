@@ -1,11 +1,10 @@
 package io.github.smiley4.ktorswaggerui.data
 
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiResponse
-import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
+import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import kotlin.reflect.KClass
 
 data class PluginConfigData(
-    val defaultUnauthorizedResponse: OpenApiResponse?,
+    val defaultUnauthorizedResponse: OpenApiResponseData?,
     val defaultSecuritySchemeNames: Set<String>,
     val tagGenerator: TagGenerator,
     val specAssigner: SpecAssigner,
@@ -17,9 +16,6 @@ data class PluginConfigData(
     val externalDocs: ExternalDocsData,
     val securitySchemes: List<SecuritySchemeData>,
     val tags: List<TagData>,
-    val customSchemas: Map<String, BaseCustomSchema>,
-    val includeAllCustomSchemas: Boolean,
-    val encoding: EncodingData,
     val specConfigs: MutableMap<String, PluginConfigData>,
     val whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs?
 ) {
@@ -38,9 +34,6 @@ data class PluginConfigData(
             externalDocs = ExternalDocsData.DEFAULT,
             securitySchemes = emptyList(),
             tags = emptyList(),
-            customSchemas = emptyMap(),
-            includeAllCustomSchemas = false,
-            encoding = EncodingData.DEFAULT,
             specConfigs = mutableMapOf(),
             whenBuildOpenApiSpecs = null
         )

@@ -1,6 +1,6 @@
 package io.github.smiley4.ktorswaggerui.builder.route
 
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 
 class RouteDocumentationMerger {
 

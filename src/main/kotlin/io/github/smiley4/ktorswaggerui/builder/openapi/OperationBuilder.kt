@@ -18,11 +18,11 @@ class OperationBuilder(
             it.operationId = route.documentation.operationId
             it.deprecated = route.documentation.deprecated
             it.tags = operationTagsBuilder.build(route)
-            it.parameters = route.documentation.getRequest().getParameters().map { param -> parameterBuilder.build(param) }
-            route.documentation.getRequest().getBody()?.let { body ->
+            it.parameters = route.documentation.request.parameters.map { param -> parameterBuilder.build(param) }
+            route.documentation.request.body?.let { body ->
                 it.requestBody = requestBodyBuilder.build(body)
             }
-            it.responses = responsesBuilder.build(route.documentation.getResponses(), route.protected)
+            it.responses = responsesBuilder.build(route.documentation.responses, route.protected)
             if (route.protected) {
                 securityRequirementsBuilder.build(route).also { securityRequirements ->
                     if (securityRequirements.isNotEmpty()) {

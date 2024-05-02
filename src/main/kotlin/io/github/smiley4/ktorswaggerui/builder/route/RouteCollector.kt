@@ -1,11 +1,18 @@
 package io.github.smiley4.ktorswaggerui.builder.route
 
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.DocumentedRouteSelector
-import io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.routing.DocumentedRouteSelector
+import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 import io.ktor.http.HttpMethod
 import io.ktor.server.auth.AuthenticationRouteSelector
-import io.ktor.server.routing.*
+import io.ktor.server.routing.ConstantParameterRouteSelector
+import io.ktor.server.routing.HttpMethodRouteSelector
+import io.ktor.server.routing.OptionalParameterRouteSelector
+import io.ktor.server.routing.ParameterRouteSelector
+import io.ktor.server.routing.RootRouteSelector
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.RouteSelector
+import io.ktor.server.routing.TrailingSlashRouteSelector
 import kotlin.reflect.full.isSubclassOf
 
 class RouteCollector(
@@ -23,7 +30,7 @@ class RouteCollector(
                 RouteMeta(
                     method = getMethod(route),
                     path = getPath(route, config),
-                    documentation = documentation,
+                    documentation = documentation.build(),
                     protected = documentation.protected ?: isProtected(route)
                 )
             }
@@ -31,11 +38,11 @@ class RouteCollector(
             .filter { path -> config.pathFilter(path.method, path.path.split("/").filter { it.isNotEmpty() }) }
     }
 
+
     private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
         var documentation = base
         if (route.selector is DocumentedRouteSelector) {
-            documentation =
-                routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
+            documentation = routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
         }
         return if (route.parent != null) {
             getDocumentation(route.parent!!, documentation)
@@ -44,9 +51,11 @@ class RouteCollector(
         }
     }
 
+
     private fun getMethod(route: Route): HttpMethod {
         return (route.selector as HttpMethodRouteSelector).method
     }
+
 
     @Suppress("CyclomaticComplexMethod")
     private fun getPath(route: Route, config: PluginConfigData): String {
@@ -68,6 +77,7 @@ class RouteCollector(
         }
     }
 
+
     private fun isIgnoredSelector(selector: RouteSelector, config: PluginConfigData): Boolean {
         return when (selector) {
             is TrailingSlashRouteSelector -> false
@@ -82,6 +92,7 @@ class RouteCollector(
         }
     }
 
+
     private fun isProtected(route: Route): Boolean {
         return when (route.selector) {
             is AuthenticationRouteSelector -> true
@@ -90,6 +101,7 @@ class RouteCollector(
             is DocumentedRouteSelector -> route.parent?.let { isProtected(it) } ?: false
             is HttpMethodRouteSelector -> route.parent?.let { isProtected(it) } ?: false
             else -> route.parent?.let { isProtected(it) } ?: false
+
         }
     }
 
@@ -97,6 +109,5 @@ class RouteCollector(
         return (listOf(root) + root.children.flatMap { allRoutes(it) })
             .filter { it.selector is HttpMethodRouteSelector }
     }
-
 
 }

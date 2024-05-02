@@ -1,7 +1,7 @@
 package io.github.smiley4.ktorswaggerui.builder.openapi
 
-import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.swagger.v3.oas.models.security.SecurityRequirement
 
 class SecurityRequirementsBuilder(
@@ -9,12 +9,11 @@ class SecurityRequirementsBuilder(
 ) {
 
     fun build(route: RouteMeta): List<SecurityRequirement> {
-        val securitySchemes = mutableSetOf<String>().also { schemes ->
-            route.documentation.securitySchemeName?.also { schemes.add(it) }
-            route.documentation.securitySchemeNames?.also { schemes.addAll(it) }
-        }
-        if (securitySchemes.isEmpty()) {
-            config.defaultSecuritySchemeNames.also { securitySchemes.addAll(it) }
+        val securitySchemes = buildSet {
+            addAll(route.documentation.securitySchemeNames)
+            if(route.documentation.securitySchemeNames.isEmpty()) {
+                addAll(config.defaultSecuritySchemeNames)
+            }
         }
         return securitySchemes.map {
             SecurityRequirement().apply {
