@@ -30,8 +30,6 @@ import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextImpl
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.routing.ApiSpec
-import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
-import io.github.smiley4.ktorswaggerui.routing.SwaggerController
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin
@@ -43,9 +41,6 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json
 import mu.KotlinLogging
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.set
 
 /**
  * This version must match the version of the gradle dependency
