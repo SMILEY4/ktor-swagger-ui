@@ -1,0 +1,23 @@
+- hello world
+    - basic config
+    - manual routing
+    - simple route
+
+- authenticated routes
+
+- request/response bodies
+    - basic documentation
+    - body-types/-schemas
+    - examples
+
+- advanced schemas
+    - customizing schema generation
+    - custom schemas
+
+- multiple specs
+
+- resource-plugin
+
+- "real world" examples
+    - petshop, using more features
+    - file download

@@ -66,22 +66,6 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
             logger.error("Error during application startup in swagger-ui-plugin", e)
         }
 
-        if (config.swaggerUI.automaticRouter) {
-            ApiSpec.getAll().forEach { (specId, json) ->
-                val specConfig = config.specConfigs[specId] ?: config
-                SwaggerController(
-                    applicationConfig!!,
-                    specConfig,
-                    SWAGGER_UI_WEBJARS_VERSION,
-                    if (ApiSpec.getAll().size > 1) specId else null,
-                    json
-                ).setup(application)
-                if (ApiSpec.getAll().size == 1 && config.swaggerUI.forwardRoot) {
-                    ForwardRouteController(applicationConfig!!, config).setup(application)
-                }
-            }
-        }
-
     }
 }
 

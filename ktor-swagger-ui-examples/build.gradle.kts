@@ -10,9 +10,18 @@ repositories {
 }
 
 dependencies {
-    testImplementation(kotlin("test"))
-}
 
-tasks.test {
-    useJUnitPlatform()
+    implementation(project(":ktor-swagger-ui"))
+
+    val ktorVersion = "2.3.7"
+    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
+    implementation("io.ktor:ktor-server-auth:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+    implementation("io.ktor:ktor-server-test-host:$ktorVersion")
+
+    val logbackVersion = "1.4.11"
+    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
+
 }

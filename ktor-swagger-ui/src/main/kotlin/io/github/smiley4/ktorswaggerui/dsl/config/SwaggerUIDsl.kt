@@ -11,36 +11,6 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 class SwaggerUIDsl {
 
     /**
-     * Whether to use the automatic swagger-ui router or create swagger-ui router manually.
-     * 'false' results in [forwardRoot], [swaggerUrl], [rootHostPath], [authentication] being ignored.
-     */
-    var automaticRouter: Boolean = SwaggerUIData.DEFAULT.automaticRouter
-
-    /**
-     * Whether to forward the root-url to the swagger-url
-     */
-    var forwardRoot: Boolean = SwaggerUIData.DEFAULT.forwardRoot
-
-
-    /**
-     * the url to the swagger-ui
-     */
-    var swaggerUrl: String = SwaggerUIData.DEFAULT.swaggerUrl
-
-
-    /**
-     * the path under which the KTOR app gets deployed. can be useful if reverse proxy is in use.
-     */
-    var rootHostPath: String = SwaggerUIData.DEFAULT.rootHostPath
-
-
-    /**
-     * The name of the authentication to use for the swagger routes. Null to not protect the swagger-ui.
-     */
-    var authentication: String? = SwaggerUIData.DEFAULT.authentication
-
-
-    /**
      * Swagger UI can attempt to validate specs against swagger.io's online validator.
      * You can use this parameter to set a different validator URL, for example for locally deployed validators.
      * Set to "null" to disable validation.
@@ -94,11 +64,6 @@ class SwaggerUIDsl {
 
     internal fun build(base: SwaggerUIData): SwaggerUIData {
         return SwaggerUIData(
-            automaticRouter = automaticRouter,
-            forwardRoot = mergeBoolean(base.forwardRoot, this.forwardRoot),
-            swaggerUrl = mergeDefault(base.swaggerUrl, this.swaggerUrl, SwaggerUIData.DEFAULT.swaggerUrl),
-            rootHostPath = mergeDefault(base.rootHostPath, this.rootHostPath, SwaggerUIData.DEFAULT.rootHostPath),
-            authentication = merge(base.authentication, this.authentication),
             validatorUrl = merge(base.validatorUrl, this.validatorUrl),
             displayOperationId = mergeBoolean(base.displayOperationId, this.displayOperationId),
             showTagFilterInput = mergeBoolean(base.showTagFilterInput, this.showTagFilterInput),
