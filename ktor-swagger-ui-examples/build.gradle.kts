@@ -21,7 +21,12 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
+    val kotlinLoggingVersion = "3.0.5"
+    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+
     val logbackVersion = "1.4.11"
-    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
+
+
 
 }

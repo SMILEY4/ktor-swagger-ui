@@ -26,14 +26,8 @@ dependencies {
     implementation("io.github.smiley4:schema-kenerator-reflection:$schemaKeneratorVersion")
     implementation("io.github.smiley4:schema-kenerator-swagger:$schemaKeneratorVersion")
 
-    val jacksonVersion = "2.15.3"
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonVersion}")
-
     val kotlinLoggingVersion = "3.0.5"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-
-    val logbackVersion = "1.4.11"
-    testImplementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     val versionMockk = "1.13.8"
     testImplementation("io.mockk:mockk:$versionMockk")
@@ -45,7 +39,4 @@ dependencies {
     val versionKotlinTest = "1.8.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
-    testImplementation("com.github.Ricky12Awesome:json-schema-serialization:0.9.9")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
 }

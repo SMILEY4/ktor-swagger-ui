@@ -50,16 +50,8 @@ class OpenApiRoute {
 
 
     /**
-     * A declaration of which security mechanism can be used for this operation.
-     * If not specified (and none specified with [securitySchemeNames]), defaultSecuritySchemeName (global plugin config) will be used.
-     * Only applied to [protected] operations.
-     */
-    var securitySchemeName: String? = null
-
-
-    /**
      * A declaration of which security mechanisms can be used for this operation (i.e. any of the specified ones).
-     * If none specified (and none with [securitySchemeName]), defaultSecuritySchemeName (global plugin config) will be used.
+     * If none is specified, defaultSecuritySchemeName (global plugin config) will be used.
      * Only applied to [protected] operations.
      */
     var securitySchemeNames: Collection<String>? = null
@@ -105,14 +97,7 @@ class OpenApiRoute {
         operationId = operationId,
         deprecated = deprecated,
         hidden = hidden,
-        securitySchemeNames = buildList {
-            if(securitySchemeNames != null) {
-                addAll(securitySchemeNames!!)
-            }
-            if(securitySchemeName != null) {
-                add(securitySchemeName!!)
-            }
-        },
+        securitySchemeNames = securitySchemeNames?.toList() ?: emptyList(),
         protected = protected,
         request = request.build(),
         responses = responses.getResponses().map { it.build() },

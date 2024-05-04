@@ -6,6 +6,7 @@ import io.github.smiley4.ktorswaggerui.data.OpenApiRequestData
 import io.github.smiley4.ktorswaggerui.data.ParameterLocation
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 
@@ -28,12 +29,12 @@ class OpenApiRequest {
     }
 
 
-//    /**
-//     * A path parameters that is applicable for this operation
-//     */
-//    fun pathParameter(name: String, type: KClass<*>, block: OpenApiRequestParameter.() -> Unit) =
-//        parameter(ParameterLocation.PATH, name, type.asSchemaType(), block)
-//
+    /**
+     * A path parameters that is applicable for this operation
+     */
+    fun pathParameter(name: String, type: TypeDescriptor, block: OpenApiRequestParameter.() -> Unit) =
+        parameter(ParameterLocation.PATH, name, type, block)
+
 //
 //    /**
 //     * A path parameters that is applicable for this operation

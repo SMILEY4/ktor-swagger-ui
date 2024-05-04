@@ -17,7 +17,6 @@ class RouteDocumentationMerger {
             summary = a.summary ?: b.summary
             description = a.description ?: b.description
             operationId = a.operationId ?: b.operationId
-            securitySchemeName = a.securitySchemeName ?: b.securitySchemeName
             securitySchemeNames = mutableSetOf<String>().also { merged ->
                 a.securitySchemeNames?.let { merged.addAll(it) }
                 b.securitySchemeNames?.let { merged.addAll(it) }

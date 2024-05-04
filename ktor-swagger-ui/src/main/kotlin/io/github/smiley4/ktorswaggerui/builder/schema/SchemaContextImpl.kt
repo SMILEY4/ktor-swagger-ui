@@ -17,12 +17,14 @@ import io.github.smiley4.schemakenerator.swagger.generateSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.steps.SwaggerSchemaUtils
 import io.github.smiley4.schemakenerator.swagger.withAutoTitle
 import io.swagger.v3.oas.models.media.Schema
+import mu.KotlinLogging
 import kotlin.reflect.KType
 
 class SchemaContextImpl : SchemaContext {
 
     private val rootSchemas = mutableMapOf<TypeDescriptor, Schema<*>>()
     private val componentSchemas = mutableMapOf<String, Schema<*>>()
+    private val logger = KotlinLogging.logger {}
 
 
     fun add(routes: Collection<RouteMeta>) {
@@ -75,6 +77,7 @@ class SchemaContextImpl : SchemaContext {
     }
 
     private fun generateSchema(type: KType): CompiledSwaggerSchema {
+        logger.debug { "Generating schema for type $type" }
         return listOf(type)
             .processReflection()
             .generateSwaggerSchema()
