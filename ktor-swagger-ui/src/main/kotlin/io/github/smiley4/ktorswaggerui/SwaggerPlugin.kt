@@ -1,5 +1,7 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextImpl
 import io.github.smiley4.ktorswaggerui.builder.openapi.ComponentsBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.ContactBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
@@ -87,7 +89,8 @@ private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>)
 private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
     return try {
         val schemaContext = SchemaContextImpl().also { it.add(routes) }
-        val openApi = builder(pluginConfig, schemaContext).build(routes)
+        val exampleContext = ExampleContextImpl().also { it.add(routes) }
+        val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
         pluginConfig.whenBuildOpenApiSpecs?.invoke(openApi)
         Json.pretty(openApi)
     } catch (e: Exception) {
@@ -105,10 +108,12 @@ private fun routes(application: Application, config: PluginConfigData): List<Rou
 private fun builder(
     config: PluginConfigData,
     schemaContext: SchemaContext,
+    exampleContext: ExampleContext,
 ): OpenApiBuilder {
     return OpenApiBuilder(
         config = config,
         schemaContext = schemaContext,
+        exampleContext = exampleContext,
         infoBuilder = InfoBuilder(
             contactBuilder = ContactBuilder(),
             licenseBuilder = LicenseBuilder()
@@ -124,10 +129,12 @@ private fun builder(
                     operationTagsBuilder = OperationTagsBuilder(config),
                     parameterBuilder = ParameterBuilder(
                         schemaContext = schemaContext,
+                        exampleContext = exampleContext,
                     ),
                     requestBodyBuilder = RequestBodyBuilder(
                         contentBuilder = ContentBuilder(
                             schemaContext = schemaContext,
+                            exampleContext = exampleContext,
                             headerBuilder = HeaderBuilder(schemaContext)
                         )
                     ),
@@ -136,6 +143,7 @@ private fun builder(
                             headerBuilder = HeaderBuilder(schemaContext),
                             contentBuilder = ContentBuilder(
                                 schemaContext = schemaContext,
+                                exampleContext = exampleContext,
                                 headerBuilder = HeaderBuilder(schemaContext)
                             )
                         ),

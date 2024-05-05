@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.builder.openapi
 
+import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.data.OpenApiBaseBodyData
 import io.github.smiley4.ktorswaggerui.data.OpenApiMultipartBodyData
@@ -13,6 +14,7 @@ import kotlin.collections.set
 
 class ContentBuilder(
     private val schemaContext: SchemaContext,
+    private val exampleContext: ExampleContext,
     private val headerBuilder: HeaderBuilder
 ) {
 
@@ -45,10 +47,8 @@ class ContentBuilder(
     private fun buildSimpleMediaType(schema: Schema<*>?, body: OpenApiSimpleBodyData): MediaType {
         return MediaType().also {
             it.schema = schema
-            body.examples.forEach { (name, _) ->
-//                todo
-//                exampleContext.getExample(body, name)
-//                    ?.also { example -> it.addExamples(name, example) }
+            body.examples.forEach { descriptor ->
+                it.addExamples(descriptor.name, exampleContext.getExample(descriptor))
             }
         }
     }
@@ -88,41 +88,6 @@ class ContentBuilder(
             }
         }
     }
-
-//    private fun getSchema(body: OpenApiSimpleBodyData): Schema<*>? {
-//        return getSchema(body.type)
-//    }
-//
-//    private fun getSchema(part: OpenApiMultipartPartData): Schema<*>? {
-//        return getSchema(part.type)
-//    }
-//
-//    private fun getSchema(typeDescriptor: TypeDescriptor): Schema<*>? {
-//        return when (typeDescriptor) {
-//            is EmptyBodyTypeDescriptor -> {
-//                null
-//            }
-//            is SchemaBodyTypeDescriptor -> {
-//                schemaContext.getSchema(typeDescriptor)
-//            }
-//            is OneOfBodyTypeDescriptor -> {
-//                Schema<Any>().also { schema ->
-//                    typeDescriptor.elements.forEach {
-//                        schema.addOneOfItem(getSchema(it))
-//                    }
-//                }
-//            }
-//            is CollectionBodyTypeDescriptor -> {
-//                Schema<Any>().also { schema ->
-//                    schema.type = "array"
-//                    schema.items = getSchema(typeDescriptor.schemaType)
-//                }
-//            }
-//            is CustomRefBodyTypeDescriptor -> {
-//                schemaContext.getSchema(typeDescriptor.customSchemaId)
-//            }
-//        }
-//    }
 
     private fun chooseMediaType(schema: Schema<*>): ContentType {
         return when (schema.type) {

@@ -2,6 +2,8 @@ package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
+import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
+import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
@@ -42,6 +44,9 @@ private fun Application.myModule() {
                 name = "MIT"
             }
         }
+        examples {
+            example(ValueExampleDescriptor("Unexpected Error", ErrorModel("Unexpected Error"), null, null, null))
+        }
     }
 
     routing {
@@ -62,12 +67,12 @@ private fun Application.myModule() {
                     queryParameter("tags", KTypeDescriptor(typeOf<List<String>>())) {
                         description = "tags to filter by"
                         required = false
-                        example = "dog"
+                        example = ValueExampleDescriptor("dog", "default", null, null, null)
                     }
                     queryParameter("limit", KTypeDescriptor(typeOf<Int>())) {
                         description = "maximum number of results to return"
                         required = false
-                        example = 100
+                        example = ValueExampleDescriptor("default", 100, null, null, null)
                     }
                 }
                 response {
@@ -75,17 +80,20 @@ private fun Application.myModule() {
                         body(KTypeDescriptor(typeOf<List<Pet>>())) {
                             description = "the list of available pets"
                             example(
-                                "Pet List", listOf(
-                                    Pet(
-                                        id = 123,
-                                        name = "Big Bird",
-                                        tag = "bird"
-                                    ),
-                                    Pet(
-                                        id = 456,
-                                        name = "Charlie",
-                                        tag = "dog"
-                                    )
+                                ValueExampleDescriptor(
+                                    "Pet List",
+                                    listOf(
+                                        Pet(
+                                            id = 123,
+                                            name = "Big Bird",
+                                            tag = "bird"
+                                        ),
+                                        Pet(
+                                            id = 456,
+                                            name = "Charlie",
+                                            tag = "dog"
+                                        )
+                                    ), null, null, true
                                 )
                             )
                         }
@@ -93,7 +101,7 @@ private fun Application.myModule() {
                     default {
                         body(KTypeDescriptor(typeOf<ErrorModel>())) {
                             description = "unexpected error"
-                            example("Error", ErrorModel("unexpected error"))
+                            example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                         }
                     }
                 }
@@ -109,17 +117,21 @@ private fun Application.myModule() {
                         description = "Pet to add to the store"
                         required = true
                         example(
-                            "New Bird",
-                            NewPet(
-                                name = "Big Bird",
-                                tag = "bird"
+                            ValueExampleDescriptor(
+                                "New Bird",
+                                NewPet(
+                                    name = "Big Bird",
+                                    tag = "bird"
+                                ), null, null, true
                             )
                         )
                         example(
-                            "New Dog",
-                            NewPet(
-                                name = "Charlie",
-                                tag = "dog"
+                            ValueExampleDescriptor(
+                                "New Dog",
+                                NewPet(
+                                    name = "Charlie",
+                                    tag = "dog"
+                                ), null, null, true
                             )
                         )
                     }
@@ -129,19 +141,23 @@ private fun Application.myModule() {
                         body(KTypeDescriptor(typeOf<Pet>())) {
                             description = "the created pet"
                             example(
-                                "Bird",
-                                Pet(
-                                    id = 123,
-                                    name = "Big Bird",
-                                    tag = "bird"
+                                ValueExampleDescriptor(
+                                    "Bird",
+                                    Pet(
+                                        id = 123,
+                                        name = "Big Bird",
+                                        tag = "bird"
+                                    ), null, null, true
                                 )
                             )
                             example(
-                                "Dog",
-                                Pet(
-                                    id = 456,
-                                    name = "Charlie",
-                                    tag = "dog"
+                                ValueExampleDescriptor(
+                                    "Dog",
+                                    Pet(
+                                        id = 456,
+                                        name = "Charlie",
+                                        tag = "dog"
+                                    ), null, null, true
                                 )
                             )
                         }
@@ -149,7 +165,7 @@ private fun Application.myModule() {
                     default {
                         body(KTypeDescriptor(typeOf<ErrorModel>())) {
                             description = "unexpected error"
-                            example("Error", ErrorModel("unexpected error"))
+                            example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                         }
                     }
                 }
@@ -166,7 +182,7 @@ private fun Application.myModule() {
                         pathParameter("id", KTypeDescriptor(typeOf<Long>())) {
                             description = "Id of pet to fetch"
                             required = true
-                            example = 123
+                            example = ValueExampleDescriptor("default", 123L, null, null, null)
                         }
                     }
                     response {
@@ -174,19 +190,23 @@ private fun Application.myModule() {
                             body(KTypeDescriptor(typeOf<Pet>())) {
                                 description = "the pet with the given id"
                                 example(
-                                    "Bird",
-                                    Pet(
-                                        id = 123,
-                                        name = "Big Bird",
-                                        tag = "bird"
+                                    ValueExampleDescriptor(
+                                        "Bird",
+                                        Pet(
+                                            id = 123,
+                                            name = "Big Bird",
+                                            tag = "bird"
+                                        ), null, null, true
                                     )
                                 )
                                 example(
-                                    "Dog",
-                                    Pet(
-                                        id = 123,
-                                        name = "Charlie",
-                                        tag = "dog"
+                                    ValueExampleDescriptor(
+                                        "Dog",
+                                        Pet(
+                                            id = 123,
+                                            name = "Charlie",
+                                            tag = "dog"
+                                        ), null, null, true
                                     )
                                 )
                             }
@@ -197,7 +217,7 @@ private fun Application.myModule() {
                         default {
                             body(KTypeDescriptor(typeOf<ErrorModel>())) {
                                 description = "unexpected error"
-                                example("Error", ErrorModel("unexpected error"))
+                                example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                             }
                         }
                     }
@@ -212,7 +232,7 @@ private fun Application.myModule() {
                         pathParameter("id", KTypeDescriptor(typeOf<Long>())) {
                             description = "Id of pet to delete"
                             required = true
-                            example = 123
+                            example = ValueExampleDescriptor("default", 123L, null, null, true)
                         }
                     }
                     response {
@@ -225,7 +245,7 @@ private fun Application.myModule() {
                         default {
                             body(KTypeDescriptor(typeOf<ErrorModel>())) {
                                 description = "unexpected error"
-                                example("Error", ErrorModel("unexpected error"))
+                                example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                             }
                         }
                     }

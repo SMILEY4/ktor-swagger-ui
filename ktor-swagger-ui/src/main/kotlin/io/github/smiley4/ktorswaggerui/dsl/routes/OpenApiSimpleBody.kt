@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl.routes
 
+import io.github.smiley4.ktorswaggerui.data.ExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
@@ -19,15 +20,17 @@ class OpenApiSimpleBody(
     /**
      * Examples for this body
      */
-    private val examples = mutableMapOf<String, OpenApiExample>()
+    private val examples = mutableListOf<ExampleDescriptor>()
 
-    fun example(name: String, value: Any, block: OpenApiExample.() -> Unit) {
-        examples[name] = OpenApiExample(value).apply(block)
+//    fun example(name: String, value: Any, block: OpenApiExample.() -> Unit) {
+//        examples[name] = OpenApiExample(value).apply(block)
+//    }
+
+    fun example(example: ExampleDescriptor) {
+        examples.add(example)
     }
 
-    fun example(name: String, value: Any) = example(name, value) {}
-
-    fun getExamples(): Map<String, OpenApiExample> = examples
+    fun getExamples(): List<ExampleDescriptor> = examples
 
 
     override fun build() = OpenApiSimpleBodyData(
@@ -35,7 +38,7 @@ class OpenApiSimpleBody(
         required = required ?: false,
         mediaTypes = getMediaTypes(),
         type = type,
-        examples = getExamples().mapValues { it.value.build() },
+        examples = getExamples(),
     )
 
 }

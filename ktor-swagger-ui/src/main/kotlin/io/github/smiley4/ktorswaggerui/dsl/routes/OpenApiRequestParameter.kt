@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl.routes
 
+import io.github.smiley4.ktorswaggerui.data.ExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiRequestParameterData
 import io.github.smiley4.ktorswaggerui.data.ParameterLocation
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
@@ -31,7 +32,7 @@ class OpenApiRequestParameter(
     /**
      * An example value for this parameter
      */
-    var example: Any? = null
+    var example: ExampleDescriptor? = null
 
 
     /**
@@ -69,7 +70,7 @@ class OpenApiRequestParameter(
 
     fun build() = OpenApiRequestParameterData(
         name = name,
-        type = TypeDescriptor.todo(type),
+        type = type,
         location = location,
         description = description,
         example = example,

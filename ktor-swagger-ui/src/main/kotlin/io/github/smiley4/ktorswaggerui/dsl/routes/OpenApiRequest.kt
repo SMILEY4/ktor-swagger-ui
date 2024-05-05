@@ -6,7 +6,6 @@ import io.github.smiley4.ktorswaggerui.data.OpenApiRequestData
 import io.github.smiley4.ktorswaggerui.data.ParameterLocation
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import kotlin.reflect.KClass
 import kotlin.reflect.KType
 
 
@@ -163,7 +162,7 @@ class OpenApiRequest {
     /**
      * The request body applicable for this operation
      */
-    fun body(block: OpenApiSimpleBody.() -> Unit) = body(EmptyTypeDescriptor, block)
+    fun body(block: OpenApiSimpleBody.() -> Unit) = body(EmptyTypeDescriptor(), block)
 
 
     /**

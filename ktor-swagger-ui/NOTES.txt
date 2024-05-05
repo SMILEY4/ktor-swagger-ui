@@ -4,3 +4,5 @@
 - cleaner handling of schema generation -> schema-kenerator + nicer config
 - drop automatic routing
 - general cleanup
+- cleaner schema & examples config -> top level "schema", "examples"
+- define examples in config and only ref by name

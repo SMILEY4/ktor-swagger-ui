@@ -5,7 +5,7 @@ data class OpenApiRequestParameterData(
     val type: TypeDescriptor,
     val location: ParameterLocation,
     val description: String?,
-    val example: Any?,
+    val example: ExampleDescriptor?,
     val required: Boolean,
     val deprecated: Boolean,
     val allowEmptyValue: Boolean,

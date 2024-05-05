@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
+import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
@@ -154,6 +155,17 @@ class PluginConfigDsl {
      * Invoked after generating the openapi-spec. Can be to e.g. further customize the spec.
      */
     var whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs? = null
+
+
+
+    fun schemas(block: SchemaConfig.() -> Unit) {
+        TODO()
+    }
+
+
+    fun examples(block: ExampleConfig.() -> Unit) {
+        TODO()
+    }
 
 
     internal fun build(base: PluginConfigData): PluginConfigData {

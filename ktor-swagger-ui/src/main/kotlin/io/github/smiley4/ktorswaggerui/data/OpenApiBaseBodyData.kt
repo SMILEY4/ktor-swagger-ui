@@ -13,7 +13,7 @@ class OpenApiSimpleBodyData(
     required: Boolean,
     mediaTypes: Set<ContentType>,
     val type: TypeDescriptor,
-    val examples: Map<String, OpenApiExampleData>
+    val examples: List<ExampleDescriptor>
 ) : OpenApiBaseBodyData(description, required, mediaTypes)
 
 class OpenApiMultipartBodyData(
