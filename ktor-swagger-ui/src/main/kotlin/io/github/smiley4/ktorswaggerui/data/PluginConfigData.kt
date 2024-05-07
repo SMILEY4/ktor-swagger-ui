@@ -17,7 +17,9 @@ data class PluginConfigData(
     val securitySchemes: List<SecuritySchemeData>,
     val tags: List<TagData>,
     val specConfigs: MutableMap<String, PluginConfigData>,
-    val whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs?
+    val whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs?,
+    val schemaConfig: SchemaConfigData,
+    val exampleConfig: ExampleConfigData,
 ) {
 
     companion object {
@@ -35,7 +37,9 @@ data class PluginConfigData(
             securitySchemes = emptyList(),
             tags = emptyList(),
             specConfigs = mutableMapOf(),
-            whenBuildOpenApiSpecs = null
+            whenBuildOpenApiSpecs = null,
+            schemaConfig = SchemaConfigData.DEFAULT,
+            exampleConfig = ExampleConfigData.DEFAULT,
         )
     }
 

@@ -157,14 +157,16 @@ class PluginConfigDsl {
     var whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs? = null
 
 
+    private val schemaConfig = SchemaConfig()
 
     fun schemas(block: SchemaConfig.() -> Unit) {
-        TODO()
+        schemaConfig.also(block)
     }
 
+    private val exampleConfig = ExampleConfig()
 
     fun examples(block: ExampleConfig.() -> Unit) {
-        TODO()
+        exampleConfig.apply(block)
     }
 
 
@@ -200,6 +202,8 @@ class PluginConfigDsl {
             },
             specConfigs = mutableMapOf(),
             whenBuildOpenApiSpecs = whenBuildOpenApiSpecs,
+            schemaConfig = schemaConfig.build(),
+            exampleConfig = exampleConfig.build()
         ).also {
             specConfigs.forEach { (specId, config) ->
                 it.specConfigs[specId] = config.build(it)

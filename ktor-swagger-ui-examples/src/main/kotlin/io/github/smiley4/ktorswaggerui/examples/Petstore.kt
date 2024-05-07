@@ -47,6 +47,11 @@ private fun Application.myModule() {
         examples {
             example(ValueExampleDescriptor("Unexpected Error", ErrorModel("Unexpected Error"), null, null, null))
         }
+        schemas {
+            schema("Pet", KTypeDescriptor(typeOf<Pet>()))
+            schema("NewPet", KTypeDescriptor(typeOf<NewPet>()))
+            schema("PetList", KTypeDescriptor(typeOf<List<Pet>>()))
+        }
     }
 
     routing {

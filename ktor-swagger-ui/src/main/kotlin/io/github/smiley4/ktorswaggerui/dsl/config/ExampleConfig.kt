@@ -1,8 +1,8 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
+import io.github.smiley4.ktorswaggerui.data.ExampleConfigData
 import io.github.smiley4.ktorswaggerui.data.ExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.swagger.v3.oas.models.examples.Example
 
 /**
  * Configuration for schemas
@@ -10,12 +10,13 @@ import io.swagger.v3.oas.models.examples.Example
 @OpenApiDslMarker
 class ExampleConfig {
 
-    var inComponents: Boolean = false
-
-    private val examples = mutableMapOf<String, Example>()
+    private val examples = mutableMapOf<String, ExampleDescriptor>()
 
     fun example(exampleDescriptor: ExampleDescriptor) {
-        TODO()
     }
+
+    fun build() = ExampleConfigData(
+        examples = examples
+    )
 
 }

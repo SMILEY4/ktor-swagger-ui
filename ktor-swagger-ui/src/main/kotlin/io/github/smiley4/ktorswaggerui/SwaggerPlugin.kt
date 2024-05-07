@@ -88,8 +88,14 @@ private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>)
 
 private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
     return try {
-        val schemaContext = SchemaContextImpl().also { it.add(routes) }
-        val exampleContext = ExampleContextImpl().also { it.add(routes) }
+        val schemaContext = SchemaContextImpl().also {
+            it.addGlobal(pluginConfig.schemaConfig)
+            it.add(routes)
+        }
+        val exampleContext = ExampleContextImpl().also {
+            it.addGlobal(pluginConfig.exampleConfig)
+            it.add(routes)
+        }
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
         pluginConfig.whenBuildOpenApiSpecs?.invoke(openApi)
         Json.pretty(openApi)

@@ -7,6 +7,8 @@ import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.OneOfTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiMultipartBodyData
 import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
+import io.github.smiley4.ktorswaggerui.data.SchemaConfigData
+import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.schemakenerator.core.data.WildcardTypeData
 import io.github.smiley4.schemakenerator.reflection.processReflection
@@ -24,6 +26,15 @@ class SchemaContextImpl : SchemaContext {
     private val rootSchemas = mutableMapOf<TypeDescriptor, Schema<*>>()
     private val componentSchemas = mutableMapOf<String, Schema<*>>()
 
+    fun addGlobal(config: SchemaConfigData) {
+        config.schemas.forEach { (schemaId, typeDescriptor) ->
+            val schema = generateSchema(typeDescriptor)
+            componentSchemas[schemaId] = schema.swagger
+            schema.componentSchemas.forEach { (k, v) ->
+                componentSchemas[k.full()] = v
+            }
+        }
+    }
 
     fun add(routes: Collection<RouteMeta>) {
         collectTypeDescriptor(routes).forEach { typeDescriptor ->
@@ -39,6 +50,13 @@ class SchemaContextImpl : SchemaContext {
         return when (typeDescriptor) {
             is KTypeDescriptor -> {
                 generateSchema(typeDescriptor.type)
+            }
+            is SwaggerTypeDescriptor -> {
+                CompiledSwaggerSchema(
+                    typeData = WildcardTypeData(),
+                    swagger = typeDescriptor.schema,
+                    componentSchemas = emptyMap()
+                )
             }
             is ArrayTypeDescriptor -> {
                 val itemSchema = generateSchema(typeDescriptor.type)

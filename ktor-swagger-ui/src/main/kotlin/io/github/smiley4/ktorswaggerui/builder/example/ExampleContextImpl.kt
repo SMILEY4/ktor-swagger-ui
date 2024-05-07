@@ -1,10 +1,11 @@
 package io.github.smiley4.ktorswaggerui.builder.example
 
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.data.ExampleConfigData
 import io.github.smiley4.ktorswaggerui.data.ExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
-import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
+import io.github.smiley4.ktorswaggerui.data.SwaggerExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.swagger.v3.oas.models.examples.Example
 
@@ -13,8 +14,11 @@ class ExampleContextImpl : ExampleContext {
     private val rootExamples = mutableMapOf<ExampleDescriptor, Example>()
     private val componentExamples = mutableMapOf<String, Example>()
 
-    fun addGlobal(config: PluginConfigData) {
-        TODO("add global examples from config to components")
+    fun addGlobal(config: ExampleConfigData) {
+        config.examples.forEach { (_, exampleDescriptor) ->
+            val example = generateExample(exampleDescriptor)
+            componentExamples[exampleDescriptor.name] = example
+        }
     }
 
     fun add(routes: Collection<RouteMeta>) {
@@ -33,7 +37,6 @@ class ExampleContextImpl : ExampleContext {
 
     private fun collectExampleDescriptors(routes: Collection<RouteMeta>): List<ExampleDescriptor> {
         val descriptors = mutableListOf<ExampleDescriptor>()
-
         routes
             .filter { !it.documentation.hidden }
             .forEach { route ->
@@ -55,7 +58,6 @@ class ExampleContextImpl : ExampleContext {
                     }
                 }
             }
-
         return descriptors
     }
 
@@ -69,6 +71,7 @@ class ExampleContextImpl : ExampleContext {
             is RefExampleDescriptor -> Example().also {
                 it.`$ref` = "#/components/examples/${exampleDescriptor.refName}"
             }
+            is SwaggerExampleDescriptor -> exampleDescriptor.example
         }
     }
 

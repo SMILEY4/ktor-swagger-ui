@@ -1,8 +1,8 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
+import io.github.smiley4.ktorswaggerui.data.SchemaConfigData
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.swagger.v3.oas.models.media.Schema
 
 /**
  * Configuration for schemas
@@ -10,10 +10,14 @@ import io.swagger.v3.oas.models.media.Schema
 @OpenApiDslMarker
 class SchemaConfig {
 
-    private val schemas = mutableMapOf<String, Schema<*>>()
+    private val schemas = mutableMapOf<String, TypeDescriptor>()
 
-    fun schema(descriptor: TypeDescriptor) {
-        TODO()
+    fun schema(schemaId: String, descriptor: TypeDescriptor) {
+        schemas[schemaId] = descriptor
     }
+
+    fun build() = SchemaConfigData(
+        schemas = schemas
+    )
 
 }
