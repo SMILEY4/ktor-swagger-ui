@@ -1,38 +1,51 @@
 package io.github.smiley4.ktorswaggerui.builder.schema
 
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.data.AnyOfTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.ArrayTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.EmptyTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.OneOfTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiMultipartBodyData
 import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
+import io.github.smiley4.ktorswaggerui.data.RefTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.SchemaConfigData
 import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
+import io.github.smiley4.schemakenerator.core.data.TypeId
 import io.github.smiley4.schemakenerator.core.data.WildcardTypeData
-import io.github.smiley4.schemakenerator.reflection.processReflection
-import io.github.smiley4.schemakenerator.swagger.compileReferencingRoot
 import io.github.smiley4.schemakenerator.swagger.data.CompiledSwaggerSchema
-import io.github.smiley4.schemakenerator.swagger.data.TitleType
-import io.github.smiley4.schemakenerator.swagger.generateSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.steps.SwaggerSchemaUtils
-import io.github.smiley4.schemakenerator.swagger.withAutoTitle
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.KType
 
-class SchemaContextImpl : SchemaContext {
+class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaContext {
 
     private val rootSchemas = mutableMapOf<TypeDescriptor, Schema<*>>()
     private val componentSchemas = mutableMapOf<String, Schema<*>>()
 
     fun addGlobal(config: SchemaConfigData) {
         config.schemas.forEach { (schemaId, typeDescriptor) ->
-            val schema = generateSchema(typeDescriptor)
+            val schema = collapseRootRef(generateSchema(typeDescriptor))
             componentSchemas[schemaId] = schema.swagger
             schema.componentSchemas.forEach { (k, v) ->
                 componentSchemas[k.full()] = v
             }
+        }
+    }
+
+    private fun collapseRootRef(schema: CompiledSwaggerSchema): CompiledSwaggerSchema {
+        if (schema.swagger.`$ref` == null) {
+            return schema
+        } else {
+            val referencedSchemaId = TypeId.parse(schema.swagger.`$ref`!!.replace("#/components/schemas/", ""))
+            val referencedSchema = schema.componentSchemas[referencedSchemaId]!!
+            return CompiledSwaggerSchema(
+                typeData = schema.typeData,
+                swagger = referencedSchema,
+                componentSchemas = schema.componentSchemas.toMutableMap().also {
+                    it.remove(referencedSchemaId)
+                }
+            )
         }
     }
 
@@ -49,7 +62,11 @@ class SchemaContextImpl : SchemaContext {
     private fun generateSchema(typeDescriptor: TypeDescriptor): CompiledSwaggerSchema {
         return when (typeDescriptor) {
             is KTypeDescriptor -> {
-                generateSchema(typeDescriptor.type)
+                if (schemaConfig.overwrite.containsKey(typeDescriptor.type)) {
+                    generateSchema(schemaConfig.overwrite[typeDescriptor.type]!!)
+                } else {
+                    generateSchema(typeDescriptor.type)
+                }
             }
             is SwaggerTypeDescriptor -> {
                 CompiledSwaggerSchema(
@@ -68,7 +85,7 @@ class SchemaContextImpl : SchemaContext {
                     componentSchemas = itemSchema.componentSchemas
                 )
             }
-            is OneOfTypeDescriptor -> {
+            is AnyOfTypeDescriptor -> {
                 val optionSchemas = typeDescriptor.types.map { generateSchema(it) }
                 CompiledSwaggerSchema(
                     typeData = WildcardTypeData(),
@@ -89,16 +106,18 @@ class SchemaContextImpl : SchemaContext {
                     componentSchemas = emptyMap()
                 )
             }
+            is RefTypeDescriptor -> {
+                CompiledSwaggerSchema(
+                    typeData = WildcardTypeData(),
+                    swagger = SwaggerSchemaUtils().referenceSchema(typeDescriptor.schemaId, true),
+                    componentSchemas = emptyMap()
+                )
+            }
         }
     }
 
     private fun generateSchema(type: KType): CompiledSwaggerSchema {
-        return listOf(type)
-            .processReflection()
-            .generateSwaggerSchema()
-            .withAutoTitle(TitleType.SIMPLE)
-            .compileReferencingRoot()
-            .first()
+        return schemaConfig.generator(type)
     }
 
     private fun collectTypeDescriptor(routes: Collection<RouteMeta>): List<TypeDescriptor> {

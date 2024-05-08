@@ -7,5 +7,6 @@ sealed interface TypeDescriptor
 class SwaggerTypeDescriptor(val schema: Schema<*>) : TypeDescriptor
 class KTypeDescriptor(val type: KType) : TypeDescriptor
 class ArrayTypeDescriptor(val type: TypeDescriptor) : TypeDescriptor
-class OneOfTypeDescriptor(val types: List<TypeDescriptor>) : TypeDescriptor
+class AnyOfTypeDescriptor(val types: List<TypeDescriptor>) : TypeDescriptor
 class EmptyTypeDescriptor : TypeDescriptor
+class RefTypeDescriptor(val schemaId: String) : TypeDescriptor

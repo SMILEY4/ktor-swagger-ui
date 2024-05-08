@@ -21,6 +21,15 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
+    val schemaKeneratorVersion = "0.1"
+    implementation("io.github.smiley4:schema-kenerator-core:$schemaKeneratorVersion")
+    implementation("io.github.smiley4:schema-kenerator-reflection:$schemaKeneratorVersion")
+    implementation("io.github.smiley4:schema-kenerator-swagger:$schemaKeneratorVersion")
+    implementation("io.github.smiley4:schema-kenerator-jackson:$schemaKeneratorVersion")
+
+    val swaggerParserVersion = "2.1.19"
+    implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
+
     val kotlinLoggingVersion = "3.0.5"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 

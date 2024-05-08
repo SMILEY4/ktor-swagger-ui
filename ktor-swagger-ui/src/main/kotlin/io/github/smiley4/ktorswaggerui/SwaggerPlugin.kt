@@ -88,7 +88,7 @@ private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>)
 
 private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
     return try {
-        val schemaContext = SchemaContextImpl().also {
+        val schemaContext = SchemaContextImpl(pluginConfig.schemaConfig).also {
             it.addGlobal(pluginConfig.schemaConfig)
             it.add(routes)
         }
