@@ -57,13 +57,10 @@ private fun Application.myModule() {
 
     routing {
 
-        // Create a route for the swagger-ui using the openapi-spec at "/api.json".
-        // This route will not be included in the spec.
+        // add the routes for swagger-ui and api-spec
         route("swagger") {
             swaggerUI("/api.json")
         }
-        // Create a route for the openapi-spec file.
-        // This route will not be included in the spec.
         route("api.json") {
             openApiSpec()
         }
@@ -93,9 +90,6 @@ private fun Application.myModule() {
         }) {
             call.respondText("Hello World!")
         }
-
-
-
 
     }
 

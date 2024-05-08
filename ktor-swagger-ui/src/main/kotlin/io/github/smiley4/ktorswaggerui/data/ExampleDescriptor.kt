@@ -9,9 +9,8 @@ sealed class ExampleDescriptor(
 class ValueExampleDescriptor(
     name: String,
     val value: Any?,
-    val summary: String?,
-    val description: String?,
-    val inComponents: Boolean?,
+    val summary: String? = null,
+    val description: String? = null,
 ) : ExampleDescriptor(name)
 
 class RefExampleDescriptor(name: String, val refName: String): ExampleDescriptor(name)

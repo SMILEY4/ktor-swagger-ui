@@ -10,13 +10,14 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 @OpenApiDslMarker
 class ExampleConfig {
 
-    private val examples = mutableMapOf<String, ExampleDescriptor>()
+    private val sharedExamples = mutableMapOf<String, ExampleDescriptor>()
 
     fun example(exampleDescriptor: ExampleDescriptor) {
+        sharedExamples[exampleDescriptor.name] = exampleDescriptor
     }
 
     fun build() = ExampleConfigData(
-        examples = examples
+        sharedExamples = sharedExamples
     )
 
 }

@@ -45,7 +45,7 @@ private fun Application.myModule() {
             }
         }
         examples {
-            example(ValueExampleDescriptor("Unexpected Error", ErrorModel("Unexpected Error"), null, null, null))
+            example(ValueExampleDescriptor("Unexpected Error", ErrorModel("Unexpected Error"), null, null))
         }
         schemas {
             schema("Pet", KTypeDescriptor(typeOf<Pet>()))
@@ -72,12 +72,12 @@ private fun Application.myModule() {
                     queryParameter("tags", KTypeDescriptor(typeOf<List<String>>())) {
                         description = "tags to filter by"
                         required = false
-                        example = ValueExampleDescriptor("dog", "default", null, null, null)
+                        example = ValueExampleDescriptor("dog", "default", null, null)
                     }
                     queryParameter("limit", KTypeDescriptor(typeOf<Int>())) {
                         description = "maximum number of results to return"
                         required = false
-                        example = ValueExampleDescriptor("default", 100, null, null, null)
+                        example = ValueExampleDescriptor("default", 100, null, null)
                     }
                 }
                 response {
@@ -98,7 +98,7 @@ private fun Application.myModule() {
                                             name = "Charlie",
                                             tag = "dog"
                                         )
-                                    ), null, null, true
+                                    ), null, null
                                 )
                             )
                         }
@@ -127,7 +127,7 @@ private fun Application.myModule() {
                                 NewPet(
                                     name = "Big Bird",
                                     tag = "bird"
-                                ), null, null, true
+                                ), null, null
                             )
                         )
                         example(
@@ -136,7 +136,7 @@ private fun Application.myModule() {
                                 NewPet(
                                     name = "Charlie",
                                     tag = "dog"
-                                ), null, null, true
+                                ), null, null
                             )
                         )
                     }
@@ -152,7 +152,7 @@ private fun Application.myModule() {
                                         id = 123,
                                         name = "Big Bird",
                                         tag = "bird"
-                                    ), null, null, true
+                                    ), null, null
                                 )
                             )
                             example(
@@ -162,7 +162,7 @@ private fun Application.myModule() {
                                         id = 456,
                                         name = "Charlie",
                                         tag = "dog"
-                                    ), null, null, true
+                                    ), null, null
                                 )
                             )
                         }
@@ -187,7 +187,7 @@ private fun Application.myModule() {
                         pathParameter("id", KTypeDescriptor(typeOf<Long>())) {
                             description = "Id of pet to fetch"
                             required = true
-                            example = ValueExampleDescriptor("default", 123L, null, null, null)
+                            example = ValueExampleDescriptor("default", 123L, null, null)
                         }
                     }
                     response {
@@ -201,7 +201,7 @@ private fun Application.myModule() {
                                             id = 123,
                                             name = "Big Bird",
                                             tag = "bird"
-                                        ), null, null, true
+                                        ), null, null
                                     )
                                 )
                                 example(
@@ -211,7 +211,7 @@ private fun Application.myModule() {
                                             id = 123,
                                             name = "Charlie",
                                             tag = "dog"
-                                        ), null, null, true
+                                        ), null, null
                                     )
                                 )
                             }
@@ -237,7 +237,7 @@ private fun Application.myModule() {
                         pathParameter("id", KTypeDescriptor(typeOf<Long>())) {
                             description = "Id of pet to delete"
                             required = true
-                            example = ValueExampleDescriptor("default", 123L, null, null, true)
+                            example = ValueExampleDescriptor("default", 123L, null, null)
                         }
                     }
                     response {

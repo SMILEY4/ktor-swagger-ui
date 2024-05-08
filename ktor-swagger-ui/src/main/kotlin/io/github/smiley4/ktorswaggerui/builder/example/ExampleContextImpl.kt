@@ -15,7 +15,7 @@ class ExampleContextImpl : ExampleContext {
     private val componentExamples = mutableMapOf<String, Example>()
 
     fun addGlobal(config: ExampleConfigData) {
-        config.examples.forEach { (_, exampleDescriptor) ->
+        config.sharedExamples.forEach { (_, exampleDescriptor) ->
             val example = generateExample(exampleDescriptor)
             componentExamples[exampleDescriptor.name] = example
         }
@@ -23,15 +23,7 @@ class ExampleContextImpl : ExampleContext {
 
     fun add(routes: Collection<RouteMeta>) {
         collectExampleDescriptors(routes).forEach { exampleDescriptor ->
-            val example = generateExample(exampleDescriptor)
-            if (exampleDescriptor is ValueExampleDescriptor && exampleDescriptor.inComponents == true) {
-                rootExamples[exampleDescriptor] = Example().also {
-                    it.`$ref` = "#/components/examples/${exampleDescriptor.name}"
-                }
-                componentExamples[exampleDescriptor.name] = example
-            } else {
-                rootExamples[exampleDescriptor] = example
-            }
+            rootExamples[exampleDescriptor] = generateExample(exampleDescriptor)
         }
     }
 

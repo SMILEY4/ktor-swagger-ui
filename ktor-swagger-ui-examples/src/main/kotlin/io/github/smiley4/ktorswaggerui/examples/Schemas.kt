@@ -35,7 +35,7 @@ fun main() {
 
 private fun Application.myModule() {
 
-    // Install the "SwaggerUI"-Plugin and use the default configuration
+    // Install and customize the "SwaggerUI"-Plugin
     install(SwaggerUI) {
         schemas {
 
@@ -48,7 +48,7 @@ private fun Application.myModule() {
             ))
 
             // add a type to the component-section of the api-spec with the id "type-schema"
-            schema("type-schema", KTypeDescriptor(typeOf<MyClass>()))
+            schema("type-schema", KTypeDescriptor(typeOf<MySchemaClass>()))
 
             // overwrite 'LocalDateTime' with custom schema (root only)
             overwrite[typeOf<LocalDateTime>()] = SwaggerTypeDescriptor(
@@ -73,12 +73,25 @@ private fun Application.myModule() {
     }
 
     routing {
+
+        // add the routes for swagger-ui and api-spec
         route("swagger") {
             swaggerUI("/api.json")
         }
         route("api.json") {
             openApiSpec()
         }
+
+
+        get("basic", {
+            request {
+                // directly specify the schema type
+                body(KTypeDescriptor(typeOf<MySchemaClass>()))
+            }
+        }) {
+            call.respondText("...")
+        }
+
 
         get("global-swagger-schema", {
             request {
@@ -89,6 +102,7 @@ private fun Application.myModule() {
             call.respondText("...")
         }
 
+
         get("global-type-schema", {
             request {
                 // reference and use the schema from the component-section with the id "type-schema"
@@ -97,6 +111,7 @@ private fun Application.myModule() {
         }) {
             call.respondText("...")
         }
+
 
         get("array-schema", {
             request {
@@ -110,6 +125,7 @@ private fun Application.myModule() {
         }) {
             call.respondText("...")
         }
+
 
         get("anyof-schema", {
             request {
@@ -127,6 +143,7 @@ private fun Application.myModule() {
             call.respondText("...")
         }
 
+
         get("type-overwrite", {
             request {
                 // schema is not generated the normal way but the overwriting schema from the config is used instead
@@ -135,6 +152,7 @@ private fun Application.myModule() {
         }) {
             call.respondText("...")
         }
+
 
         get("jackson-subtypes", {
             request {
@@ -150,7 +168,7 @@ private fun Application.myModule() {
 }
 
 
-private data class MyClass(
+private data class MySchemaClass(
     val someValue: String
 )
 
@@ -159,6 +177,8 @@ private data class MyClass(
     JsonSubTypes.Type(value = SubTypeA::class),
     JsonSubTypes.Type(value = SubTypeB::class),
 )
-open class BaseType(val base: String)
-class SubTypeA(base: String, val a: Int) : BaseType(base)
-class SubTypeB(base: String, val b: Boolean) : BaseType(base)
+private open class BaseType(val base: String)
+
+private class SubTypeA(base: String, val a: Int) : BaseType(base)
+
+private class SubTypeB(base: String, val b: Boolean) : BaseType(base)
