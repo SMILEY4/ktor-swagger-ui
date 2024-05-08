@@ -14,9 +14,6 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
 
     private val parts = mutableListOf<OpenApiMultipartPart>()
 
-    fun getParts(): List<OpenApiMultipartPart> = parts
-
-
     /**
      * One part of a multipart-body
      */
@@ -71,7 +68,7 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     override fun build() = OpenApiMultipartBodyData(
         description = description,
         required = required ?: false,
-        mediaTypes = getMediaTypes(),
-        parts = getParts().map { it.build() }
+        mediaTypes = mediaTypes,
+        parts = parts.map { it.build() }
     )
 }

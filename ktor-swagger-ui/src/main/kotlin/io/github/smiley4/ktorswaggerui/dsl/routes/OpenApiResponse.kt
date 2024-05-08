@@ -20,9 +20,6 @@ class OpenApiResponse(val statusCode: String) {
 
     private val headers = mutableMapOf<String, OpenApiHeader>()
 
-    fun getHeaders(): Map<String, OpenApiHeader> = headers
-
-
     /**
      * Possible headers returned with this response
      */
@@ -58,9 +55,6 @@ class OpenApiResponse(val statusCode: String) {
 
 
     private var body: OpenApiBaseBody? = null
-
-    fun getBody() = body
-
 
     /**
      * The body returned with this response

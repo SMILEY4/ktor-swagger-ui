@@ -30,15 +30,13 @@ class OpenApiSimpleBody(
         examples.add(example)
     }
 
-    fun getExamples(): List<ExampleDescriptor> = examples
-
 
     override fun build() = OpenApiSimpleBodyData(
         description = description,
         required = required ?: false,
-        mediaTypes = getMediaTypes(),
+        mediaTypes = mediaTypes,
         type = type,
-        examples = getExamples(),
+        examples = examples,
     )
 
 }

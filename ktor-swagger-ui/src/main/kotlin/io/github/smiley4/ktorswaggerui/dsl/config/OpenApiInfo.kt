@@ -54,6 +54,7 @@ class OpenApiInfo {
         license = OpenApiLicense().apply(block)
     }
 
+
     fun build(base: InfoData): InfoData {
         return InfoData(
             title = mergeDefault(base.title, this.title, InfoData.DEFAULT.title),

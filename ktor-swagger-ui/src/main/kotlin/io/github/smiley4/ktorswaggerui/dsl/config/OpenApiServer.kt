@@ -17,11 +17,11 @@ class OpenApiServer {
      */
     var url: String = ServerData.DEFAULT.url
 
-
     /**
      * An optional string describing the host designated by the URL
      */
     var description: String? = ServerData.DEFAULT.description
+
 
     fun build(base: ServerData) = ServerData(
         url = mergeDefault(base.url, url, ServerData.DEFAULT.url),

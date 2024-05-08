@@ -1,6 +1,5 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
-import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
@@ -159,12 +158,20 @@ class PluginConfigDsl {
 
     private val schemaConfig = SchemaConfig()
 
+
+    /**
+     * Configure schemas
+     */
     fun schemas(block: SchemaConfig.() -> Unit) {
         schemaConfig.also(block)
     }
 
     private val exampleConfig = ExampleConfig()
 
+
+    /**
+     * Configure examples
+     */
     fun examples(block: ExampleConfig.() -> Unit) {
         exampleConfig.apply(block)
     }

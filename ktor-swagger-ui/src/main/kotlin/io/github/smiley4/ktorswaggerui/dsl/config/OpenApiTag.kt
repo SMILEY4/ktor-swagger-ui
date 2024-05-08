@@ -20,12 +20,10 @@ class OpenApiTag(
      */
     var description: String? = null
 
-
     /**
      * A short description of additional external documentation for this tag.
      */
     var externalDocDescription: String? = null
-
 
     /**
      *The URL for additional external documentation for this tag.

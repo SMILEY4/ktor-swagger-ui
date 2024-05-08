@@ -9,6 +9,7 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
  */
 @OpenApiDslMarker
 class OpenApiExternalDocs {
+
     /**
      * A short description of the external documentation
      */
@@ -19,6 +20,7 @@ class OpenApiExternalDocs {
      * A URL to the external documentation
      */
     var url: String = "/"
+
 
     fun build(base: ExternalDocsData) = ExternalDocsData(
         url = DataUtils.mergeDefault(base.url, url, ExternalDocsData.DEFAULT.url),

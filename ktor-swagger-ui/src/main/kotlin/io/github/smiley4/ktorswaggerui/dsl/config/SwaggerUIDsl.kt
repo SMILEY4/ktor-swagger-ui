@@ -69,7 +69,7 @@ class SwaggerUIDsl {
             showTagFilterInput = mergeBoolean(base.showTagFilterInput, this.showTagFilterInput),
             sort = mergeDefault(base.sort, this.sort, SwaggerUIData.DEFAULT.sort),
             syntaxHighlight = mergeDefault(base.syntaxHighlight, this.syntaxHighlight, SwaggerUIData.DEFAULT.syntaxHighlight),
-            withCredentials = base.withCredentials
+            withCredentials = mergeBoolean(base.withCredentials, this.withCredentials)
         )
     }
 

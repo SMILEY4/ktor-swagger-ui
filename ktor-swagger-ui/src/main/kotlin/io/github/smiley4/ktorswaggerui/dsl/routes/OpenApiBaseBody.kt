@@ -23,13 +23,11 @@ sealed class OpenApiBaseBody {
     /**
      * Allowed Media Types for this body. If none specified, a media type will be chosen automatically based on the provided schema
      */
-    private val mediaTypes = mutableSetOf<ContentType>()
+    protected val mediaTypes = mutableSetOf<ContentType>()
 
     fun mediaType(type: ContentType) {
         mediaTypes.add(type)
     }
-
-    fun getMediaTypes(): Set<ContentType> = mediaTypes
 
     abstract fun build(): OpenApiBaseBodyData
 }

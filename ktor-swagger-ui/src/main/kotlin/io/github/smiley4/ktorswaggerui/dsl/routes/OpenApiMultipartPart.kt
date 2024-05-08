@@ -26,8 +26,6 @@ class OpenApiMultipartPart(
 
     private val headers = mutableMapOf<String, OpenApiHeader>()
 
-    fun getHeaders(): Map<String, OpenApiHeader> = headers
-
 
     /**
      * Possible headers for this part
