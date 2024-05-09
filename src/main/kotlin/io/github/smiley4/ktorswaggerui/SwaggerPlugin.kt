@@ -14,6 +14,7 @@ import io.github.smiley4.ktorswaggerui.builder.schema.TypeOverwrites
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.dsl.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.routing.ApiSpec
+import io.github.smiley4.ktorswaggerui.routing.ControllerUtils
 import io.github.smiley4.ktorswaggerui.routing.ForwardRouteController
 import io.github.smiley4.ktorswaggerui.routing.SwaggerController
 import io.ktor.server.application.*
@@ -44,6 +45,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         }
 
         try {
+            ControllerUtils.appConfig = applicationConfig
             val routes = routes(application, config)
             ApiSpec.setAll(buildOpenApiSpecs(config, routes))
         } catch (e: Exception) {
