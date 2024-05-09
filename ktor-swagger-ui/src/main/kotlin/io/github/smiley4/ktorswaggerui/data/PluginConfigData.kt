@@ -4,42 +4,36 @@ import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import kotlin.reflect.KClass
 
 data class PluginConfigData(
-    val defaultUnauthorizedResponse: OpenApiResponseData?,
-    val defaultSecuritySchemeNames: Set<String>,
-    val tagGenerator: TagGenerator,
     val specAssigner: SpecAssigner,
     val pathFilter: PathFilter,
     val ignoredRouteSelectors: Set<KClass<*>>,
-    val swaggerUI: SwaggerUIData,
+    val swagger: SwaggerUIData,
     val info: InfoData,
     val servers: List<ServerData>,
     val externalDocs: ExternalDocsData,
-    val securitySchemes: List<SecuritySchemeData>,
-    val tags: List<TagData>,
     val specConfigs: MutableMap<String, PluginConfigData>,
-    val whenBuildOpenApiSpecs: WhenBuildOpenApiSpecs?,
+    val postBuild: PostBuild?,
     val schemaConfig: SchemaConfigData,
     val exampleConfig: ExampleConfigData,
+    val securityConfig: SecurityData,
+    val tagsConfig: TagsData
 ) {
 
     companion object {
         val DEFAULT = PluginConfigData(
-            defaultUnauthorizedResponse = null,
-            defaultSecuritySchemeNames = emptySet(),
-            tagGenerator = { emptyList() },
             specAssigner = { _, _ -> PluginConfigDsl.DEFAULT_SPEC_ID },
             pathFilter = { _, _ -> true },
             ignoredRouteSelectors = emptySet(),
-            swaggerUI = SwaggerUIData.DEFAULT,
+            swagger = SwaggerUIData.DEFAULT,
             info = InfoData.DEFAULT,
             servers = emptyList(),
             externalDocs = ExternalDocsData.DEFAULT,
-            securitySchemes = emptyList(),
-            tags = emptyList(),
             specConfigs = mutableMapOf(),
-            whenBuildOpenApiSpecs = null,
+            postBuild = null,
             schemaConfig = SchemaConfigData.DEFAULT,
             exampleConfig = ExampleConfigData.DEFAULT,
+            securityConfig = SecurityData.DEFAULT,
+            tagsConfig = TagsData.DEFAULT
         )
     }
 

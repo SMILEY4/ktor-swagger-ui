@@ -14,7 +14,7 @@ object ApiSpec {
     }
 
     fun get(name: String): String {
-        return apiSpecs[name] ?: throw NoSuchElementException("No api-spec with name $name registered.")
+        return apiSpecs[name] ?: throw NoSuchElementException("No api-spec with name '$name' registered.")
     }
 
     fun getAll(): Map<String, String> {

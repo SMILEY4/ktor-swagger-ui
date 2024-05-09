@@ -31,9 +31,6 @@ class SwaggerUIDsl {
         specValidator("https://validator.swagger.io/validator")
     }
 
-    fun getSpecValidatorUrl() = validatorUrl
-
-
     /**
      * Whether to show the operation-id of endpoints in the list
      */
