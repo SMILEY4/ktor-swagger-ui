@@ -24,8 +24,6 @@ class OpenApiMultipartPart(
      */
     var mediaTypes: Collection<ContentType> = setOf()
 
-    private val headers = mutableMapOf<String, OpenApiHeader>()
-
 
     /**
      * Possible headers for this part
@@ -36,29 +34,7 @@ class OpenApiMultipartPart(
         }
     }
 
-
-//    /**
-//     * Possible headers for this part
-//     */
-//    fun header(name: String, type: KClass<*>, block: OpenApiHeader.() -> Unit) = header(name, KTypeDescriptor(type.starProjectedType), block)
-//
-
-//    /**
-//     * Possible headers for this part
-//     */
-//    fun header(name: String, type: KClass<*>) = header(name, type) {}
-
-//
-//    /**
-//     * Possible headers for this part
-//     */
-//    inline fun <reified TYPE> header(name: String) = header(name, KTypeDescriptor(getKType<TYPE>())) {}
-//
-//
-//    /**
-//     * Possible headers for this part
-//     */
-//    inline fun <reified TYPE> header(name: String, noinline block: OpenApiHeader.() -> Unit) = header(name, getSchemaType<TYPE>(), block)
+    private val headers = mutableMapOf<String, OpenApiHeader>()
 
 
     fun build() = OpenApiMultipartPartData(

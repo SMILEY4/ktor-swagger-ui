@@ -68,7 +68,7 @@ class ExampleContextImpl : ExampleContext {
     }
 
     override fun getExample(descriptor: ExampleDescriptor): Example {
-        return rootExamples[descriptor] ?: throw Exception("no root-example for given example-descriptor")
+        return rootExamples[descriptor] ?: throw NoSuchElementException("no root-example for given example-descriptor")
     }
 
     override fun getComponentSection(): Map<String, Example> {

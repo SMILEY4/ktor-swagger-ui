@@ -1,6 +1,9 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 object Meta {
     const val artifactId = "ktor-swagger-ui"
 }
+
 
 dependencies {
     val ktorVersion = "2.3.7"

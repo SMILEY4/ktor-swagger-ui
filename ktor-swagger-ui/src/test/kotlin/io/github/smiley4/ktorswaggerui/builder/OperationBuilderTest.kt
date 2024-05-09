@@ -789,7 +789,8 @@ class OperationBuilderTest : StringSpec({
                                             schema.type shouldBe "array"
                                             schema.items.also { item ->
                                                 item.type shouldBe null
-                                                item.`$ref` shouldBe "#/components/schemas/io.github.smiley4.ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject"
+                                                item.`$ref` shouldBe "#/components/schemas/io.github.smiley4." +
+                                                        "ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject"
                                             }
                                         }
                                     mediaType.example shouldBe null
@@ -806,7 +807,9 @@ class OperationBuilderTest : StringSpec({
                 }
         }
         schemaContext.getComponentSection().also { section ->
-            section.keys shouldContainExactlyInAnyOrder listOf("io.github.smiley4.ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject")
+            section.keys shouldContainExactlyInAnyOrder listOf(
+                "io.github.smiley4.ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject"
+            )
             section["io.github.smiley4.ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject"]?.also { schema ->
                 schema.type shouldBe "object"
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("number", "text")
@@ -893,7 +896,7 @@ class OperationBuilderTest : StringSpec({
                 route.request {
                     multipartBody {
                         mediaType(ContentType.MultiPart.FormData)
-                        part("customData", RefTypeDescriptor("myCustomSchema"))
+                        part("customData", RefTypeDescriptor("myCustomSchema")) {}
                     }
                 }
             }.build(),

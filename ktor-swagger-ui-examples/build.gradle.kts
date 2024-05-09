@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
 plugins {
     kotlin("jvm")
 }
@@ -36,4 +38,9 @@ dependencies {
     val logbackVersion = "1.4.11"
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
+}
+
+
+tasks.withType<Detekt>().configureEach {
+    ignoreFailures = true
 }

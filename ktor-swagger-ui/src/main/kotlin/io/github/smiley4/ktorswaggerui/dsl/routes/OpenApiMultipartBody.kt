@@ -21,50 +21,6 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
         parts.add(OpenApiMultipartPart(name, type).apply(block))
     }
 
-
-    /**
-     * One part of a multipart-body
-     */
-    fun part(name: String, type: TypeDescriptor) = part(name, type) {}
-
-
-//    /**
-//     * One part of a multipart-body
-//     */
-//    fun part(name: String, type: KType, block: OpenApiMultipartPart.() -> Unit) = part(name, KTypeDescriptor(type), block)
-//
-//
-//    /**
-//     * One part of a multipart-body
-//     */
-//    fun part(name: String, type: KClass<*>) = part(name, type.asSchemaType()) {}
-//
-//
-//    /**
-//     * One part of a multipart-body
-//     */
-//    inline fun <reified TYPE> part(name: String) = part(name, getSchemaType<TYPE>()) {}
-//
-//
-//    /**
-//     * One part of a multipart-body
-//     */
-//    inline fun <reified TYPE> part(name: String, noinline block: OpenApiMultipartPart.() -> Unit) = part(name, getSchemaType<TYPE>(), block)
-
-
-//    /**
-//     * One part of a multipart-body
-//     */
-//    fun part(name: String, customSchemaId: String, block: OpenApiMultipartPart.() -> Unit) =
-//        part(name, BodyTypeDescriptor.custom(customSchemaId), block)
-//
-//
-//    /**
-//     * One part of a multipart-body
-//     */
-//    fun part(name: String, customSchemaId: String) = part(name, customSchemaId) {}
-
-
     override fun build() = OpenApiMultipartBodyData(
         description = description,
         required = required ?: false,

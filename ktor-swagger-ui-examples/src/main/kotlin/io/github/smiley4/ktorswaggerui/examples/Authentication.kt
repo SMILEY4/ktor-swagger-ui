@@ -42,16 +42,18 @@ private fun Application.myModule() {
 
     // Install and configure the "SwaggerUI"-Plugin
     install(SwaggerUI) {
-        // configure a basic-auth security scheme
-        securityScheme("MySecurityScheme") {
-            type = AuthType.HTTP
-            scheme = AuthScheme.BASIC
-        }
-        // if no other security scheme is specified for a route, the one with this name is used instead
-        defaultSecuritySchemeName = "MySecurityScheme"
-        // if no other response is documented for "401 Unauthorized", this information is used instead
-        defaultUnauthorizedResponse {
-            description = "Username or password is invalid"
+        security {
+            // configure a basic-auth security scheme
+            securityScheme("MySecurityScheme") {
+                type = AuthType.HTTP
+                scheme = AuthScheme.BASIC
+            }
+            // if no other security scheme is specified for a route, the one with this name is used instead
+            defaultSecuritySchemeNames = setOf("MySecurityScheme")
+            // if no other response is documented for "401 Unauthorized", this information is used instead
+            defaultUnauthorizedResponse {
+                description = "Username or password is invalid"
+            }
         }
     }
 

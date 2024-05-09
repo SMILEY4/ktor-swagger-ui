@@ -33,11 +33,10 @@ subprojects {
     }
 
     tasks.withType<Detekt>().configureEach {
-        ignoreFailures = true // todo: temporary
+        ignoreFailures = false
         buildUponDefaultConfig = true
         allRules = false
-        config.setFrom("$projectDir/config/detekt.yml")
-        baseline.set(file("$projectDir/config/baseline.xml"))
+        config.setFrom("$projectDir/../detekt/detekt.yml")
         reports {
             html.required.set(true)
             md.required.set(true)
@@ -48,32 +47,3 @@ subprojects {
     }
 
 }
-
-//mavenPublishing {
-//    publishToMavenCentral(SonatypeHost.S01)
-//    signAllPublications()
-//    coordinates(Meta.groupId, Meta.artifactId, Meta.version)
-//    pom {
-//        name.set(Meta.name)
-//        description.set(Meta.description)
-//        url.set(Meta.scmUrl)
-//        licenses {
-//            license {
-//                name.set(Meta.licenseName)
-//                url.set(Meta.licenseUrl)
-//                distribution.set(Meta.licenseUrl)
-//            }
-//        }
-//        scm {
-//            url.set(Meta.scmUrl)
-//            connection.set(Meta.scmConnection)
-//        }
-//        developers {
-//            developer {
-//                id.set(Meta.developerName)
-//                name.set(Meta.developerName)
-//                url.set(Meta.developerUrl)
-//            }
-//        }
-//    }
-//}

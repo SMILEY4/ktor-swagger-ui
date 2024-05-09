@@ -164,7 +164,7 @@ class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaCont
     }
 
     override fun getSchema(typeDescriptor: TypeDescriptor): Schema<*> {
-        return rootSchemas[typeDescriptor] ?: throw Exception("no root-schema for given type-descriptor")
+        return rootSchemas[typeDescriptor] ?: throw NoSuchElementException("no root-schema for given type-descriptor")
     }
 
     override fun getComponentSection(): Map<String, Schema<*>> {
