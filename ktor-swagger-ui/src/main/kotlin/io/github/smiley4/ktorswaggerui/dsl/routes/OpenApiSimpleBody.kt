@@ -22,10 +22,6 @@ class OpenApiSimpleBody(
      */
     private val examples = mutableListOf<ExampleDescriptor>()
 
-//    fun example(name: String, value: Any, block: OpenApiExample.() -> Unit) {
-//        examples[name] = OpenApiExample(value).apply(block)
-//    }
-
     fun example(example: ExampleDescriptor) {
         examples.add(example)
     }

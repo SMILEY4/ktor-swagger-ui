@@ -1,12 +1,6 @@
-import io.gitlab.arturbosch.detekt.Detekt
-
-object Meta {
-    const val artifactId = "ktor-swagger-ui"
-}
-
 
 dependencies {
-    val ktorVersion = "2.3.7"
+    val ktorVersion = "2.3.11"
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-webjars:$ktorVersion")
     implementation("io.ktor:ktor-server-auth:$ktorVersion")

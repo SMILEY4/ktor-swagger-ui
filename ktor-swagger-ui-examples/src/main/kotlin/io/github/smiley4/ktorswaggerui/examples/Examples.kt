@@ -110,4 +110,3 @@ private fun Application.myModule() {
 private data class MyExampleClass(
     val someValue: String
 )
-

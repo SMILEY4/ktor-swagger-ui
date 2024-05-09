@@ -448,8 +448,10 @@ class OperationBuilderTest : StringSpec({
                     body(KTypeDescriptor(typeOf<String>())) {
                         description = "the test body"
                         required = true
-                        mediaType(ContentType.Application.Json)
-                        mediaType(ContentType.Application.Xml)
+                        mediaTypes = setOf(
+                            ContentType.Application.Json,
+                            ContentType.Application.Xml
+                        )
                         example(
                             ValueExampleDescriptor(
                                 name = "example 1",
@@ -537,7 +539,9 @@ class OperationBuilderTest : StringSpec({
             documentation = OpenApiRoute().also { route ->
                 route.request {
                     multipartBody {
-                        mediaType(ContentType.MultiPart.FormData)
+                        mediaTypes = setOf(
+                            ContentType.MultiPart.FormData
+                        )
                         part("image", KTypeDescriptor(typeOf<File>())) {
                             mediaTypes = setOf(
                                 ContentType.Image.PNG,
@@ -614,7 +618,9 @@ class OperationBuilderTest : StringSpec({
             documentation = OpenApiRoute().also { route ->
                 route.request {
                     multipartBody {
-                        mediaType(ContentType.MultiPart.FormData)
+                        mediaTypes = setOf(
+                            ContentType.MultiPart.FormData
+                        )
                     }
                 }
             }.build(),
@@ -895,7 +901,9 @@ class OperationBuilderTest : StringSpec({
             documentation = OpenApiRoute().also { route ->
                 route.request {
                     multipartBody {
-                        mediaType(ContentType.MultiPart.FormData)
+                        mediaTypes = setOf(
+                            ContentType.MultiPart.FormData
+                        )
                         part("customData", RefTypeDescriptor("myCustomSchema")) {}
                     }
                 }

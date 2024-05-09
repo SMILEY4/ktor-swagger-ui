@@ -15,7 +15,7 @@ dependencies {
 
     implementation(project(":ktor-swagger-ui"))
 
-    val ktorVersion = "2.3.7"
+    val ktorVersion = "2.3.11"
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")

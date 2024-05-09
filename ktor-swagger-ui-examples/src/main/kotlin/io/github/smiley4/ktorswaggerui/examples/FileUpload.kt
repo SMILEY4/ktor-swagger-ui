@@ -53,9 +53,11 @@ private fun Application.myModule() {
         post("single", {
             request {
                 body(KTypeDescriptor(typeOf<File>())) {
-                    mediaType(ContentType.Image.PNG)
-                    mediaType(ContentType.Image.JPEG)
-                    mediaType(ContentType.Image.SVG)
+                    mediaTypes = setOf(
+                        ContentType.Image.PNG,
+                        ContentType.Image.JPEG,
+                        ContentType.Image.SVG,
+                    )
                 }
             }
         }) {
@@ -66,10 +68,10 @@ private fun Application.myModule() {
         post("multipart", {
             request {
                 multipartBody {
-                    mediaType(ContentType.MultiPart.FormData)
+                    mediaTypes = setOf(ContentType.MultiPart.FormData)
                     part("first-image", KTypeDescriptor(typeOf<File>())) {
                         mediaTypes = setOf(
-                            ContentType.Image.PNG, // todo: why setOf here and not for single body?
+                            ContentType.Image.PNG,
                             ContentType.Image.JPEG,
                             ContentType.Image.SVG
                         )
