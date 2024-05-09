@@ -12,7 +12,7 @@ class SecurityRequirementsBuilder(
         val securitySchemes = buildSet {
             addAll(route.documentation.securitySchemeNames)
             if(route.documentation.securitySchemeNames.isEmpty()) {
-                addAll(config.defaultSecuritySchemeNames)
+                addAll(config.securityConfig.defaultSecuritySchemeNames)
             }
         }
         return securitySchemes.map {

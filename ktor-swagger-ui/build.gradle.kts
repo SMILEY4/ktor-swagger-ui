@@ -29,9 +29,6 @@ dependencies {
     val kotlinLoggingVersion = "3.0.5"
     implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
 
-    val versionMockk = "1.13.8"
-    testImplementation("io.mockk:mockk:$versionMockk")
-
     val versionKotest = "5.8.0"
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
@@ -39,4 +36,6 @@ dependencies {
     val versionKotlinTest = "1.8.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
+    val versionMockk = "1.13.8"
+    testImplementation("io.mockk:mockk:$versionMockk")
 }

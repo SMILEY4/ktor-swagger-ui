@@ -16,6 +16,6 @@ class OperationTagsBuilder(
 
     private fun getRouteTags(route: RouteMeta) = route.documentation.tags
 
-    private fun getGeneratedTags(route: RouteMeta) = config.tagGenerator(route.path.split("/").filter { it.isNotEmpty() })
+    private fun getGeneratedTags(route: RouteMeta) = config.tagsConfig.generator(route.path.split("/").filter { it.isNotEmpty() })
 
 }

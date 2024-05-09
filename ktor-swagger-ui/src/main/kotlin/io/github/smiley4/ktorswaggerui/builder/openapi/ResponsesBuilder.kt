@@ -16,7 +16,7 @@ class ResponsesBuilder(
                 .map { response -> responseBuilder.build(response) }
                 .forEach { (name, response) -> it.addApiResponse(name, response) }
             if (shouldAddUnauthorized(responses, isProtected)) {
-                config.defaultUnauthorizedResponse
+                config.securityConfig.defaultUnauthorizedResponse
                     ?.let { response -> responseBuilder.build(response) }
                     ?.also { (name, response) -> it.addApiResponse(name, response) }
             }
@@ -24,7 +24,7 @@ class ResponsesBuilder(
 
     private fun shouldAddUnauthorized(responses: List<OpenApiResponseData>, isProtected: Boolean): Boolean {
         val unauthorizedCode = HttpStatusCode.Unauthorized.value.toString();
-        return config.defaultUnauthorizedResponse != null
+        return config.securityConfig.defaultUnauthorizedResponse != null
                 && isProtected
                 && responses.count { it.statusCode == unauthorizedCode } == 0
     }

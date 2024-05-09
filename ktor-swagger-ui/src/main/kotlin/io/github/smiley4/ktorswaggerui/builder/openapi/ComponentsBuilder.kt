@@ -14,8 +14,8 @@ class ComponentsBuilder(
         return Components().also {
             it.schemas = schemas
             it.examples = examples
-            if (config.securitySchemes.isNotEmpty()) {
-                it.securitySchemes = securitySchemesBuilder.build(config.securitySchemes)
+            if (config.securityConfig.securitySchemes.isNotEmpty()) {
+                it.securitySchemes = securitySchemesBuilder.build(config.securityConfig.securitySchemes)
             }
         }
     }
