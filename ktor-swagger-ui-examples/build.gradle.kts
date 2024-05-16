@@ -1,46 +1,42 @@
-import io.gitlab.arturbosch.detekt.Detekt
+val projectGroupId: String by project
+val projectVersion: String by project
+group = projectGroupId
+version = projectVersion
 
 plugins {
     kotlin("jvm")
 }
-
-group = "io.github.smiley4"
-version = "3.0.0-indev"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    val versionKtor: String by project
+    val versionSwaggerParser: String by project
+    val versionSchemaKenerator: String by project
+    val versionKotlinLogging: String by project
+    val versionLogback: String by project
 
     implementation(project(":ktor-swagger-ui"))
 
-    val ktorVersion = "2.3.11"
-    implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    implementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty-jvm:$versionKtor")
+    implementation("io.ktor:ktor-server-content-negotiation:$versionKtor")
+    implementation("io.ktor:ktor-serialization-jackson:$versionKtor")
+    implementation("io.ktor:ktor-server-auth:$versionKtor")
+    implementation("io.ktor:ktor-server-call-logging:$versionKtor")
+    implementation("io.ktor:ktor-server-test-host:$versionKtor")
 
-    val schemaKeneratorVersion = "0.1"
-    implementation("io.github.smiley4:schema-kenerator-core:$schemaKeneratorVersion")
-    implementation("io.github.smiley4:schema-kenerator-reflection:$schemaKeneratorVersion")
-    implementation("io.github.smiley4:schema-kenerator-swagger:$schemaKeneratorVersion")
-    implementation("io.github.smiley4:schema-kenerator-jackson:$schemaKeneratorVersion")
+    implementation("io.github.smiley4:schema-kenerator-core:$versionSchemaKenerator")
+    implementation("io.github.smiley4:schema-kenerator-reflection:$versionSchemaKenerator")
+    implementation("io.github.smiley4:schema-kenerator-swagger:$versionSchemaKenerator")
+    implementation("io.github.smiley4:schema-kenerator-jackson:$versionSchemaKenerator")
 
-    val swaggerParserVersion = "2.1.19"
-    implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
-
-    val kotlinLoggingVersion = "3.0.5"
-    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
-
-    val logbackVersion = "1.4.11"
-    implementation("ch.qos.logback:logback-classic:$logbackVersion")
-
+    implementation("io.swagger.parser.v3:swagger-parser:$versionSwaggerParser")
+    implementation("io.github.microutils:kotlin-logging-jvm:$versionKotlinLogging")
+    implementation("ch.qos.logback:logback-classic:$versionLogback")
 }
 
-
-tasks.withType<Detekt>().configureEach {
-    ignoreFailures = true
+kotlin {
+    jvmToolchain(11)
 }

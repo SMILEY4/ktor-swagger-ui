@@ -1,38 +1,81 @@
+import io.gitlab.arturbosch.detekt.Detekt
+
+val projectGroupId: String by project
+val projectVersion: String by project
+group = projectGroupId
+version = projectVersion
+
+plugins {
+    kotlin("jvm")
+    id("org.owasp.dependencycheck")
+    id("io.gitlab.arturbosch.detekt")
+    id("com.vanniktech.maven.publish")
+    id("org.jetbrains.dokka")
+}
+
+repositories {
+    mavenCentral()
+}
 
 dependencies {
-    val ktorVersion = "2.3.11"
-    implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
-    implementation("io.ktor:ktor-server-webjars:$ktorVersion")
-    implementation("io.ktor:ktor-server-auth:$ktorVersion")
-    implementation("io.ktor:ktor-server-resources:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
-    testImplementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-auth:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-call-logging:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    val versionKtor: String by project
+    val versionSwaggerUI: String by project
+    val versionSwaggerParser: String by project
+    val versionSchemaKenerator: String by project
+    val versionKotlinLogging: String by project
+    val versionKotest: String by project
+    val versionKotlinTest: String by project
+    val versionMockk: String by project
 
-    val swaggerUiVersion = "5.9.0" // this version must match the version declared in the code (SwaggerPlugin#SWAGGER_UI_WEBJARS_VERSION)
-    implementation("org.webjars:swagger-ui:$swaggerUiVersion")
+    implementation("io.ktor:ktor-server-core-jvm:$versionKtor")
+    implementation("io.ktor:ktor-server-webjars:$versionKtor")
+    implementation("io.ktor:ktor-server-auth:$versionKtor")
+    implementation("io.ktor:ktor-server-resources:$versionKtor")
+    testImplementation("io.ktor:ktor-server-netty-jvm:$versionKtor")
+    testImplementation("io.ktor:ktor-server-content-negotiation:$versionKtor")
+    testImplementation("io.ktor:ktor-serialization-jackson:$versionKtor")
+    testImplementation("io.ktor:ktor-server-auth:$versionKtor")
+    testImplementation("io.ktor:ktor-server-call-logging:$versionKtor")
+    testImplementation("io.ktor:ktor-server-test-host:$versionKtor")
 
-    val swaggerParserVersion = "2.1.19"
-    implementation("io.swagger.parser.v3:swagger-parser:$swaggerParserVersion")
+    implementation("org.webjars:swagger-ui:$versionSwaggerUI")
 
-    val schemaKeneratorVersion = "0.1"
-    implementation("io.github.smiley4:schema-kenerator-core:$schemaKeneratorVersion")
-    implementation("io.github.smiley4:schema-kenerator-reflection:$schemaKeneratorVersion")
-    implementation("io.github.smiley4:schema-kenerator-swagger:$schemaKeneratorVersion")
+    implementation("io.swagger.parser.v3:swagger-parser:$versionSwaggerParser")
 
-    val kotlinLoggingVersion = "3.0.5"
-    implementation("io.github.microutils:kotlin-logging-jvm:$kotlinLoggingVersion")
+    implementation("io.github.smiley4:schema-kenerator-core:$versionSchemaKenerator")
+    implementation("io.github.smiley4:schema-kenerator-reflection:$versionSchemaKenerator")
+    implementation("io.github.smiley4:schema-kenerator-swagger:$versionSchemaKenerator")
 
-    val versionKotest = "5.8.0"
+    implementation("io.github.microutils:kotlin-logging-jvm:$versionKotlinLogging")
+
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
 
-    val versionKotlinTest = "1.8.21"
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
 
-    val versionMockk = "1.13.8"
     testImplementation("io.mockk:mockk:$versionMockk")
 }
+
+kotlin {
+    jvmToolchain(11)
+}
+
+detekt {
+    ignoreFailures = false
+    buildUponDefaultConfig = true
+    allRules = false
+    config.setFrom("$projectDir/../detekt/detekt.yml")
+}
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        md.required.set(true)
+        xml.required.set(false)
+        txt.required.set(false)
+        sarif.required.set(false)
+    }
+}
+
+//mavenPublishing {
+//    todo
+//}
