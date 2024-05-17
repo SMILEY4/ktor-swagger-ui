@@ -1,3 +1,6 @@
+import com.vanniktech.maven.publish.JavadocJar
+import com.vanniktech.maven.publish.KotlinJvm
+import com.vanniktech.maven.publish.SonatypeHost
 import io.gitlab.arturbosch.detekt.Detekt
 
 val projectGroupId: String by project
@@ -78,6 +81,44 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
-//mavenPublishing {
-//    todo
-//}
+mavenPublishing {
+    val projectGroupId: String by project
+    val projectVersion: String by project
+    val projectArtifactIdBase: String by project
+    val projectNameBase: String by project
+    val projectDescriptionBase: String by project
+    val projectScmUrl: String by project
+    val projectScmConnection: String by project
+    val projectLicenseName: String by project
+    val projectLicenseUrl: String by project
+    val projectDeveloperName: String by project
+    val projectDeveloperUrl: String by project
+
+    configure(KotlinJvm(JavadocJar.Dokka("dokkaHtml"), true))
+    publishToMavenCentral(SonatypeHost.S01)
+    signAllPublications()
+    coordinates(projectGroupId, projectArtifactIdBase, projectVersion)
+    pom {
+        name.set(projectNameBase)
+        description.set(projectDescriptionBase)
+        url.set(projectScmUrl)
+        licenses {
+            license {
+                name.set(projectLicenseName)
+                url.set(projectLicenseUrl)
+                distribution.set(projectLicenseUrl)
+            }
+        }
+        scm {
+            url.set(projectScmUrl)
+            connection.set(projectScmConnection)
+        }
+        developers {
+            developer {
+                id.set(projectDeveloperName)
+                name.set(projectDeveloperName)
+                url.set(projectDeveloperUrl)
+            }
+        }
+    }
+}
