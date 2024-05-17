@@ -31,12 +31,6 @@ dependencies {
     implementation("io.ktor:ktor-server-webjars:$versionKtor")
     implementation("io.ktor:ktor-server-auth:$versionKtor")
     implementation("io.ktor:ktor-server-resources:$versionKtor")
-    testImplementation("io.ktor:ktor-server-netty-jvm:$versionKtor")
-    testImplementation("io.ktor:ktor-server-content-negotiation:$versionKtor")
-    testImplementation("io.ktor:ktor-serialization-jackson:$versionKtor")
-    testImplementation("io.ktor:ktor-server-auth:$versionKtor")
-    testImplementation("io.ktor:ktor-server-call-logging:$versionKtor")
-    testImplementation("io.ktor:ktor-server-test-host:$versionKtor")
 
     implementation("org.webjars:swagger-ui:$versionSwaggerUI")
 
@@ -48,16 +42,24 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging-jvm:$versionKotlinLogging")
 
+    testImplementation("io.ktor:ktor-server-netty-jvm:$versionKtor")
+    testImplementation("io.ktor:ktor-server-content-negotiation:$versionKtor")
+    testImplementation("io.ktor:ktor-serialization-jackson:$versionKtor")
+    testImplementation("io.ktor:ktor-server-auth:$versionKtor")
+    testImplementation("io.ktor:ktor-server-call-logging:$versionKtor")
+    testImplementation("io.ktor:ktor-server-test-host:$versionKtor")
     testImplementation("io.kotest:kotest-runner-junit5:$versionKotest")
     testImplementation("io.kotest:kotest-assertions-core:$versionKotest")
-
     testImplementation("org.jetbrains.kotlin:kotlin-test:$versionKotlinTest")
-
     testImplementation("io.mockk:mockk:$versionMockk")
 }
 
 kotlin {
     jvmToolchain(11)
+}
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 detekt {
