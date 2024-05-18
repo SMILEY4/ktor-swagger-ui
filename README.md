@@ -3,7 +3,6 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui)
 [![Checks Passing](https://github.com/SMILEY4/ktor-swagger-ui/actions/workflows/checks.yml/badge.svg?branch=develop)](https://github.com/SMILEY4/ktor-swagger-ui/actions/workflows/checks.yml)
 
-
 This library provides a Ktor plugin to document routes, generate an OpenApi Specification and serve a Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing application without requiring immediate changes to the code. Routes can then be gradually enhanced with documentation.
 
 
@@ -32,9 +31,12 @@ dependencies {
 }
 ```
 
+
 ## Example
 Full examples can be found in [src/test/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/develop/src/test/kotlin/io/github/smiley4/ktorswaggerui/examples).
+
 ### Configuration
+
 ```kotlin
 install(SwaggerUI) {
     swagger {
@@ -52,7 +54,9 @@ install(SwaggerUI) {
     }
 }
 ```
+
 ### Routes
+
 ```kotlin
 get("hello", {
     description = "Hello World Endpoint."
