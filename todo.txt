@@ -1,9 +1,9 @@
 todo:
 
 - keep up to date with schema-kenerator
-- simplify dsl for schemas (TypeDescriptors)
+- simplify dsl for schemas (TypeDescriptors) ✅
     - utility methods for adding different TypeDescriptors ✅
-    - dsl for array, anyof, ref, empty, ...
+    - dsl for array, anyof, ref, empty, ... ✅
 - simplify dsl for examples (ExampleDescriptors)
 - add rootHostPath to operations (see 2.10.0)
 - post build hook (?)

@@ -2,10 +2,9 @@ package io.github.smiley4.ktorswaggerui.examples
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.AnyOfTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.ArrayTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.RefTypeDescriptor
+import io.github.smiley4.ktorswaggerui.data.anyOf
+import io.github.smiley4.ktorswaggerui.data.array
+import io.github.smiley4.ktorswaggerui.data.ref
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -26,7 +25,6 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.swagger.v3.oas.models.media.Schema
 import java.time.LocalDateTime
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -91,7 +89,7 @@ private fun Application.myModule() {
         get("global-swagger-schema", {
             request {
                 // reference and use the schema from the component-section with the id "swagger-schema"
-                body(RefTypeDescriptor("swagger-schema"))
+                body(ref("swagger-schema"))
             }
         }) {
             call.respondText("...")
@@ -101,7 +99,7 @@ private fun Application.myModule() {
         get("global-type-schema", {
             request {
                 // reference and use the schema from the component-section with the id "type-schema"
-                body(RefTypeDescriptor("type-schema"))
+                body(ref("type-schema"))
             }
         }) {
             call.respondText("...")
@@ -112,8 +110,8 @@ private fun Application.myModule() {
             request {
                 // an array of items with the referenced schema with the id "type-schema"
                 body(
-                    ArrayTypeDescriptor(
-                        RefTypeDescriptor("type-schema")
+                    array(
+                        ref("type-schema")
                     )
                 )
             }
@@ -126,11 +124,9 @@ private fun Application.myModule() {
             request {
                 // either the referenced schema with id "type-schema" or "swagger-schema"
                 body(
-                    AnyOfTypeDescriptor(
-                        listOf(
-                            RefTypeDescriptor("type-schema"),
-                            RefTypeDescriptor("swagger-schema")
-                        )
+                    anyOf(
+                        ref("type-schema"),
+                        ref("swagger-schema")
                     )
                 )
             }
