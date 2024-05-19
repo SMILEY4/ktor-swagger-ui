@@ -1,8 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -26,20 +24,18 @@ private fun Application.myModule() {
         examples {
 
             // specify two shared examples
-            example(ValueExampleDescriptor(
-                name = "Shared A",
-                description = "first shared example",
+            example("Shared A") {
+                description = "first shared example"
                 value = MyExampleClass(
                     someValue = "shared a"
                 )
-            ))
-            example(ValueExampleDescriptor(
-                name = "Shared B",
-                description = "second shared example",
+            }
+            example("Shared B") {
+                description = "second shared example"
                 value = MyExampleClass(
                     someValue = "shared b"
                 )
-            ))
+            }
 
         }
     }
@@ -59,24 +55,18 @@ private fun Application.myModule() {
             request {
                 body<MyExampleClass> {
                     // specify two example values
-                    example(
-                        ValueExampleDescriptor(
-                            name = "Example 1",
-                            description = "A first example value",
+                    example("Example 1") {
+                            description = "A first example value"
                             value = MyExampleClass(
                                 someValue = "example 1"
-                            ),
+                            )
+                    }
+                    example("Example 2") {
+                        description = "A second example value"
+                        value = MyExampleClass(
+                            someValue = "example 2"
                         )
-                    )
-                    example(
-                        ValueExampleDescriptor(
-                            name = "Example 2",
-                            description = "A second example value",
-                            value = MyExampleClass(
-                                someValue = "example 2"
-                            ),
-                        )
-                    )
+                    }
                 }
             }
         }) {
@@ -88,12 +78,8 @@ private fun Application.myModule() {
             request {
                 body<MyExampleClass> {
                     // reference two shared examples specified in the plugin-config (and placed in the component section)
-                    example(
-                        RefExampleDescriptor("Example 1", "Shared A")
-                    )
-                    example(
-                        RefExampleDescriptor("Example 2", "Shared B")
-                    )
+                    exampleRef("Example 1", "Shared A")
+                    exampleRef("Example 2", "Shared B")
                 }
             }
         }) {

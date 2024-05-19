@@ -1,8 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.delete
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
@@ -43,7 +41,9 @@ private fun Application.myModule() {
             }
         }
         examples {
-            example(ValueExampleDescriptor("Unexpected Error", ErrorModel("Unexpected Error"), null, null))
+            example("Unexpected Error") {
+                value = ErrorModel("Unexpected Error")
+            }
         }
     }
 
@@ -65,41 +65,42 @@ private fun Application.myModule() {
                     queryParameter<List<String>>("tags") {
                         description = "tags to filter by"
                         required = false
-                        example = ValueExampleDescriptor("dog", "default", null, null)
+                        example("dog") {
+                            value = "default"
+                        }
                     }
                     queryParameter<Int>("limit") {
                         description = "maximum number of results to return"
                         required = false
-                        example = ValueExampleDescriptor("default", 100, null, null)
+                        example("default") {
+                            value = 100
+                        }
                     }
                 }
                 response {
                     HttpStatusCode.OK to {
                         body<List<Pet>> {
                             description = "the list of available pets"
-                            example(
-                                ValueExampleDescriptor(
-                                    "Pet List",
-                                    listOf(
-                                        Pet(
-                                            id = 123,
-                                            name = "Big Bird",
-                                            tag = "bird"
-                                        ),
-                                        Pet(
-                                            id = 456,
-                                            name = "Charlie",
-                                            tag = "dog"
-                                        )
-                                    ), null, null
+                            example("Pet List") {
+                                value = listOf(
+                                    Pet(
+                                        id = 123,
+                                        name = "Big Bird",
+                                        tag = "bird"
+                                    ),
+                                    Pet(
+                                        id = 456,
+                                        name = "Charlie",
+                                        tag = "dog"
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                     default {
                         body<ErrorModel> {
                             description = "unexpected error"
-                            example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
+                            exampleRef("Unexpected Error")
                         }
                     }
                 }
@@ -114,56 +115,44 @@ private fun Application.myModule() {
                     body<NewPet> {
                         description = "Pet to add to the store"
                         required = true
-                        example(
-                            ValueExampleDescriptor(
-                                "New Bird",
-                                NewPet(
-                                    name = "Big Bird",
-                                    tag = "bird"
-                                ), null, null
+                        example("New Bird") {
+                            value = NewPet(
+                                name = "Big Bird",
+                                tag = "bird"
                             )
-                        )
-                        example(
-                            ValueExampleDescriptor(
-                                "New Dog",
-                                NewPet(
-                                    name = "Charlie",
-                                    tag = "dog"
-                                ), null, null
+                        }
+                        example("New Dog") {
+                            value = NewPet(
+                                name = "Charlie",
+                                tag = "dog"
                             )
-                        )
+                        }
                     }
                 }
                 response {
                     HttpStatusCode.OK to {
                         body<Pet> {
                             description = "the created pet"
-                            example(
-                                ValueExampleDescriptor(
-                                    "Bird",
-                                    Pet(
-                                        id = 123,
-                                        name = "Big Bird",
-                                        tag = "bird"
-                                    ), null, null
+                            example("Bird") {
+                                value = Pet(
+                                    id = 123,
+                                    name = "Big Bird",
+                                    tag = "bird"
                                 )
-                            )
-                            example(
-                                ValueExampleDescriptor(
-                                    "Dog",
-                                    Pet(
-                                        id = 456,
-                                        name = "Charlie",
-                                        tag = "dog"
-                                    ), null, null
+                            }
+                            example("Dog") {
+                                value = Pet(
+                                    id = 456,
+                                    name = "Charlie",
+                                    tag = "dog"
                                 )
-                            )
+                            }
                         }
                     }
                     default {
                         body<ErrorModel> {
                             description = "unexpected error"
-                            example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
+                            exampleRef("Unexpected Error")
                         }
                     }
                 }
@@ -180,33 +169,29 @@ private fun Application.myModule() {
                         pathParameter<Long>("id") {
                             description = "Id of pet to fetch"
                             required = true
-                            example = ValueExampleDescriptor("default", 123L, null, null)
+                            example("default") {
+                                value = 123L
+                            }
                         }
                     }
                     response {
                         HttpStatusCode.OK to {
                             body<Pet>{
                                 description = "the pet with the given id"
-                                example(
-                                    ValueExampleDescriptor(
-                                        "Bird",
-                                        Pet(
-                                            id = 123,
-                                            name = "Big Bird",
-                                            tag = "bird"
-                                        ), null, null
+                                example("Bird") {
+                                    value = Pet(
+                                        id = 123,
+                                        name = "Big Bird",
+                                        tag = "bird"
                                     )
-                                )
-                                example(
-                                    ValueExampleDescriptor(
-                                        "Dog",
-                                        Pet(
-                                            id = 123,
-                                            name = "Charlie",
-                                            tag = "dog"
-                                        ), null, null
+                                }
+                                example("Dog") {
+                                    value = Pet(
+                                        id = 123,
+                                        name = "Charlie",
+                                        tag = "dog"
                                     )
-                                )
+                                }
                             }
                         }
                         HttpStatusCode.NotFound to {
@@ -215,7 +200,7 @@ private fun Application.myModule() {
                         default {
                             body<ErrorModel> {
                                 description = "unexpected error"
-                                example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
+                                exampleRef("Unexpected Error")
                             }
                         }
                     }
@@ -230,7 +215,9 @@ private fun Application.myModule() {
                         pathParameter<Long>("id") {
                             description = "Id of pet to delete"
                             required = true
-                            example = ValueExampleDescriptor("default", 123L, null, null)
+                            example("default") {
+                                value = 123L
+                            }
                         }
                     }
                     response {
@@ -243,7 +230,7 @@ private fun Application.myModule() {
                         default {
                             body<ErrorModel> {
                                 description = "unexpected error"
-                                example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
+                                exampleRef("Unexpected Error")
                             }
                         }
                     }

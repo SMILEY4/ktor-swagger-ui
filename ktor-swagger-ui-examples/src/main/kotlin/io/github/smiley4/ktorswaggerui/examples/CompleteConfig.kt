@@ -5,7 +5,6 @@ import io.github.smiley4.ktorswaggerui.data.AuthScheme
 import io.github.smiley4.ktorswaggerui.data.AuthType
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
-import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
@@ -110,20 +109,15 @@ private fun Application.myModule() {
             })
         }
         examples {
-            example(
-                ValueExampleDescriptor(
-                    name = "Id 1",
-                    description = "First example id",
-                    value = "12345"
-                )
-            )
-            example(
-                ValueExampleDescriptor(
-                    name = "Id 2",
-                    description = "Second example id",
-                    value = "54321"
-                )
-            )
+            example("Id 1") {
+                description = "First example id"
+                value = "12345"
+            }
+            example("Id 2") {
+                description = "Second example id"
+                value = "54321"
+
+            }
         }
         specAssigner = { _, _ -> PluginConfigDsl.DEFAULT_SPEC_ID }
         pathFilter = { _, url -> url.firstOrNull() != "hidden" }
