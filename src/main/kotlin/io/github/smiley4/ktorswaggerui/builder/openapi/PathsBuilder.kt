@@ -1,6 +1,7 @@
 package io.github.smiley4.ktorswaggerui.builder.openapi
 
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
+import io.github.smiley4.ktorswaggerui.routing.ControllerUtils
 import io.swagger.v3.oas.models.PathItem
 import io.swagger.v3.oas.models.Paths
 
@@ -21,7 +22,8 @@ class PathsBuilder(
         }
 
     private fun addAsNewPath(paths: Paths, route: RouteMeta) {
-        paths.addPathItem(route.path, pathBuilder.build(route))
+        val rootPath = ControllerUtils.appConfig?.let { ControllerUtils.getRootPath(it) } ?: ""
+        paths.addPathItem("$rootPath${route.path}", pathBuilder.build(route))
     }
 
     private fun addToExistingPath(existing: PathItem, route: RouteMeta) {

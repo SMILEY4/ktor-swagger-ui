@@ -1,8 +1,10 @@
 package io.github.smiley4.ktorswaggerui.routing
 
-import io.ktor.server.config.ApplicationConfig
+import io.ktor.server.config.*
 
 object ControllerUtils {
+
+    var appConfig: ApplicationConfig? = null
 
     fun getRootPath(appConfig: ApplicationConfig): String {
         return appConfig.propertyOrNull("ktor.deployment.rootPath")?.getString()?.let { "/${dropSlashes(it)}" } ?: ""
