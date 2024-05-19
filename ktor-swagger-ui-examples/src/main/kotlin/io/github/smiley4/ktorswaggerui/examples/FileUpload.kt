@@ -1,8 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -18,7 +16,6 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.swagger.v3.oas.models.media.Schema
 import java.io.File
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -30,12 +27,10 @@ private fun Application.myModule() {
     install(SwaggerUI) {
         schemas {
             // overwrite type "File" with custom schema for binary data
-            overwrite[typeOf<File>()] = SwaggerTypeDescriptor(
-                Schema<Any>().also {
-                    it.type = "string"
-                    it.format = "binary"
-                }
-            )
+            overwrite<File>(Schema<Any>().also {
+                it.type = "string"
+                it.format = "binary"
+            })
         }
     }
 
@@ -52,7 +47,7 @@ private fun Application.myModule() {
         // upload a single file, either as png, jpeg or svg
         post("single", {
             request {
-                body(KTypeDescriptor(typeOf<File>())) {
+                body<File> {
                     mediaTypes = setOf(
                         ContentType.Image.PNG,
                         ContentType.Image.JPEG,
@@ -69,14 +64,14 @@ private fun Application.myModule() {
             request {
                 multipartBody {
                     mediaTypes = setOf(ContentType.MultiPart.FormData)
-                    part("first-image", KTypeDescriptor(typeOf<File>())) {
+                    part<File>("first-image",) {
                         mediaTypes = setOf(
                             ContentType.Image.PNG,
                             ContentType.Image.JPEG,
                             ContentType.Image.SVG
                         )
                     }
-                    part("second-image", KTypeDescriptor(typeOf<File>())) {
+                    part<File>("second-image") {
                         mediaTypes = setOf(
                             ContentType.Image.PNG,
                             ContentType.Image.JPEG,

@@ -6,7 +6,6 @@ import io.github.smiley4.ktorswaggerui.data.AnyOfTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.ArrayTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.RefTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -40,23 +39,19 @@ private fun Application.myModule() {
         schemas {
 
             // add a swagger schema to the component-section of the api-spec with the id "swagger-schema"
-            schema("swagger-schema", SwaggerTypeDescriptor(
-                Schema<Any>().also {
-                    it.type = "number"
-                    it.title = "Custom Type"
-                }
-            ))
+            schema("swagger-schema", Schema<Any>().also {
+                it.type = "number"
+                it.title = "Custom Type"
+            })
 
             // add a type to the component-section of the api-spec with the id "type-schema"
-            schema("type-schema", KTypeDescriptor(typeOf<MySchemaClass>()))
+            schema<MySchemaClass>("type-schema")
 
             // overwrite 'LocalDateTime' with custom schema (root only)
-            overwrite[typeOf<LocalDateTime>()] = SwaggerTypeDescriptor(
-                Schema<Any>().also {
-                    it.title = "timestamp"
-                    it.type = "integer"
-                }
-            )
+            overwrite<LocalDateTime>(Schema<Any>().also {
+                it.title = "timestamp"
+                it.type = "integer"
+            })
 
             // customized schema generation pipeline
             generator = { type ->
@@ -86,7 +81,7 @@ private fun Application.myModule() {
         get("basic", {
             request {
                 // directly specify the schema type
-                body(KTypeDescriptor(typeOf<MySchemaClass>()))
+                body<MySchemaClass>()
             }
         }) {
             call.respondText("...")
@@ -147,7 +142,7 @@ private fun Application.myModule() {
         get("type-overwrite", {
             request {
                 // schema is not generated the normal way but the overwriting schema from the config is used instead
-                body(KTypeDescriptor(typeOf<LocalDateTime>()))
+                body<LocalDateTime>()
             }
         }) {
             call.respondText("...")
@@ -157,7 +152,7 @@ private fun Application.myModule() {
         get("jackson-subtypes", {
             request {
                 // jackson subtypes are detected automatically
-                body(KTypeDescriptor(typeOf<BaseType>()))
+                body<BaseType>()
             }
         }) {
             call.respondText("...")

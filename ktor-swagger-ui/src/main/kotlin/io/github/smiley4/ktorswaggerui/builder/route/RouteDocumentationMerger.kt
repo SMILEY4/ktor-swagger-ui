@@ -25,9 +25,9 @@ class RouteDocumentationMerger {
             hidden = a.hidden || b.hidden
             protected = a.protected ?: b.protected
             request {
-                (getParameters() as MutableList).also {
-                    it.addAll(a.getRequest().getParameters())
-                    it.addAll(b.getRequest().getParameters())
+                parameters.also {
+                    it.addAll(a.getRequest().parameters)
+                    it.addAll(b.getRequest().parameters)
                 }
                 setBody(a.getRequest().getBody() ?: b.getRequest().getBody())
             }

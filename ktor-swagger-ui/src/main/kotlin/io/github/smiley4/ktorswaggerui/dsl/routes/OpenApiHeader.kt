@@ -1,8 +1,13 @@
 package io.github.smiley4.ktorswaggerui.dsl.routes
 
+import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiHeaderData
+import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import io.swagger.v3.oas.models.media.Schema
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 
 @OpenApiDslMarker
@@ -18,6 +23,32 @@ class OpenApiHeader {
      * The schema of the header
      */
     var type: TypeDescriptor? = null
+
+
+    /**
+     * The schema of the header
+     */
+    fun type(type: TypeDescriptor) {
+        this.type = type
+    }
+
+
+    /**
+     * The schema of the header
+     */
+    fun type(type: Schema<*>) = type(SwaggerTypeDescriptor(type))
+
+
+    /**
+     * The schema of the header
+     */
+    fun type(type: KType) = type(KTypeDescriptor(type))
+
+
+    /**
+     * The schema of the header
+     */
+    inline fun <reified T> type() = type(KTypeDescriptor(typeOf<T>()))
 
 
     /**

@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.delete
@@ -18,7 +17,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -47,11 +45,6 @@ private fun Application.myModule() {
         examples {
             example(ValueExampleDescriptor("Unexpected Error", ErrorModel("Unexpected Error"), null, null))
         }
-        schemas {
-            schema("Pet", KTypeDescriptor(typeOf<Pet>()))
-            schema("NewPet", KTypeDescriptor(typeOf<NewPet>()))
-            schema("PetList", KTypeDescriptor(typeOf<List<Pet>>()))
-        }
     }
 
     routing {
@@ -69,12 +62,12 @@ private fun Application.myModule() {
                 operationId = "findPets"
                 description = "Returns all pets from the system that the user has access to"
                 request {
-                    queryParameter("tags", KTypeDescriptor(typeOf<List<String>>())) {
+                    queryParameter<List<String>>("tags") {
                         description = "tags to filter by"
                         required = false
                         example = ValueExampleDescriptor("dog", "default", null, null)
                     }
-                    queryParameter("limit", KTypeDescriptor(typeOf<Int>())) {
+                    queryParameter<Int>("limit") {
                         description = "maximum number of results to return"
                         required = false
                         example = ValueExampleDescriptor("default", 100, null, null)
@@ -82,7 +75,7 @@ private fun Application.myModule() {
                 }
                 response {
                     HttpStatusCode.OK to {
-                        body(KTypeDescriptor(typeOf<List<Pet>>())) {
+                        body<List<Pet>> {
                             description = "the list of available pets"
                             example(
                                 ValueExampleDescriptor(
@@ -104,7 +97,7 @@ private fun Application.myModule() {
                         }
                     }
                     default {
-                        body(KTypeDescriptor(typeOf<ErrorModel>())) {
+                        body<ErrorModel> {
                             description = "unexpected error"
                             example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                         }
@@ -118,7 +111,7 @@ private fun Application.myModule() {
                 operationId = "addPet"
                 description = "Creates a new pet in the store. Duplicates are allowed"
                 request {
-                    body(KTypeDescriptor(typeOf<NewPet>())) {
+                    body<NewPet> {
                         description = "Pet to add to the store"
                         required = true
                         example(
@@ -143,7 +136,7 @@ private fun Application.myModule() {
                 }
                 response {
                     HttpStatusCode.OK to {
-                        body(KTypeDescriptor(typeOf<Pet>())) {
+                        body<Pet> {
                             description = "the created pet"
                             example(
                                 ValueExampleDescriptor(
@@ -168,7 +161,7 @@ private fun Application.myModule() {
                         }
                     }
                     default {
-                        body(KTypeDescriptor(typeOf<ErrorModel>())) {
+                        body<ErrorModel> {
                             description = "unexpected error"
                             example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                         }
@@ -184,7 +177,7 @@ private fun Application.myModule() {
                     operationId = "findBetById"
                     description = "Returns a pet based on a single ID."
                     request {
-                        pathParameter("id", KTypeDescriptor(typeOf<Long>())) {
+                        pathParameter<Long>("id") {
                             description = "Id of pet to fetch"
                             required = true
                             example = ValueExampleDescriptor("default", 123L, null, null)
@@ -192,7 +185,7 @@ private fun Application.myModule() {
                     }
                     response {
                         HttpStatusCode.OK to {
-                            body(KTypeDescriptor(typeOf<Pet>())) {
+                            body<Pet>{
                                 description = "the pet with the given id"
                                 example(
                                     ValueExampleDescriptor(
@@ -220,7 +213,7 @@ private fun Application.myModule() {
                             description = "the pet with the given id was not found"
                         }
                         default {
-                            body(KTypeDescriptor(typeOf<ErrorModel>())) {
+                            body<ErrorModel> {
                                 description = "unexpected error"
                                 example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                             }
@@ -234,7 +227,7 @@ private fun Application.myModule() {
                     operationId = "deletePet"
                     description = "deletes a single pet based on the supplied ID"
                     request {
-                        pathParameter("id", KTypeDescriptor(typeOf<Long>())) {
+                        pathParameter<Long>("id") {
                             description = "Id of pet to delete"
                             required = true
                             example = ValueExampleDescriptor("default", 123L, null, null)
@@ -248,7 +241,7 @@ private fun Application.myModule() {
                             description = "the pet with the given id was not found"
                         }
                         default {
-                            body(KTypeDescriptor(typeOf<ErrorModel>())) {
+                            body<ErrorModel> {
                                 description = "unexpected error"
                                 example(RefExampleDescriptor("Unexpected Error", "Unexpected Error"))
                             }

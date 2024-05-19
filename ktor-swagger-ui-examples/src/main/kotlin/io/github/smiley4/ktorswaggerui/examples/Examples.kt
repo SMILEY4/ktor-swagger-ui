@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
@@ -15,7 +14,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -59,7 +57,7 @@ private fun Application.myModule() {
 
         get("basic", {
             request {
-                body(KTypeDescriptor(typeOf<MyExampleClass>())) {
+                body<MyExampleClass> {
                     // specify two example values
                     example(
                         ValueExampleDescriptor(
@@ -88,7 +86,7 @@ private fun Application.myModule() {
 
         get("reference-shared", {
             request {
-                body(KTypeDescriptor(typeOf<MyExampleClass>())) {
+                body<MyExampleClass> {
                     // reference two shared examples specified in the plugin-config (and placed in the component section)
                     example(
                         RefExampleDescriptor("Example 1", "Shared A")

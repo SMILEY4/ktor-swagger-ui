@@ -26,7 +26,7 @@ class RouteDocumentationMergerTest : StringSpec({
             route.securitySchemeNames.shouldBeEmpty()
             route.protected shouldBe null
             route.getRequest().also { requests ->
-                requests.getParameters().shouldBeEmpty()
+                requests.parameters.shouldBeEmpty()
                 requests.getBody() shouldBe null
             }
             route.getResponses().also { responses ->
@@ -99,7 +99,7 @@ class RouteDocumentationMergerTest : StringSpec({
             )
             route.protected shouldBe true
             route.getRequest().also { requests ->
-                requests.getParameters().map { it.name } shouldContainExactlyInAnyOrder listOf(
+                requests.parameters.map { it.name } shouldContainExactlyInAnyOrder listOf(
                     "query",
                     "pathA1",
                     "pathA2",

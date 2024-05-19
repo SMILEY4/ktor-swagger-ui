@@ -18,7 +18,7 @@ class OpenApiSecurityScheme(
     /**
      * The name of the security scheme.
      */
-    val schemeName: String
+    private val schemeName: String
 ) {
 
     /**

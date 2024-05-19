@@ -3,8 +3,6 @@ package io.github.smiley4.ktorswaggerui.examples
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.data.AuthScheme
 import io.github.smiley4.ktorswaggerui.data.AuthType
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
@@ -28,7 +26,6 @@ import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
 import io.swagger.v3.oas.models.media.Schema
 import java.io.File
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -99,7 +96,7 @@ private fun Application.myModule() {
             }
         }
         schemas {
-            schema("string", KTypeDescriptor(typeOf<String>()))
+            schema<String>("string")
             generator = { type ->
                 type
                     .processReflection()
@@ -107,12 +104,10 @@ private fun Application.myModule() {
                     .withAutoTitle(TitleType.SIMPLE)
                     .compileReferencingRoot()
             }
-            overwrite[typeOf<File>()] = SwaggerTypeDescriptor(
-                Schema<Any>().also {
-                    it.type = "string"
-                    it.format = "binary"
-                }
-            )
+            overwrite<File>(Schema<Any>().also {
+                it.type = "string"
+                it.format = "binary"
+            })
         }
         examples {
             example(
@@ -151,7 +146,7 @@ private fun Application.myModule() {
         get("hello", {
             description = "A Hello-World route"
             request {
-                queryParameter("name", KTypeDescriptor(typeOf<String>())) {
+                queryParameter<String>("name") {
                     description = "the name to greet"
                 }
             }

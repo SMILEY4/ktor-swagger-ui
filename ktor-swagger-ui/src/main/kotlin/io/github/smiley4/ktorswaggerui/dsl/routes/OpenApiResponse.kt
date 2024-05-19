@@ -2,9 +2,12 @@ package io.github.smiley4.ktorswaggerui.dsl.routes
 
 import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.OpenApiResponseData
+import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.KType
+import kotlin.reflect.typeOf
 
 /**
  * A container for the expected responses of an operation. The container maps an HTTP response code to the expected response.
@@ -18,105 +21,64 @@ class OpenApiResponse(val statusCode: String) {
      */
     var description: String? = null
 
-    private val headers = mutableMapOf<String, OpenApiHeader>()
+    val headers = mutableMapOf<String, OpenApiHeader>()
+
 
     /**
      * Possible headers returned with this response
      */
-    fun header(name: String, type: TypeDescriptor, block: OpenApiHeader.() -> Unit) {
+    fun header(name: String, type: TypeDescriptor, block: OpenApiHeader.() -> Unit = {}) {
         headers[name] = OpenApiHeader().apply(block).apply {
             this.type = type
         }
     }
 
-//
-//    /**
-//     * Possible headers returned with this response
-//     */
-//    fun header(name: String, type: KClass<*>, block: OpenApiHeader.() -> Unit) = header(name, type.asSchemaType(), block)
-//
-//
-//    /**
-//     * Possible headers returned with this response
-//     */
-//    fun header(name: String, type: KClass<*>) = header(name, type.asSchemaType()) {}
-//
-//
-//    /**
-//     * Possible headers returned with this response
-//     */
-//    inline fun <reified TYPE> header(name: String) = header(name, getSchemaType<TYPE>()) {}
-//
-//
-//    /**
-//     * Possible headers returned with this response
-//     */
-//    inline fun <reified TYPE> header(name: String, noinline block: OpenApiHeader.() -> Unit) = header(name, getSchemaType<TYPE>(), block)
+
+    /**
+     * Possible headers returned with this response
+     */
+    fun header(name: String, type: Schema<*>, block: OpenApiHeader.() -> Unit = {}) = header(name, SwaggerTypeDescriptor(type), block)
+
+
+    /**
+     * Possible headers returned with this response
+     */
+    fun header(name: String, type: KType, block: OpenApiHeader.() -> Unit = {}) = header(name, KTypeDescriptor(type), block)
+
+
+    /**
+     * Possible headers returned with this response
+     */
+    inline fun <reified T> header(name: String, noinline block: OpenApiHeader.() -> Unit = {}) =
+        header(name, KTypeDescriptor(typeOf<T>()), block)
 
 
     private var body: OpenApiBaseBody? = null
 
+
     /**
      * The body returned with this response
      */
-    fun body(type: TypeDescriptor, block: OpenApiSimpleBody.() -> Unit) {
+    fun body(type: TypeDescriptor, block: OpenApiSimpleBody.() -> Unit = {}) {
         body = OpenApiSimpleBody(type).apply(block)
     }
 
+    /**
+     * The body returned with this response
+     */
+    fun body(type: Schema<*>, block: OpenApiSimpleBody.() -> Unit = {}) = body(SwaggerTypeDescriptor(type), block)
 
     /**
      * The body returned with this response
      */
-    fun body(type: TypeDescriptor) = body(type) {}
-
+    fun body(type: KType, block: OpenApiSimpleBody.() -> Unit = {}) = body(KTypeDescriptor(type), block)
 
     /**
      * The body returned with this response
      */
-    fun body(type: KType, block: OpenApiSimpleBody.() -> Unit) = body(KTypeDescriptor(type), block)
+    inline fun <reified T> body(noinline block: OpenApiSimpleBody.() -> Unit = {}) = body(KTypeDescriptor(typeOf<T>()), block)
 
 
-//    /**
-//     * The body returned with this response
-//     */
-//    fun body(type: KClass<*>, block: OpenApiSimpleBody.() -> Unit) = body(type.asSchemaType(), block)
-//
-//
-//    /**
-//     * The body returned with this response
-//     */
-//    @JvmName("bodyGenericType")
-//    inline fun <reified TYPE> body(noinline block: OpenApiSimpleBody.() -> Unit) = body(getSchemaType<TYPE>(), block)
-//
-//
-//    /**
-//     * The body returned with this response
-//     */
-//    fun body(type: KClass<*>) = body(type) {}
-//
-//
-//    /**
-//     * The body returned with this response
-//     */
-//    inline fun <reified TYPE> body() = body(getSchemaType<TYPE>()) {}
-//
-//
-//    /**
-//     * The body returned with this response
-//     */
-//    fun body(block: OpenApiSimpleBody.() -> Unit) = body(EmptyTypeDescriptor, block)
-
-
-//    /**
-//     * The body returned with this response
-//     */
-//    fun body(customSchemaId: String, block: OpenApiSimpleBody.() -> Unit) = body(BodyTypeDescriptor.custom(customSchemaId), block)
-//
-//
-//    /**
-//     * The body returned with this response
-//     */
-//    fun body(customSchemaId: String) = body(customSchemaId) {}
 
 
     /**

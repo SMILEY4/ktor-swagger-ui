@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.util.DefaultIndenter
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.post
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -20,7 +19,6 @@ import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -56,7 +54,7 @@ private fun Application.myModule() {
             // information about the request
             request {
                 // specify the schema of the request-body and some additional information
-                body(KTypeDescriptor(typeOf<Calculation>())) {
+                body<Calculation> {
                     description = "the requested operation and values to perform the operation on"
                     required = true
                 }
@@ -67,7 +65,7 @@ private fun Application.myModule() {
                 HttpStatusCode.OK to {
                     description = "Calculation was performed successfully."
                     // specify the schema of the response-body and some additional information
-                    body(KTypeDescriptor(typeOf<CalculationResult>())) {
+                    body<CalculationResult> {
                         description = "the result of an operation together with the original request"
                     }
                 }

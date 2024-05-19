@@ -1,7 +1,6 @@
 package io.github.smiley4.ktorswaggerui.examples
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
@@ -14,7 +13,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import kotlin.reflect.typeOf
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -65,7 +63,7 @@ private fun Application.myModule() {
             // information about the request
             request {
                 // information about the query-parameter "name" of type "string"
-                queryParameter("name", KTypeDescriptor(typeOf<String>())) {
+                queryParameter<String>("name") {
                     description = "the name to greet"
                 }
             }
