@@ -28,7 +28,7 @@ class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaCont
             val schema = collapseRootRef(generateSchema(typeDescriptor))
             componentSchemas[schemaId] = schema.swagger
             schema.componentSchemas.forEach { (k, v) ->
-                componentSchemas[k.full()] = v
+                componentSchemas[k] = v
             }
         }
     }
@@ -37,7 +37,7 @@ class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaCont
         if (schema.swagger.`$ref` == null) {
             return schema
         } else {
-            val referencedSchemaId = TypeId.parse(schema.swagger.`$ref`!!.replace("#/components/schemas/", ""))
+            val referencedSchemaId = schema.swagger.`$ref`!!.replace("#/components/schemas/", "")
             val referencedSchema = schema.componentSchemas[referencedSchemaId]!!
             return CompiledSwaggerSchema(
                 typeData = schema.typeData,
@@ -54,7 +54,7 @@ class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaCont
             val schema = generateSchema(typeDescriptor)
             rootSchemas[typeDescriptor] = schema.swagger
             schema.componentSchemas.forEach { (k, v) ->
-                componentSchemas[k.full()] = v
+                componentSchemas[k] = v
             }
         }
     }

@@ -16,5 +16,3 @@ class ValueExampleDescriptor(
 class RefExampleDescriptor(name: String, val refName: String) : ExampleDescriptor(name)
 
 class SwaggerExampleDescriptor(name: String, val example: Example) : ExampleDescriptor(name)
-
-

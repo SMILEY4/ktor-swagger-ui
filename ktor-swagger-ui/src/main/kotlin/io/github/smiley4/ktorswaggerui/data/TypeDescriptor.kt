@@ -27,7 +27,9 @@ fun anyOf(vararg types: TypeDescriptor) = AnyOfTypeDescriptor(types.toList())
 fun anyOf(types: Collection<TypeDescriptor>) = AnyOfTypeDescriptor(types.toList())
 
 fun anyOf(vararg types: Schema<*>) = AnyOfTypeDescriptor(types.map { SwaggerTypeDescriptor(it) })
+@JvmName("anyOfSwagger")
 fun anyOf(types: Collection<Schema<*>>) = AnyOfTypeDescriptor(types.map { SwaggerTypeDescriptor(it) })
 
 fun anyOf(vararg types: KType) = AnyOfTypeDescriptor(types.map { KTypeDescriptor(it) })
+@JvmName("anyOfKType")
 fun anyOf(types: Collection<KType>) = AnyOfTypeDescriptor(types.map { KTypeDescriptor(it) })
