@@ -1,6 +1,10 @@
 package io.github.smiley4.ktorswaggerui.routing
 
+import io.github.smiley4.ktorswaggerui.data.SwaggerUIData
+
 object ApiSpec {
+
+    var swaggerUiConfig: SwaggerUIData = SwaggerUIData.DEFAULT
 
     private val apiSpecs = mutableMapOf<String, String>()
 

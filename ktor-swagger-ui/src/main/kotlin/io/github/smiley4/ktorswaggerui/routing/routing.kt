@@ -4,6 +4,7 @@ import io.github.smiley4.ktorswaggerui.SWAGGER_UI_WEBJARS_VERSION
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.data.SwaggerUIData
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
+import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.ktor.http.*
@@ -11,7 +12,6 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import mu.KotlinLogging
 
 
 fun Route.openApiSpec(specId: String = PluginConfigDsl.DEFAULT_SPEC_ID) {
@@ -31,7 +31,7 @@ fun Route.swaggerUI(apiUrl: String) {
             serveStaticResource(call.parameters["filename"]!!, SWAGGER_UI_WEBJARS_VERSION, call)
         }
         get("swagger-initializer.js") {
-            serveSwaggerInitializer(call, SwaggerUIData.DEFAULT, apiUrl)
+            serveSwaggerInitializer(call, ApiSpec.swaggerUiConfig, apiUrl)
         }
     }
 }
@@ -44,7 +44,9 @@ private suspend fun serveSwaggerInitializer(call: ApplicationCall, swaggerUiConf
     val propSort = "operationsSorter: " +
             if (swaggerUiConfig.sort == SwaggerUiSort.NONE) "undefined"
             else "\"${swaggerUiConfig.sort.value}\""
-    val propSyntaxHighlight = "syntaxHighlight: { theme: \"${swaggerUiConfig.syntaxHighlight.value}\" }"
+    val propSyntaxHighlight = "syntaxHighlight: " +
+            if(swaggerUiConfig.syntaxHighlight == SwaggerUiSyntaxHighlight.DISABLED) "false"
+            else "{ theme: \"${swaggerUiConfig.syntaxHighlight.value}\" }"
     val content = """
 			window.onload = function() {
 			  window.ui = SwaggerUIBundle({
