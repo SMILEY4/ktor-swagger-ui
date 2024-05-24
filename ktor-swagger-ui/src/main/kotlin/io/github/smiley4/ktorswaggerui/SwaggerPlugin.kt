@@ -64,6 +64,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
         try {
             val routes = routes(application, config)
             ApiSpec.setAll(buildOpenApiSpecs(config, routes))
+            ApiSpec.swaggerUiConfig = config.swagger
         } catch (e: Exception) {
             logger.error("Error during application startup in swagger-ui-plugin", e)
         }
