@@ -13,6 +13,5 @@
     </root>
 
     <logger name="io.netty" level="INFO"/>
-    <logger name="com.arangodb" level="INFO"/>
 
 </configuration>
