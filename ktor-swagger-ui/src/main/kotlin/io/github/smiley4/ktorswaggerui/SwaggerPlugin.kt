@@ -47,7 +47,7 @@ import mu.KotlinLogging
 /**
  * This version must match the version of the gradle dependency
  */
-internal const val SWAGGER_UI_WEBJARS_VERSION = "5.9.0"
+internal const val SWAGGER_UI_WEBJARS_VERSION = "5.17.11"
 
 private val logger = KotlinLogging.logger {}
 
