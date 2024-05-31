@@ -1,9 +1,9 @@
 package io.github.smiley4.ktorswaggerui.builder
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextImpl
 import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ExternalDocumentationBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.HeaderBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.OperationBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.OperationTagsBuilder
@@ -12,6 +12,7 @@ import io.github.smiley4.ktorswaggerui.builder.openapi.RequestBodyBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.ResponseBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.ResponsesBuilder
 import io.github.smiley4.ktorswaggerui.builder.openapi.SecurityRequirementsBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.ServerBuilder
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextImpl
@@ -1001,6 +1002,8 @@ class OperationBuilderTest : StringSpec({
                     config = pluginConfigData
                 ),
                 securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
+                externalDocumentationBuilder = ExternalDocumentationBuilder(),
+                serverBuilder = ServerBuilder()
             ).build(route)
         }
 

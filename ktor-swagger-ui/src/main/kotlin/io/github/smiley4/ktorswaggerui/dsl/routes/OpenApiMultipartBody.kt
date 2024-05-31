@@ -50,7 +50,7 @@ class OpenApiMultipartBody : OpenApiBaseBody() {
     override fun build() = OpenApiMultipartBodyData(
         description = description,
         required = required ?: false,
-        mediaTypes = mediaTypes,
+        mediaTypes = mediaTypes.toSet(),
         parts = parts.map { it.build() }
     )
 }

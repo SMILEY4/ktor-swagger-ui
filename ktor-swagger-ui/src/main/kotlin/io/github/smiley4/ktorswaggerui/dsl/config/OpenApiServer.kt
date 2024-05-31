@@ -22,10 +22,23 @@ class OpenApiServer {
      */
     var description: String? = ServerData.DEFAULT.description
 
+    private val variables = mutableMapOf<String, OpenApiServerVariable>()
+
+
+    /**
+     * Adds a new server variable with the given name
+     */
+    fun variable(name: String, block: OpenApiServerVariable.() -> Unit) {
+        variables[name] = OpenApiServerVariable(name).apply(block)
+    }
 
     fun build(base: ServerData) = ServerData(
         url = mergeDefault(base.url, url, ServerData.DEFAULT.url),
-        description = merge(base.description, description)
+        description = merge(base.description, description),
+        variables = buildMap {
+            base.variables.forEach { this[it.name] = it }
+            variables.values.map { it.build() }.forEach { this[it.name] = it }
+        }.values.toList()
     )
 
 }

@@ -8,6 +8,7 @@ import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.swagger.v3.oas.models.examples.Example
+import io.swagger.v3.oas.models.parameters.Parameter
 
 
 @OpenApiDslMarker
@@ -99,6 +100,11 @@ class OpenApiRequestParameter(
     var allowReserved: Boolean? = null
 
 
+    /**
+     * Describes how the parameter value will be serialized depending on the type of the parameter value.
+     */
+    var style: Parameter.StyleEnum? = null
+
     fun build() = OpenApiRequestParameterData(
         name = name,
         type = type,
@@ -110,6 +116,7 @@ class OpenApiRequestParameter(
         allowEmptyValue = allowEmptyValue ?: true,
         explode = explode ?: false,
         allowReserved = allowReserved ?: true,
+        style = style
     )
 
 }

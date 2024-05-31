@@ -8,7 +8,9 @@ class OperationBuilder(
     private val parameterBuilder: ParameterBuilder,
     private val requestBodyBuilder: RequestBodyBuilder,
     private val responsesBuilder: ResponsesBuilder,
-    private val securityRequirementsBuilder: SecurityRequirementsBuilder
+    private val securityRequirementsBuilder: SecurityRequirementsBuilder,
+    private val externalDocumentationBuilder: ExternalDocumentationBuilder,
+    private val serverBuilder: ServerBuilder
 ) {
 
     fun build(route: RouteMeta): Operation =
@@ -29,6 +31,10 @@ class OperationBuilder(
                         it.security = securityRequirements
                     }
                 }
+            }
+            it.externalDocs = route.documentation.externalDocs?.let { docs -> externalDocumentationBuilder.build(docs) }
+            if (route.documentation.servers.isNotEmpty()) {
+                it.servers = route.documentation.servers.map { server -> serverBuilder.build(server) }
             }
         }
 

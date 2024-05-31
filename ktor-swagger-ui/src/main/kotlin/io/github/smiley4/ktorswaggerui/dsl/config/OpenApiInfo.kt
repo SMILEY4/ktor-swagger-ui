@@ -27,6 +27,11 @@ class OpenApiInfo {
      */
     var description: String? = null
 
+    /**
+     * A short summary of the API
+     */
+    var summary: String? = null
+
 
     /**
      * A URL to the Terms of Service for the API. MUST be in the format of a URL.
@@ -62,7 +67,8 @@ class OpenApiInfo {
             description = merge(base.description, this.description),
             termsOfService = merge(base.termsOfService, this.termsOfService),
             contact = contact?.build(base.contact ?: ContactData.DEFAULT) ?: base.contact,
-            license = license?.build(base.license ?: LicenseData.DEFAULT) ?: base.license
+            license = license?.build(base.license ?: LicenseData.DEFAULT) ?: base.license,
+            summary = merge(base.summary, this.summary)
         )
     }
 

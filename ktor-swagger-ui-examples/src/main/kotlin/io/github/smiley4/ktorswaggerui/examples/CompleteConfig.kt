@@ -14,6 +14,7 @@ import io.github.smiley4.schemakenerator.swagger.compileReferencingRoot
 import io.github.smiley4.schemakenerator.swagger.data.TitleType
 import io.github.smiley4.schemakenerator.swagger.generateSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.withAutoTitle
+import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
@@ -30,11 +31,15 @@ fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
 }
 
+class Greeting(
+    val name: String
+)
 
 /**
  * A (nearly) complete - and mostly nonsensical - plugin configuration
  */
 private fun Application.myModule() {
+
 
     install(SwaggerUI) {
         info {
@@ -50,6 +55,7 @@ private fun Application.myModule() {
             license {
                 name = "Example License"
                 url = "example.com"
+                identifier = "Apache-2.0"
             }
         }
         externalDocs {
@@ -59,10 +65,20 @@ private fun Application.myModule() {
         server {
             url = "localhost"
             description = "local dev-server"
+            variable("version") {
+                default = "1.0"
+                enum = setOf("1.0", "2.0", "3.0")
+                description = "the version of the server api"
+            }
         }
         server {
             url = "example.com"
             description = "productive server"
+            variable("version") {
+                default = "1.0"
+                enum = setOf("1.0", "2.0")
+                description = "the version of the server api"
+            }
         }
         swagger {
             displayOperationId = true
@@ -138,15 +154,53 @@ private fun Application.myModule() {
 
         // a documented route
         get("hello", {
-            description = "A Hello-World route"
+            operationId = "hello"
+            summary = "hello world route"
+            description = "A Hello-World route as an example."
+            tags = setOf("hello", "example")
+            specId = PluginConfigDsl.DEFAULT_SPEC_ID
+            deprecated = false
+            hidden = false
+            protected = false
+            securitySchemeNames = emptyList()
+            externalDocs {
+                url = "example.com/hello"
+                description = "external documentation of 'hello'-route"
+            }
             request {
                 queryParameter<String>("name") {
                     description = "the name to greet"
+                    example("Josh") {
+                        value = "Josh"
+                        summary = "Example name"
+                        description = "An example name for this query parameter"
+                    }
                 }
+                body<Unit>()
             }
             response {
                 HttpStatusCode.OK to {
                     description = "successful request - always returns 'Hello World!'"
+                    header<String>("x-random") {
+                        description = "A header with some random number"
+                        required = true
+                        deprecated = false
+                        explode = false
+                    }
+                    body<Greeting> {
+                        description = "the greeting object with the name of the person to greet."
+                        mediaTypes = setOf(ContentType.Application.Json)
+                        required = true
+                    }
+                }
+            }
+            server {
+                url = "example.com"
+                description = "productive server for 'hello'-route"
+                variable("version") {
+                    default = "1.0"
+                    enum = setOf("1.0", "2.0")
+                    description = "the version of the server api"
                 }
             }
         }) {

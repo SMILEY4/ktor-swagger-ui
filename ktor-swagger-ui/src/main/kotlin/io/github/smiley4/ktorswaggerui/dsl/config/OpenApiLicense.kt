@@ -22,8 +22,14 @@ class OpenApiLicense {
     var url: String? = LicenseData.DEFAULT.url
 
 
+    /**
+     * An SPDX (https://spdx.org/licenses/) license expression for the API. The identifier field is mutually exclusive of the url field.
+     */
+    var identifier: String? = LicenseData.DEFAULT.identifier
+
     fun build(base: LicenseData) = LicenseData(
         name = DataUtils.merge(base.name, name),
         url = DataUtils.merge(base.url, url),
+        identifier = DataUtils.merge(base.identifier, identifier)
     )
 }

@@ -72,7 +72,7 @@ class OpenApiSimpleBody(
     override fun build() = OpenApiSimpleBodyData(
         description = description,
         required = required ?: false,
-        mediaTypes = mediaTypes,
+        mediaTypes = mediaTypes.toSet(),
         type = type,
         examples = examples,
     )

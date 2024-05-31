@@ -23,7 +23,7 @@ sealed class OpenApiBaseBody {
     /**
      * Allowed Media Types for this body. If none specified, a media type will be chosen automatically based on the provided schema
      */
-    var mediaTypes: Set<ContentType> = emptySet()
+    var mediaTypes: Collection<ContentType> = emptySet()
 
     abstract fun build(): OpenApiBaseBodyData
 }

@@ -14,6 +14,8 @@ class HeaderBuilder(
             it.required = header.required
             it.deprecated = header.deprecated
             it.schema = header.type?.let { t -> schemaContext.getSchema(t) }
+            it.explode = header.explode
+//            it.example = TODO()
         }
 
 }

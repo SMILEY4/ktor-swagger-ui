@@ -20,6 +20,7 @@ class InfoBuilder(
             info.license?.also { license ->
                 it.license = licenseBuilder.build(license)
             }
+            it.summary = info.summary
         }
 
 }

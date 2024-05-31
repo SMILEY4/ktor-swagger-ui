@@ -5,4 +5,5 @@ data class OpenApiHeaderData(
     val type: TypeDescriptor?,
     val required: Boolean,
     val deprecated: Boolean,
+    val explode: Boolean?,
 )

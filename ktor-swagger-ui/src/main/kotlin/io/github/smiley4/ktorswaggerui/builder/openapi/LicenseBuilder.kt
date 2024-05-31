@@ -9,6 +9,7 @@ class LicenseBuilder {
         License().also {
             it.name = license.name
             it.url = license.url
+            it.identifier = license.identifier
         }
 
 }

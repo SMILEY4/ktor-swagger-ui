@@ -62,11 +62,13 @@ class OpenApiHeader {
      */
     var deprecated: Boolean? = null
 
+    var explode: Boolean? = null
 
     fun build() = OpenApiHeaderData(
         description = description,
         type = type,
         required = required ?: false,
-        deprecated = deprecated ?: false
+        deprecated = deprecated ?: false,
+        explode = explode,
     )
 }

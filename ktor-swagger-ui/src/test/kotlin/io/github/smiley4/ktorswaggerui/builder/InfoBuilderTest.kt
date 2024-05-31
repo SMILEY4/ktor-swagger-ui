@@ -29,6 +29,7 @@ class InfoBuilderTest : StringSpec({
         buildInfoObject {
             title = "Test Api"
             version = "1.0"
+            summary = "testing api"
             description = "Api for testing"
             termsOfService = "test-tos"
             contact {
@@ -40,10 +41,12 @@ class InfoBuilderTest : StringSpec({
             license {
                 name = "Test License"
                 url = "example.com"
+                identifier = "Example"
             }
         }.also { info ->
             info.title shouldBe "Test Api"
             info.version shouldBe "1.0"
+            info.summary shouldBe "testing api"
             info.description shouldBe "Api for testing"
             info.termsOfService shouldBe "test-tos"
             info.contact
@@ -58,9 +61,9 @@ class InfoBuilderTest : StringSpec({
                 ?.also { license ->
                     license.name shouldBe "Test License"
                     license.url shouldBe "example.com"
+                    license.identifier shouldBe "Example"
                 }
             info.extensions shouldBe null
-            info.summary shouldBe null
         }
     }
 

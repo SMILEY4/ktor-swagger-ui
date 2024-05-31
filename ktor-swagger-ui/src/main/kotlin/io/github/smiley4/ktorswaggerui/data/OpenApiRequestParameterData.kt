@@ -1,5 +1,7 @@
 package io.github.smiley4.ktorswaggerui.data
 
+import io.swagger.v3.oas.models.parameters.Parameter
+
 data class OpenApiRequestParameterData(
     val name: String,
     val type: TypeDescriptor,
@@ -10,5 +12,6 @@ data class OpenApiRequestParameterData(
     val deprecated: Boolean,
     val allowEmptyValue: Boolean,
     val explode: Boolean,
-    val allowReserved: Boolean
+    val allowReserved: Boolean,
+    val style: Parameter.StyleEnum?,
 )

@@ -1,7 +1,11 @@
 package io.github.smiley4.ktorswaggerui.dsl.routes
 
+import io.github.smiley4.ktorswaggerui.data.ExternalDocsData
 import io.github.smiley4.ktorswaggerui.data.OpenApiRouteData
+import io.github.smiley4.ktorswaggerui.data.ServerData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
+import io.github.smiley4.ktorswaggerui.dsl.config.OpenApiExternalDocs
+import io.github.smiley4.ktorswaggerui.dsl.config.OpenApiServer
 
 @OpenApiDslMarker
 class OpenApiRoute {
@@ -15,7 +19,7 @@ class OpenApiRoute {
     /**
      * A list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier
      */
-    var tags: List<String> = emptyList()
+    var tags: Collection<String> = emptyList()
 
 
     /**
@@ -50,19 +54,19 @@ class OpenApiRoute {
 
 
     /**
-     * A declaration of which security mechanisms can be used for this operation (i.e. any of the specified ones).
-     * If none is specified, defaultSecuritySchemeName (global plugin config) will be used.
-     * Only applied to [protected] operations.
-     */
-    var securitySchemeNames: Collection<String>? = null
-
-
-    /**
      * Specifies whether this operation is protected.
      * If not specified, the authentication state of the Ktor route will be used
      * (i.e. whether it is surrounded by an [authenticate][io.ktor.server.auth.authenticate] block or not).
      */
     var protected: Boolean? = null
+
+
+    /**
+     * A declaration of which security mechanisms can be used for this operation (i.e. any of the specified ones).
+     * If none is specified, defaultSecuritySchemeName (global plugin config) will be used.
+     * Only applied to [protected] operations.
+     */
+    var securitySchemeNames: Collection<String>? = null
 
     private val request = OpenApiRequest()
 
@@ -89,9 +93,29 @@ class OpenApiRoute {
     fun getResponses() = responses
 
 
+    /**
+     * OpenAPI external docs configuration - link and description of an external documentation
+     */
+    fun externalDocs(block: OpenApiExternalDocs.() -> Unit) {
+        externalDocs = OpenApiExternalDocs().apply(block)
+    }
+
+    private var externalDocs: OpenApiExternalDocs? = null
+
+
+    /**
+     * OpenAPI server configuration - an array of servers, which provide connectivity information to a target server
+     */
+    fun server(block: OpenApiServer.() -> Unit) {
+        servers.add(OpenApiServer().apply(block))
+    }
+
+    private val servers = mutableListOf<OpenApiServer>()
+
+
     fun build() = OpenApiRouteData(
         specId = specId,
-        tags = tags,
+        tags = tags.toSet(),
         summary = summary,
         description = description,
         operationId = operationId,
@@ -101,6 +125,8 @@ class OpenApiRoute {
         protected = protected,
         request = request.build(),
         responses = responses.getResponses().map { it.build() },
+        externalDocs = externalDocs?.build(ExternalDocsData.DEFAULT),
+        servers = servers.map { it.build(ServerData.DEFAULT) }
     )
 
 }

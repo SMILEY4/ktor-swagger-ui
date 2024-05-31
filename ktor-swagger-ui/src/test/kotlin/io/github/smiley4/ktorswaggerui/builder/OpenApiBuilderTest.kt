@@ -33,6 +33,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldHaveSize
+import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.swagger.v3.oas.models.OpenAPI
@@ -67,10 +68,16 @@ class OpenApiBuilderTest : StringSpec({
         }
         buildOpenApiObject(emptyList(), config).also { openapi ->
             openapi.servers shouldHaveSize 2
-            openapi.servers.map { it.url } shouldContainExactlyInAnyOrder listOf(
-                "http://localhost:8080",
-                "https://127.0.0.1"
-            )
+            openapi.servers.find { it.url == "http://localhost:8080" }!!.also { server ->
+                server.url shouldBe "http://localhost:8080"
+                server.description shouldBe "Development Server"
+                server.variables shouldBe null
+            }
+            openapi.servers.find { it.url == "https://127.0.0.1" }!!.also { server ->
+                server.url shouldBe "https://127.0.0.1"
+                server.description shouldBe "Production Server"
+                server.variables shouldBe null
+            }
         }
     }
 
@@ -160,6 +167,8 @@ class OpenApiBuilderTest : StringSpec({
                                 config = pluginConfigData
                             ),
                             securityRequirementsBuilder = SecurityRequirementsBuilder(pluginConfigData),
+                            externalDocumentationBuilder = ExternalDocumentationBuilder(),
+                            serverBuilder = ServerBuilder()
                         )
                     )
                 ),

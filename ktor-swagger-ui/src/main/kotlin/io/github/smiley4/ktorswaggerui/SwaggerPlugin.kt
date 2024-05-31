@@ -75,7 +75,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
 private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>): Map<String, String> {
     val routesBySpec = buildMap<String, MutableList<RouteMeta>> {
         routes.forEach { route ->
-            val specName = route.documentation.specId ?: config.specAssigner(route.path, route.documentation.tags)
+            val specName = route.documentation.specId ?: config.specAssigner(route.path, route.documentation.tags.toList())
             computeIfAbsent(specName) { mutableListOf() }.add(route)
         }
     }
@@ -157,6 +157,8 @@ private fun builder(
                         config = config
                     ),
                     securityRequirementsBuilder = SecurityRequirementsBuilder(config),
+                    externalDocumentationBuilder = ExternalDocumentationBuilder(),
+                    serverBuilder = ServerBuilder()
                 )
             )
         ),

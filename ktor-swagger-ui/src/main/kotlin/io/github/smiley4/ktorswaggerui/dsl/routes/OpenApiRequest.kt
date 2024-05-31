@@ -19,6 +19,7 @@ class OpenApiRequest {
      */
     val parameters = mutableListOf<OpenApiRequestParameter>()
 
+
     /**
      * A path parameters that is applicable for this operation
      */
@@ -33,17 +34,20 @@ class OpenApiRequest {
     fun pathParameter(name: String, type: TypeDescriptor, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.PATH, name, type, block)
 
+
     /**
      * A path parameters that is applicable for this operation
      */
     fun pathParameter(name: String, type: Schema<*>, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.PATH, name, SwaggerTypeDescriptor(type), block)
 
+
     /**
      * A path parameters that is applicable for this operation
      */
     fun pathParameter(name: String, type: KType, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.PATH, name, KTypeDescriptor(type), block)
+
 
     /**
      * A path parameters that is applicable for this operation
@@ -58,17 +62,20 @@ class OpenApiRequest {
     fun queryParameter(name: String, type: TypeDescriptor, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.QUERY, name, type, block)
 
+
     /**
      * A query parameters that is applicable for this operation
      */
     fun queryParameter(name: String, type: Schema<*>, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.QUERY, name, SwaggerTypeDescriptor(type), block)
 
+
     /**
      * A query parameters that is applicable for this operation
      */
     fun queryParameter(name: String, type: KType, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.QUERY, name, KTypeDescriptor(type), block)
+
 
     /**
      * A query parameters that is applicable for this operation
@@ -83,17 +90,20 @@ class OpenApiRequest {
     fun headerParameter(name: String, type: TypeDescriptor, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.HEADER, name, type, block)
 
+
     /**
      * A header parameters that is applicable for this operation
      */
     fun headerParameter(name: String, type: Schema<*>, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.HEADER, name, SwaggerTypeDescriptor(type), block)
 
+
     /**
      * A header parameters that is applicable for this operation
      */
     fun headerParameter(name: String, type: KType, block: OpenApiRequestParameter.() -> Unit = {}) =
         parameter(ParameterLocation.HEADER, name, KTypeDescriptor(type), block)
+
 
     /**
      * A header parameters that is applicable for this operation
@@ -111,18 +121,24 @@ class OpenApiRequest {
      * The body returned with this request
      */
     fun body(type: TypeDescriptor, block: OpenApiSimpleBody.() -> Unit = {}) {
-        body = OpenApiSimpleBody(type).apply(block)
+        val result = OpenApiSimpleBody(type).apply(block)
+        if (!result.isEmptyBody()) {
+            body = result
+        }
     }
+
 
     /**
      * The body returned with this request
      */
     fun body(type: Schema<*>, block: OpenApiSimpleBody.() -> Unit = {}) = body(SwaggerTypeDescriptor(type), block)
 
+
     /**
      * The body returned with this request
      */
     fun body(type: KType, block: OpenApiSimpleBody.() -> Unit = {}) = body(KTypeDescriptor(type), block)
+
 
     /**
      * The body returned with this request
@@ -149,5 +165,15 @@ class OpenApiRequest {
         parameters = parameters.map { it.build() },
         body = body?.build()
     )
+
+    private fun OpenApiBaseBody.isEmptyBody(): Boolean {
+        return when (this) {
+            is OpenApiSimpleBody -> when (type) {
+                is KTypeDescriptor -> type.type == typeOf<Unit>()
+                else -> false
+            }
+            is OpenApiMultipartBody -> false
+        }
+    }
 
 }
