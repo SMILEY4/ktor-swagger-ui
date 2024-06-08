@@ -55,7 +55,7 @@ class OpenApiSecurityScheme(
 
 
     /**
-     * information for the oauth flow types supported.
+     * Information for the oauth flow types supported.
      * Required for type [AuthType.OAUTH2]
      */
     fun flows(block: OpenIdOAuthFlows.() -> Unit) {
@@ -71,7 +71,7 @@ class OpenApiSecurityScheme(
 
 
     /**
-     * A short description for security scheme.
+     * A short description of the security scheme.
      */
     var description: String? = null
 

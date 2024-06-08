@@ -62,6 +62,10 @@ class OpenApiHeader {
      */
     var deprecated: Boolean? = null
 
+
+    /**
+     * Specifies whether arrays and objects should generate separate parameters for each array item or object property.
+     */
     var explode: Boolean? = null
 
     fun build() = OpenApiHeaderData(

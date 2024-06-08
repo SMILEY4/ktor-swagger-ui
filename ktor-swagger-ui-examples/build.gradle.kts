@@ -5,6 +5,7 @@ version = projectVersion
 
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization") version "1.9.21"
 }
 
 repositories {
@@ -29,6 +30,7 @@ dependencies {
 
     implementation("io.github.smiley4:schema-kenerator-core:$versionSchemaKenerator")
     implementation("io.github.smiley4:schema-kenerator-reflection:$versionSchemaKenerator")
+    implementation("io.github.smiley4:schema-kenerator-serialization:$versionSchemaKenerator")
     implementation("io.github.smiley4:schema-kenerator-swagger:$versionSchemaKenerator")
     implementation("io.github.smiley4:schema-kenerator-jackson:$versionSchemaKenerator")
 

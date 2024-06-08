@@ -1,10 +1,14 @@
 package io.github.smiley4.ktorswaggerui.data
 
+import io.github.smiley4.schemakenerator.core.connectSubTypes
+import io.github.smiley4.schemakenerator.core.handleNameAnnotation
+import io.github.smiley4.schemakenerator.reflection.collectSubTypes
 import io.github.smiley4.schemakenerator.reflection.processReflection
 import io.github.smiley4.schemakenerator.swagger.compileReferencingRoot
 import io.github.smiley4.schemakenerator.swagger.data.CompiledSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.data.TitleType
 import io.github.smiley4.schemakenerator.swagger.generateSwaggerSchema
+import io.github.smiley4.schemakenerator.swagger.handleCoreAnnotations
 import io.github.smiley4.schemakenerator.swagger.withAutoTitle
 import kotlin.reflect.KType
 
@@ -19,8 +23,12 @@ data class SchemaConfigData(
             schemas = emptyMap(),
             generator = { type ->
                 type
+                    .collectSubTypes()
                     .processReflection()
+                    .connectSubTypes()
+                    .handleNameAnnotation()
                     .generateSwaggerSchema()
+                    .handleCoreAnnotations()
                     .withAutoTitle(TitleType.SIMPLE)
                     .compileReferencingRoot()
             },

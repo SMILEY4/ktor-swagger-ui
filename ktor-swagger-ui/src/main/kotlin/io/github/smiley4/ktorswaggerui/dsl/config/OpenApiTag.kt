@@ -26,7 +26,7 @@ class OpenApiTag(
     var externalDocDescription: String? = null
 
     /**
-     *The URL for additional external documentation for this tag.
+     * The URL for additional external documentation for this tag.
      */
     var externalDocUrl: String? = null
 

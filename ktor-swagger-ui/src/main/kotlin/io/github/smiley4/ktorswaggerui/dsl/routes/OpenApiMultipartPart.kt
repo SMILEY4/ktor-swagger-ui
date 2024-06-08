@@ -25,7 +25,7 @@ class OpenApiMultipartPart(
 ) {
 
     /**
-     * Set a specific content type for this part
+     * Set a specific content types for this part
      */
     var mediaTypes: Collection<ContentType> = setOf()
 
