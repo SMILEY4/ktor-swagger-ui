@@ -13,7 +13,9 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-
+/**
+ * Registers the route for serving an openapi-spec. When multiple specs are configured, the id of the one to serve has to be provided.
+ */
 fun Route.openApiSpec(specId: String = PluginConfigDsl.DEFAULT_SPEC_ID) {
     route({ hidden = true }) {
         get {
@@ -22,6 +24,9 @@ fun Route.openApiSpec(specId: String = PluginConfigDsl.DEFAULT_SPEC_ID) {
     }
 }
 
+/**
+ * Registers the route for serving all swagger-ui resources. The path to the openapi-spec file to use has to be given.
+ */
 fun Route.swaggerUI(apiUrl: String) {
     route({ hidden = true }) {
         get {

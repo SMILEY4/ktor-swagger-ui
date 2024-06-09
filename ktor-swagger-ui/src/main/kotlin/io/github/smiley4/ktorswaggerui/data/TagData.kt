@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.data
 
+/**
+ * See [OpenAPI Specification - Tag Object](https://swagger.io/specification/#tag-object).
+ */
 data class TagData(
     val name: String,
     val description: String?,

@@ -5,6 +5,10 @@ import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.ktor.http.HttpStatusCode
 import io.swagger.v3.oas.models.responses.ApiResponses
 
+/**
+ * Build the openapi [ApiResponses]-object. A container for the expected responses of an operation.
+ * See [OpenAPI Specification - Responses Object](https://swagger.io/specification/#responses-object).
+ */
 class ResponsesBuilder(
     private val responseBuilder: ResponseBuilder,
     private val config: PluginConfigData

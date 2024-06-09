@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.data
 
+/**
+ * See [OpenAPI Specification - Info Object](https://swagger.io/specification/#info-object).
+ */
 data class InfoData(
     val title: String,
     val version: String?,

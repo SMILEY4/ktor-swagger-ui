@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.data
 
+/**
+ * See [OpenAPI Specification - OAuth Flow Object](https://swagger.io/specification/#oauth-flow-object).
+ */
 data class OpenIdOAuthFlowData(
     val authorizationUrl: String? = null,
     val tokenUrl: String? = null,

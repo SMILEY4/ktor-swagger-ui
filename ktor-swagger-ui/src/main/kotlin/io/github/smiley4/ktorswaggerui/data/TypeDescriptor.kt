@@ -4,12 +4,41 @@ import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
+/**
+ * Describes and identifies types and schemas.
+ */
 sealed interface TypeDescriptor
+
+
+/**
+ * Describes a type from a swagger [Schema]
+ */
 class SwaggerTypeDescriptor(val schema: Schema<*>) : TypeDescriptor
+
+
+/**
+ * Describes a type from a kotlin [KType]
+ */
 class KTypeDescriptor(val type: KType) : TypeDescriptor
+
+/**
+ * Describes an array of types.
+ */
 class ArrayTypeDescriptor(val type: TypeDescriptor) : TypeDescriptor
+
+/**
+ * Describes an object matching any of the given types.
+ */
 class AnyOfTypeDescriptor(val types: List<TypeDescriptor>) : TypeDescriptor
+
+/**
+ * Describes an empty type/schema.
+ */
 class EmptyTypeDescriptor : TypeDescriptor
+
+/**
+ * Describes a reference to a schema in the component section.
+ */
 class RefTypeDescriptor(val schemaId: String) : TypeDescriptor
 
 inline fun <reified T> type() = KTypeDescriptor(typeOf<T>())

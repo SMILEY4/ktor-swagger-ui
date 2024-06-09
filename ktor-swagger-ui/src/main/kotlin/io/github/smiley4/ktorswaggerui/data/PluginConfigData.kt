@@ -3,6 +3,9 @@ package io.github.smiley4.ktorswaggerui.data
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import kotlin.reflect.KClass
 
+/**
+ * Complete plugin configuration
+ */
 data class PluginConfigData(
     val specAssigner: SpecAssigner,
     val pathFilter: PathFilter,

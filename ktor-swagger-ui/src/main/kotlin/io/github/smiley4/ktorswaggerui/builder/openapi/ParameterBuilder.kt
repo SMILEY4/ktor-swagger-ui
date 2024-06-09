@@ -6,6 +6,10 @@ import io.github.smiley4.ktorswaggerui.data.OpenApiRequestParameterData
 import io.github.smiley4.ktorswaggerui.data.ParameterLocation
 import io.swagger.v3.oas.models.parameters.Parameter
 
+/**
+ * Build the openapi [Parameter]-object. Holds information describing a single operation (query, path or header) parameter.
+ * See [OpenAPI Specification - Parameter Object](https://swagger.io/specification/#parameter-object).
+ */
 class ParameterBuilder(
     private val schemaContext: SchemaContext,
     private val exampleContext: ExampleContext

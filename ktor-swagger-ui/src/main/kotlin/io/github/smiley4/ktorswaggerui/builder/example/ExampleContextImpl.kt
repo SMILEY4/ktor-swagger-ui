@@ -9,24 +9,39 @@ import io.github.smiley4.ktorswaggerui.data.SwaggerExampleDescriptor
 import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
 import io.swagger.v3.oas.models.examples.Example
 
+/**
+ * Implementation of an [ExampleContext].
+ */
 class ExampleContextImpl : ExampleContext {
 
     private val rootExamples = mutableMapOf<ExampleDescriptor, Example>()
     private val componentExamples = mutableMapOf<String, Example>()
 
-    fun addGlobal(config: ExampleConfigData) {
+
+    /**
+     * Add all global/shared examples from the config that are placed in the components-section of the openapi-spec
+     */
+    fun addShared(config: ExampleConfigData) {
         config.sharedExamples.forEach { (_, exampleDescriptor) ->
             val example = generateExample(exampleDescriptor)
             componentExamples[exampleDescriptor.name] = example
         }
     }
 
+
+    /**
+     * Collect and add all examples for the given routes
+     */
     fun add(routes: Collection<RouteMeta>) {
         collectExampleDescriptors(routes).forEach { exampleDescriptor ->
             rootExamples[exampleDescriptor] = generateExample(exampleDescriptor)
         }
     }
 
+
+    /**
+     * Collect all [ExampleDescriptor]s from the given routes
+     */
     private fun collectExampleDescriptors(routes: Collection<RouteMeta>): List<ExampleDescriptor> {
         val descriptors = mutableListOf<ExampleDescriptor>()
         routes
@@ -53,6 +68,10 @@ class ExampleContextImpl : ExampleContext {
         return descriptors
     }
 
+
+    /**
+     * Generate a swagger [Example] from the given [ExampleDescriptor]
+     */
     private fun generateExample(exampleDescriptor: ExampleDescriptor): Example {
         return when (exampleDescriptor) {
             is ValueExampleDescriptor -> Example().also {

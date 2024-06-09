@@ -10,7 +10,9 @@ import io.swagger.v3.oas.models.media.Schema
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 
-
+/**
+ * Describes a single request.
+ */
 @OpenApiDslMarker
 class OpenApiRequest {
 

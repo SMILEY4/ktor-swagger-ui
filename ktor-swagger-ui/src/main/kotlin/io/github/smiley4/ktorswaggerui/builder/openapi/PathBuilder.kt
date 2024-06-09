@@ -4,6 +4,10 @@ import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.ktor.http.HttpMethod
 import io.swagger.v3.oas.models.PathItem
 
+/**
+ * Build the openapi [PathItem]-object. Holds information describing the operations available on a single path.
+ * See [OpenAPI Specification - Path Item Object](https://swagger.io/specification/#path-item-object).
+ */
 class PathBuilder(
     private val operationBuilder: OperationBuilder
 ) {

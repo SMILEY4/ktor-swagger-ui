@@ -6,7 +6,9 @@ import io.github.smiley4.ktorswaggerui.data.DataUtils.mergeDefault
 import io.github.smiley4.ktorswaggerui.data.SwaggerUIData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 
-
+/**
+ * Configuration for the swagger-ui
+ */
 @OpenApiDslMarker
 class SwaggerUIDsl {
 

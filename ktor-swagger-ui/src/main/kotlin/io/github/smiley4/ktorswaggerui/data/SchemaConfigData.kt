@@ -12,7 +12,9 @@ import io.github.smiley4.schemakenerator.swagger.handleCoreAnnotations
 import io.github.smiley4.schemakenerator.swagger.withAutoTitle
 import kotlin.reflect.KType
 
-
+/**
+ * Common configuration for schemas.
+ */
 data class SchemaConfigData(
     val schemas: Map<String, TypeDescriptor>,
     val generator: (type: KType) -> CompiledSwaggerSchema,

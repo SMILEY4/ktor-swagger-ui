@@ -10,7 +10,9 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.parameters.Parameter
 
-
+/**
+ * Describes a single request parameter.
+ */
 @OpenApiDslMarker
 class OpenApiRequestParameter(
     /**

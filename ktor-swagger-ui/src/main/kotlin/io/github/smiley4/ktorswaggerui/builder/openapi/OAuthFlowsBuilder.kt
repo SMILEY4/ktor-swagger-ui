@@ -6,6 +6,10 @@ import io.swagger.v3.oas.models.security.OAuthFlow
 import io.swagger.v3.oas.models.security.OAuthFlows
 import io.swagger.v3.oas.models.security.Scopes
 
+/**
+ * Build the openapi [OAuthFlows]-object. Holds configuration of the supported OAuth Flows.
+ * See [OpenAPI Specification - OAuth Flows Object](https://swagger.io/specification/#oauth-flows-object).
+ */
 class OAuthFlowsBuilder {
 
     fun build(flows: OpenIdOAuthFlowsData): OAuthFlows {

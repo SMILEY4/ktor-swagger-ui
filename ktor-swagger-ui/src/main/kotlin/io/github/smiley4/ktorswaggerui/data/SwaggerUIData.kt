@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.data
 
+/**
+ * Common configuration for the swagger-ui.
+ */
 data class SwaggerUIData(
     val validatorUrl: String?,
     val displayOperationId: Boolean,

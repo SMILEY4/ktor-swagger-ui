@@ -7,6 +7,9 @@ import io.github.smiley4.ktorswaggerui.data.InfoData
 import io.github.smiley4.ktorswaggerui.data.LicenseData
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 
+/**
+ * Basic information for the exposed API.
+ */
 @OpenApiDslMarker
 class OpenApiInfo {
 

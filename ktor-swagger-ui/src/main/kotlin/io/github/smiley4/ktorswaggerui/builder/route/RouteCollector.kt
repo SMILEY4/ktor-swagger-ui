@@ -15,6 +15,9 @@ import io.ktor.server.routing.RouteSelector
 import io.ktor.server.routing.TrailingSlashRouteSelector
 import kotlin.reflect.full.isSubclassOf
 
+/**
+ * Collect all routes from the given application
+ */
 class RouteCollector(
     private val routeDocumentationMerger: RouteDocumentationMerger
 ) {

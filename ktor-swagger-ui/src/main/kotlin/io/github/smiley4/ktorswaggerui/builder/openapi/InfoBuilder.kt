@@ -3,6 +3,10 @@ package io.github.smiley4.ktorswaggerui.builder.openapi
 import io.github.smiley4.ktorswaggerui.data.InfoData
 import io.swagger.v3.oas.models.info.Info
 
+/**
+ * Build the openapi [Info]-object. Holds metadata about the API.
+ * See [OpenAPI Specification - Info Object](https://swagger.io/specification/#info-object).
+ */
 class InfoBuilder(
     private val contactBuilder: ContactBuilder,
     private val licenseBuilder: LicenseBuilder

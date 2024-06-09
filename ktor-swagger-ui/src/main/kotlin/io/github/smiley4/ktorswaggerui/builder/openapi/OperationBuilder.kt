@@ -3,6 +3,10 @@ package io.github.smiley4.ktorswaggerui.builder.openapi
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.swagger.v3.oas.models.Operation
 
+/**
+ * Build the openapi [Operation]-object. Holds information describing a single API operation on a path.
+ * See [OpenAPI Specification - Operation Object](https://swagger.io/specification/#operation-object).
+ */
 class OperationBuilder(
     private val operationTagsBuilder: OperationTagsBuilder,
     private val parameterBuilder: ParameterBuilder,

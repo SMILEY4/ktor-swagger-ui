@@ -94,7 +94,7 @@ private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteM
             it.add(routes)
         }
         val exampleContext = ExampleContextImpl().also {
-            it.addGlobal(pluginConfig.exampleConfig)
+            it.addShared(pluginConfig.exampleConfig)
             it.add(routes)
         }
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)

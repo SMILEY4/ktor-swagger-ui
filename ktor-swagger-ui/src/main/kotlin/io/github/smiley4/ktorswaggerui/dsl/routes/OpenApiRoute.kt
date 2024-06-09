@@ -7,6 +7,9 @@ import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.config.OpenApiExternalDocs
 import io.github.smiley4.ktorswaggerui.dsl.config.OpenApiServer
 
+/**
+ * Describes a single route including request and responses.
+ */
 @OpenApiDslMarker
 class OpenApiRoute {
 

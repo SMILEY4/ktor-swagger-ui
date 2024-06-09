@@ -2,6 +2,9 @@ package io.github.smiley4.ktorswaggerui.data
 
 import io.swagger.v3.oas.models.parameters.Parameter
 
+/**
+ * Information about a request (query, path or header) parameter.
+ */
 data class OpenApiRequestParameterData(
     val name: String,
     val type: TypeDescriptor,

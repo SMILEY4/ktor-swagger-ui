@@ -5,6 +5,10 @@ import io.swagger.v3.oas.models.Components
 import io.swagger.v3.oas.models.examples.Example
 import io.swagger.v3.oas.models.media.Schema
 
+/**
+ * Builds the openapi [Components]-object containing shared reusable schemas and examples.
+ * See [OpenAPI Specification - Components Object](https://swagger.io/specification/#components-object).
+ */
 class ComponentsBuilder(
     private val config: PluginConfigData,
     private val securitySchemesBuilder: SecuritySchemesBuilder

@@ -2,8 +2,13 @@ package io.github.smiley4.ktorswaggerui.builder.openapi
 
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.data.OpenApiHeaderData
+import io.swagger.v3.oas.models.ExternalDocumentation
 import io.swagger.v3.oas.models.headers.Header
 
+/**
+ * Build the openapi [Header]-object.
+ * See [OpenAPI Specification - Header Object](https://swagger.io/specification/#header-object).
+ */
 class HeaderBuilder(
     private val schemaContext: SchemaContext
 ) {

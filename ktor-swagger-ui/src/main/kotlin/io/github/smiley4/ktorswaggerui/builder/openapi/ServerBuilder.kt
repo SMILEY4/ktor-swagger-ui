@@ -5,6 +5,10 @@ import io.swagger.v3.oas.models.servers.Server
 import io.swagger.v3.oas.models.servers.ServerVariable
 import io.swagger.v3.oas.models.servers.ServerVariables
 
+/**
+ * Build the openapi [Server]-object. Holds information representing a Server.
+ * See [OpenAPI Specification - Server Object](https://swagger.io/specification/#server-object).
+ */
 class ServerBuilder {
 
     fun build(server: ServerData): Server =

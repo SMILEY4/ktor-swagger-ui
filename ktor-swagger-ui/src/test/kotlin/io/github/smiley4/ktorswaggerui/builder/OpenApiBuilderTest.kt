@@ -33,7 +33,6 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.maps.shouldHaveSize
-import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 import io.swagger.v3.oas.models.OpenAPI
@@ -118,7 +117,7 @@ class OpenApiBuilderTest : StringSpec({
         private fun exampleContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl): ExampleContext {
             val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
             return ExampleContextImpl().also {
-                it.addGlobal(pluginConfigData.exampleConfig)
+                it.addShared(pluginConfigData.exampleConfig)
                 it.add(routes)
             }
         }

@@ -12,6 +12,11 @@ import io.swagger.v3.oas.models.media.MediaType
 import io.swagger.v3.oas.models.media.Schema
 import kotlin.collections.set
 
+/**
+ * Builds the openapi [Content]-object for request and response bodies.
+ * See [OpenAPI Specification - Request Body Object](https://swagger.io/specification/#request-body-object)
+ * and [OpenAPI Specification - Response Object](https://swagger.io/specification/#response-object).
+ */
 class ContentBuilder(
     private val schemaContext: SchemaContext,
     private val exampleContext: ExampleContext,

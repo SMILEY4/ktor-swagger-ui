@@ -1,5 +1,8 @@
 package io.github.smiley4.ktorswaggerui.data
 
+/**
+ * Information about a single route.
+ */
 data class OpenApiRouteData(
     val specId: String?,
     val tags: Set<String>,

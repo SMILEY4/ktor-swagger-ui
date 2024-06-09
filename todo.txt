@@ -1,5 +1,0 @@
-todo:
-
-- keep up to date with schema-kenerator features
-
-- wiki / documentation
