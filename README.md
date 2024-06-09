@@ -3,20 +3,19 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.github.smiley4/ktor-swagger-ui)
 [![Checks Passing](https://github.com/SMILEY4/ktor-swagger-ui/actions/workflows/checks.yml/badge.svg?branch=develop)](https://github.com/SMILEY4/ktor-swagger-ui/actions/workflows/checks.yml)
 
-
 This library provides a Ktor plugin to document routes, generate an OpenApi Specification and serve a Swagger UI. It is meant to be  minimally invasive, meaning it can be plugged into existing application without requiring immediate changes to the code. Routes can then be gradually enhanced with documentation.
 
 
 ## Features
 
 - minimally invasive (no immediate change to existing code required)
-- provides swagger-ui with no initial configuration required
-- supports most of the [OpenAPI 3.0.3 Specification](https://swagger.io/specification/)
-- automatic json-schema generation from arbitrary types/classes for bodies and parameters
-- use custom encoder/serializers for examples and json-schemas
-- provide custom schemas or a custom schema-builder
-- external/custom json-schemas for bodies
-- protect Swagger-UI and OpenApi-Spec with custom authentication
+- provides swagger-ui and openapi-spec with minimal configuration
+- supports most of the [OpenAPI 3.1.0 Specification](https://swagger.io/specification/)
+- automatic [json-schema generation](https://github.com/SMILEY4/schema-kenerator) from arbitrary types/classes for bodies and parameters
+  - supports generics, inheritance, collections, ... 
+  - support for Jackson-annotations and swagger Schema-annotations (optional) 
+  - use with reflection or kotlinx-serialization
+  - customizable schema-generation
 
 
 ## Documentation
@@ -32,9 +31,14 @@ dependencies {
 }
 ```
 
-## Example
-Full examples can be found in [src/test/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/develop/src/test/kotlin/io/github/smiley4/ktorswaggerui/examples).
+
+## Examples
+
+Runnable examples can be found in [ktor-swagger-ui-examples/src/main/kotlin/io/github/smiley4/ktorswaggerui/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/release/ktor-swagger-ui-examples/src/main/kotlin/io/github/smiley4/ktorswaggerui/examples).
+
+
 ### Configuration
+
 ```kotlin
 install(SwaggerUI) {
     swagger {
@@ -52,7 +56,9 @@ install(SwaggerUI) {
     }
 }
 ```
+
 ### Routes
+
 ```kotlin
 get("hello", {
     description = "Hello World Endpoint."
