@@ -5,3 +5,7 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.0" apply false
     id("com.vanniktech.maven.publish") version "0.28.0" apply false
 }
+
+repositories {
+    mavenCentral()
+}
