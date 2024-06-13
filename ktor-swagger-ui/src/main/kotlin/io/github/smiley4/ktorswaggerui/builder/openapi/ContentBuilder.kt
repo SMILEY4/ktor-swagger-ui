@@ -53,7 +53,7 @@ class ContentBuilder(
         return MediaType().also {
             it.schema = schema
             body.examples.forEach { descriptor ->
-                it.addExamples(descriptor.name, exampleContext.getExample(descriptor))
+                it.addExamples(descriptor.name, exampleContext.getExample(descriptor, body.type))
             }
         }
     }

@@ -30,6 +30,7 @@ import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextImpl
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.routing.ApiSpec
 import io.ktor.server.application.Application
@@ -93,7 +94,7 @@ private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteM
             it.addGlobal(pluginConfig.schemaConfig)
             it.add(routes)
         }
-        val exampleContext = ExampleContextImpl().also {
+        val exampleContext = ExampleContextImpl(pluginConfig.exampleConfig.exampleEncoder).also {
             it.addShared(pluginConfig.exampleConfig)
             it.add(routes)
         }

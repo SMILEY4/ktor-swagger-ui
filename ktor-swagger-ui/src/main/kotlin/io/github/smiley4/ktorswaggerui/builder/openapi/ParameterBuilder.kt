@@ -28,7 +28,7 @@ class ParameterBuilder(
             it.deprecated = parameter.deprecated
             it.allowEmptyValue = parameter.allowEmptyValue
             it.explode = parameter.explode
-            it.example = parameter.example?.let { e -> exampleContext.getExample(e).value } // todo: example"S" ?
+            it.example = parameter.example?.let { e -> exampleContext.getExample(e, parameter.type).value } // todo: example"S" ?
             it.allowReserved = parameter.allowReserved
             it.schema = schemaContext.getSchema(parameter.type)
             it.style = parameter.style
