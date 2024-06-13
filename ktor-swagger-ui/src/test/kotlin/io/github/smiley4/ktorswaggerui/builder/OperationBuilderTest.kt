@@ -732,6 +732,48 @@ class OperationBuilderTest : StringSpec({
         }
     }
 
+    "automatic unauthorized response with body type and example" {
+        val config = PluginConfigDsl().also {
+            it.security {
+                defaultUnauthorizedResponse {
+                    description = "Default unauthorized Response"
+                    body<SimpleObject> {
+                        example("Example 1") {
+                            value = SimpleObject(text = "Some text", number = 123)
+                        }
+                    }
+                }
+            }
+        }
+        val route = RouteMeta(
+            path = "/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.response {
+                    default {
+                        description = "Default Response"
+                    }
+                }
+            }.build(),
+            protected = true
+        )
+        val schemaContext = schemaContext(listOf(route), config)
+        val exampleContext = exampleContext(listOf(route), config)
+        buildOperationObject(route, schemaContext, exampleContext, config).also { operation ->
+            operation.responses
+                .also { it shouldHaveSize 2 }
+                ?.also { responses ->
+                    responses["401"]
+                        .also { it.shouldNotBeNull() }
+                        ?.also { it.description shouldBe "Default unauthorized Response" }
+                        ?.also { TODO("Write test") }
+                    responses["default"]
+                        .also { it.shouldNotBeNull() }
+                        ?.also { it.description shouldBe "Default Response" }
+                }
+        }
+    }
+
     "automatic unauthorized response for unprotected route" {
         val config = PluginConfigDsl().also {
             it.security {
