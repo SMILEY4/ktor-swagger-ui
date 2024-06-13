@@ -136,6 +136,7 @@ class PluginConfigDsl {
 
 
     internal fun build(base: PluginConfigData): PluginConfigData {
+        val securityConfig = security.build(base.securityConfig)
         return PluginConfigData(
             info = info.build(base.info),
             externalDocs = externalDocs.build(base.externalDocs),
@@ -144,10 +145,10 @@ class PluginConfigDsl {
                 addAll(servers.map { it.build(ServerData.DEFAULT) })
             },
             swagger = swaggerUI.build(base.swagger),
-            securityConfig = security.build(base.securityConfig),
+            securityConfig = securityConfig,
             tagsConfig = tags.build(base.tagsConfig),
-            schemaConfig = schemaConfig.build(),
-            exampleConfig = exampleConfig.build(),
+            schemaConfig = schemaConfig.build(securityConfig),
+            exampleConfig = exampleConfig.build(securityConfig),
             specAssigner = merge(base.specAssigner, specAssigner) ?: PluginConfigData.DEFAULT.specAssigner,
             pathFilter = merge(base.pathFilter, pathFilter) ?: PluginConfigData.DEFAULT.pathFilter,
             ignoredRouteSelectors = buildSet {
