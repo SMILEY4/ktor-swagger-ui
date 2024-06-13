@@ -3,7 +3,6 @@ package io.github.smiley4.ktorswaggerui.dsl.config
 import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.ktor.http.*
 import io.ktor.server.routing.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -111,7 +110,7 @@ class PluginConfigDsl {
     private val specConfigs = mutableMapOf<String, PluginConfigDsl>()
 
     /**
-     * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute.specId] to a specified openapi-spec.
+     * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute.specId]] to a specified openapi-spec.
      */
     var specAssigner: SpecAssigner? = PluginConfigData.DEFAULT.specAssigner
 
