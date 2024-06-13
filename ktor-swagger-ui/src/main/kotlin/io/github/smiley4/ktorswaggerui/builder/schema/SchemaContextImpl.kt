@@ -10,7 +10,7 @@ import kotlin.reflect.KType
 
 class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaContext {
 
-    val rootSchemas = mutableMapOf<TypeDescriptor, Schema<*>>()
+    private val rootSchemas = mutableMapOf<TypeDescriptor, Schema<*>>()
     private val componentSchemas = mutableMapOf<String, Schema<*>>()
 
     fun addGlobal(config: SchemaConfigData) {
