@@ -1,9 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
-import io.github.smiley4.ktorswaggerui.data.ExampleConfigData
-import io.github.smiley4.ktorswaggerui.data.ExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.SwaggerExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
+import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.ktorswaggerui.dsl.routes.ValueExampleDescriptorDsl
 import io.swagger.v3.oas.models.examples.Example
@@ -35,8 +32,14 @@ class ExampleConfig {
             }
     )
 
-    fun build() = ExampleConfigData(
-        sharedExamples = sharedExamples
+    fun build(securityConfig: SecurityData) = ExampleConfigData(
+        sharedExamples = sharedExamples,
+        securityExamples = securityConfig.defaultUnauthorizedResponse?.body?.let {
+            when (it) {
+                is OpenApiSimpleBodyData -> it.examples
+                is OpenApiMultipartBodyData -> emptyList()
+            }
+        } ?: emptyList()
     )
 
 }

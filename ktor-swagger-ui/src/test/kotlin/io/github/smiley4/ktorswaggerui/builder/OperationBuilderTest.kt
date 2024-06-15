@@ -2,38 +2,23 @@ package io.github.smiley4.ktorswaggerui.builder
 
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextImpl
-import io.github.smiley4.ktorswaggerui.builder.openapi.ContentBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ExternalDocumentationBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.HeaderBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.OperationBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.OperationTagsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ParameterBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.RequestBodyBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ResponseBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ResponsesBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.SecurityRequirementsBuilder
-import io.github.smiley4.ktorswaggerui.builder.openapi.ServerBuilder
+import io.github.smiley4.ktorswaggerui.builder.openapi.*
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextImpl
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.data.RefTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
+import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.maps.shouldBeEmpty
 import io.kotest.matchers.maps.shouldHaveSize
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
-import io.ktor.http.ContentType
-import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
+import io.ktor.http.*
 import io.swagger.v3.oas.models.Operation
 import io.swagger.v3.oas.models.media.Schema
 import java.io.File
@@ -725,6 +710,55 @@ class OperationBuilderTest : StringSpec({
                     responses["401"]
                         .also { it.shouldNotBeNull() }
                         ?.also { it.description shouldBe "Default unauthorized Response" }
+                    responses["default"]
+                        .also { it.shouldNotBeNull() }
+                        ?.also { it.description shouldBe "Default Response" }
+                }
+        }
+    }
+
+    "automatic unauthorized response with body type and example" {
+        val config = PluginConfigDsl().also {
+            it.security {
+                defaultUnauthorizedResponse {
+                    description = "Default unauthorized Response"
+                    body<SimpleObject> {
+                        example("Example 1") {
+                            value = SimpleObject(text = "Some text", number = 123)
+                        }
+                    }
+                }
+            }
+        }
+        val route = RouteMeta(
+            path = "/test",
+            method = HttpMethod.Get,
+            documentation = OpenApiRoute().also { route ->
+                route.response {
+                    default {
+                        description = "Default Response"
+                    }
+                }
+            }.build(),
+            protected = true
+        )
+        val schemaContext = schemaContext(listOf(route), config)
+        val exampleContext = exampleContext(listOf(route), config)
+        buildOperationObject(route, schemaContext, exampleContext, config).also { operation ->
+            operation.responses
+                .also { it shouldHaveSize 2 }
+                ?.also { responses ->
+                    responses["401"]
+                        .also { it.shouldNotBeNull() }
+                        ?.also { it.description shouldBe "Default unauthorized Response" }
+                        ?.also { response ->
+                            val content = response.content["application/json"]
+                            content.shouldNotBeNull()
+                            content.schema.title shouldBe "SimpleObject"
+                            val example = content.examples["Example 1"]
+                            example.shouldNotBeNull()
+                            example.value shouldBeEqual SimpleObject(text = "Some text", number = 123)
+                        }
                     responses["default"]
                         .also { it.shouldNotBeNull() }
                         ?.also { it.description shouldBe "Default Response" }

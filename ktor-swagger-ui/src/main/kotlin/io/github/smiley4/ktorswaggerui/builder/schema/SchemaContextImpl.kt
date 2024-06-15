@@ -1,17 +1,7 @@
 package io.github.smiley4.ktorswaggerui.builder.schema
 
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.data.AnyOfTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.ArrayTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.EmptyTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.OpenApiMultipartBodyData
-import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
-import io.github.smiley4.ktorswaggerui.data.RefTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.SchemaConfigData
-import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
-import io.github.smiley4.schemakenerator.core.data.TypeId
+import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.schemakenerator.core.data.WildcardTypeData
 import io.github.smiley4.schemakenerator.swagger.data.CompiledSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.steps.SwaggerSchemaUtils
@@ -24,6 +14,10 @@ class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaCont
     private val componentSchemas = mutableMapOf<String, Schema<*>>()
 
     fun addGlobal(config: SchemaConfigData) {
+        config.securitySchemas.forEach { typeDescriptor ->
+            val schema = collapseRootRef(generateSchema(typeDescriptor))
+            rootSchemas[typeDescriptor] = schema.swagger
+        }
         config.schemas.forEach { (schemaId, typeDescriptor) ->
             val schema = collapseRootRef(generateSchema(typeDescriptor))
             componentSchemas[schemaId] = schema.swagger

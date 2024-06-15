@@ -3,7 +3,6 @@ package io.github.smiley4.ktorswaggerui.dsl.config
 import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.ktor.http.*
 import io.ktor.server.routing.*
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -111,7 +110,7 @@ class PluginConfigDsl {
     private val specConfigs = mutableMapOf<String, PluginConfigDsl>()
 
     /**
-     * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.OpenApiRoute.specId] to a specified openapi-spec.
+     * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute.specId]] to a specified openapi-spec.
      */
     var specAssigner: SpecAssigner? = PluginConfigData.DEFAULT.specAssigner
 
@@ -136,6 +135,7 @@ class PluginConfigDsl {
 
 
     internal fun build(base: PluginConfigData): PluginConfigData {
+        val securityConfig = security.build(base.securityConfig)
         return PluginConfigData(
             info = info.build(base.info),
             externalDocs = externalDocs.build(base.externalDocs),
@@ -144,10 +144,10 @@ class PluginConfigDsl {
                 addAll(servers.map { it.build(ServerData.DEFAULT) })
             },
             swagger = swaggerUI.build(base.swagger),
-            securityConfig = security.build(base.securityConfig),
+            securityConfig = securityConfig,
             tagsConfig = tags.build(base.tagsConfig),
-            schemaConfig = schemaConfig.build(),
-            exampleConfig = exampleConfig.build(),
+            schemaConfig = schemaConfig.build(securityConfig),
+            exampleConfig = exampleConfig.build(securityConfig),
             specAssigner = merge(base.specAssigner, specAssigner) ?: PluginConfigData.DEFAULT.specAssigner,
             pathFilter = merge(base.pathFilter, pathFilter) ?: PluginConfigData.DEFAULT.pathFilter,
             ignoredRouteSelectors = buildSet {
