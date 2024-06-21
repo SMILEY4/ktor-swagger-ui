@@ -1,9 +1,6 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
-import io.github.smiley4.ktorswaggerui.data.KTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.SchemaConfigData
-import io.github.smiley4.ktorswaggerui.data.SwaggerTypeDescriptor
-import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
+import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
 import io.github.smiley4.schemakenerator.swagger.data.CompiledSwaggerSchema
 import io.swagger.v3.oas.models.media.Schema
@@ -34,7 +31,6 @@ class SchemaConfig {
 
     inline fun <reified T, reified R> overwrite() = overwrite(typeOf<T>(), KTypeDescriptor(typeOf<R>()))
 
-
     fun schema(schemaId: String, descriptor: TypeDescriptor) {
         schemas[schemaId] = descriptor
     }
@@ -45,10 +41,16 @@ class SchemaConfig {
 
     inline fun <reified T> schema(schemaId: String) = schema(schemaId, KTypeDescriptor(typeOf<T>()))
 
-    fun build() = SchemaConfigData(
+    fun build(securityConfig: SecurityData) = SchemaConfigData(
         generator = generator,
         schemas = schemas,
-        overwrite = overwrite
+        overwrite = overwrite,
+        securitySchemas = securityConfig.defaultUnauthorizedResponse?.body?.let {
+            when (it) {
+                is OpenApiSimpleBodyData -> listOf(it.type)
+                is OpenApiMultipartBodyData -> it.parts.map { it.type }
+            }
+        } ?: emptyList()
     )
 
 }

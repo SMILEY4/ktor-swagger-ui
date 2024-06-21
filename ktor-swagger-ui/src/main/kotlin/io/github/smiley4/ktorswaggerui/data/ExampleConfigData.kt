@@ -1,12 +1,14 @@
 package io.github.smiley4.ktorswaggerui.data
 
 class ExampleConfigData(
-    val sharedExamples: Map<String, ExampleDescriptor>
+    val sharedExamples: Map<String, ExampleDescriptor>,
+    val securityExamples: List<ExampleDescriptor>
 ) {
 
     companion object {
         val DEFAULT = ExampleConfigData(
-            sharedExamples = emptyMap()
+            sharedExamples = emptyMap(),
+            securityExamples = emptyList()
         )
     }
 

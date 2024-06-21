@@ -18,7 +18,8 @@ import kotlin.reflect.KType
 data class SchemaConfigData(
     val schemas: Map<String, TypeDescriptor>,
     val generator: (type: KType) -> CompiledSwaggerSchema,
-    val overwrite: Map<KType, TypeDescriptor>
+    val overwrite: Map<KType, TypeDescriptor>,
+    val securitySchemas: List<TypeDescriptor>
 ) {
     companion object {
         val DEFAULT = SchemaConfigData(
@@ -34,7 +35,8 @@ data class SchemaConfigData(
                     .withAutoTitle(TitleType.SIMPLE)
                     .compileReferencingRoot()
             },
-            overwrite = emptyMap()
+            overwrite = emptyMap(),
+            securitySchemas = emptyList()
         )
     }
 }

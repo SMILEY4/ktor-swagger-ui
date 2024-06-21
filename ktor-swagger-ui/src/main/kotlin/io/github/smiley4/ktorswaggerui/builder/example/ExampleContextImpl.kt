@@ -1,12 +1,7 @@
 package io.github.smiley4.ktorswaggerui.builder.example
 
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
-import io.github.smiley4.ktorswaggerui.data.ExampleConfigData
-import io.github.smiley4.ktorswaggerui.data.ExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
-import io.github.smiley4.ktorswaggerui.data.RefExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.SwaggerExampleDescriptor
-import io.github.smiley4.ktorswaggerui.data.ValueExampleDescriptor
+import io.github.smiley4.ktorswaggerui.data.*
 import io.swagger.v3.oas.models.examples.Example
 
 /**
@@ -25,6 +20,10 @@ class ExampleContextImpl : ExampleContext {
         config.sharedExamples.forEach { (_, exampleDescriptor) ->
             val example = generateExample(exampleDescriptor)
             componentExamples[exampleDescriptor.name] = example
+        }
+        config.securityExamples.forEach { exampleDescriptor ->
+            val example = generateExample(exampleDescriptor)
+            rootExamples[exampleDescriptor] = example
         }
     }
 
