@@ -12,18 +12,23 @@ class PathsBuilder(
     fun build(routes: Collection<RouteMeta>): Paths =
         Paths().also {
             routes.forEach { route ->
-                val existingPath = it[route.path]
+                val fullPath = fullPath(route);
+                val existingPath = it[fullPath]
                 if (existingPath != null) {
                     addToExistingPath(existingPath, route)
                 } else {
-                    addAsNewPath(it, route)
+                    addAsNewPath(it, route, fullPath)
                 }
             }
         }
 
-    private fun addAsNewPath(paths: Paths, route: RouteMeta) {
+    private fun fullPath(route: RouteMeta): String {
         val rootPath = ControllerUtils.appConfig?.let { ControllerUtils.getRootPath(it) } ?: ""
-        paths.addPathItem("$rootPath${route.path}", pathBuilder.build(route))
+        return "$rootPath${route.path}"
+    }
+
+    private fun addAsNewPath(paths: Paths, route: RouteMeta, fullPath: String) {
+        paths.addPathItem(fullPath, pathBuilder.build(route))
     }
 
     private fun addToExistingPath(existing: PathItem, route: RouteMeta) {
