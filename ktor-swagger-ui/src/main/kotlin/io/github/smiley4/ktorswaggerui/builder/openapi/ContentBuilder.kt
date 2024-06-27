@@ -5,7 +5,7 @@ import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.data.OpenApiBaseBodyData
 import io.github.smiley4.ktorswaggerui.data.OpenApiMultipartBodyData
 import io.github.smiley4.ktorswaggerui.data.OpenApiSimpleBodyData
-import io.ktor.http.ContentType
+import io.ktor.http.*
 import io.swagger.v3.oas.models.media.Content
 import io.swagger.v3.oas.models.media.Encoding
 import io.swagger.v3.oas.models.media.MediaType
@@ -53,7 +53,7 @@ class ContentBuilder(
         return MediaType().also {
             it.schema = schema
             body.examples.forEach { descriptor ->
-                it.addExamples(descriptor.name, exampleContext.getExample(descriptor, body.type))
+                it.addExamples(descriptor.name, exampleContext.getExample(descriptor))
             }
         }
     }

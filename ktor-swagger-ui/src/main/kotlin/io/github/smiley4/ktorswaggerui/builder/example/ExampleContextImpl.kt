@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.examples.Example
  */
 class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext {
 
-    private val rootExamples = mutableMapOf<ExampleDescriptor, ExampleDescriptor>()
+    private val rootExamples = mutableMapOf<ExampleDescriptor, Example>()
     private val componentExamples = mutableMapOf<String, Example>()
 
 
@@ -22,7 +22,8 @@ class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext 
             componentExamples[exampleDescriptor.name] = example
         }
         config.securityExamples.forEach { exampleDescriptor ->
-            rootExamples[exampleDescriptor] = exampleDescriptor
+            val example = generateExample(exampleDescriptor, null)
+            rootExamples[exampleDescriptor] = example
         }
     }
 
@@ -31,8 +32,9 @@ class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext 
      * Collect and add all examples for the given routes
      */
     fun add(routes: Collection<RouteMeta>) {
-        collectExampleDescriptors(routes).forEach { exampleDescriptor ->
-            rootExamples[exampleDescriptor] = exampleDescriptor
+        collectExampleDescriptors(routes).forEach { (exampleDescriptor, typeDescriptor) ->
+            val example = generateExample(exampleDescriptor, typeDescriptor)
+            rootExamples[exampleDescriptor] = example
         }
     }
 
@@ -40,31 +42,30 @@ class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext 
     /**
      * Collect all [ExampleDescriptor]s from the given routes
      */
-    private fun collectExampleDescriptors(routes: Collection<RouteMeta>): List<ExampleDescriptor> {
-        val descriptors = mutableListOf<ExampleDescriptor>()
-        routes
-            .filter { !it.documentation.hidden }
-            .forEach { route ->
-                route.documentation.request.also { request ->
-                    request.parameters.forEach { parameter ->
-                        parameter.example?.also { descriptors.add(it) }
+    private fun collectExampleDescriptors(routes: Collection<RouteMeta>): List<Pair<ExampleDescriptor, TypeDescriptor>> =
+        buildList {
+            routes
+                .filter { !it.documentation.hidden }
+                .forEach { route ->
+                    route.documentation.request.also { request ->
+                        request.parameters.forEach { parameter ->
+                            parameter.example?.also { add(it to parameter.type) }
+                        }
+                        request.body?.also { body ->
+                            if (body is OpenApiSimpleBodyData) {
+                                addAll(body.examples.map { it to body.type })
+                            }
+                        }
                     }
-                    request.body?.also { body ->
-                        if (body is OpenApiSimpleBodyData) {
-                            descriptors.addAll(body.examples)
+                    route.documentation.responses.forEach { response ->
+                        response.body?.also { body ->
+                            if (body is OpenApiSimpleBodyData) {
+                                addAll(body.examples.map { it to body.type })
+                            }
                         }
                     }
                 }
-                route.documentation.responses.forEach { response ->
-                    response.body?.also { body ->
-                        if (body is OpenApiSimpleBodyData) {
-                            descriptors.addAll(body.examples)
-                        }
-                    }
-                }
-            }
-        return descriptors
-    }
+        }
 
 
     /**
@@ -88,11 +89,8 @@ class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext 
         }
     }
 
-    override fun getExample(descriptor: ExampleDescriptor, type: TypeDescriptor): Example {
-        return generateExample(
-            rootExamples[descriptor] ?: throw NoSuchElementException("no root-example for given example-descriptor"),
-            type
-        )
+    override fun getExample(descriptor: ExampleDescriptor): Example {
+        return rootExamples[descriptor] ?: throw NoSuchElementException("no root-example for given example-descriptor")
     }
 
     override fun getComponentSection(): Map<String, Example> {
