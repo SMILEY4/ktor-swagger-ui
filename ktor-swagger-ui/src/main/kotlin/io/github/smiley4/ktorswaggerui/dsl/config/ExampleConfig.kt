@@ -6,12 +6,13 @@ import io.github.smiley4.ktorswaggerui.dsl.routes.ValueExampleDescriptorDsl
 import io.swagger.v3.oas.models.examples.Example
 
 /**
- * Configuration for schemas
+ * Configuration for examples
  */
 @OpenApiDslMarker
 class ExampleConfig {
 
     val sharedExamples = mutableMapOf<String, ExampleDescriptor>()
+    var exampleEncoder: ExampleEncoder? = null
 
     fun example(example: ExampleDescriptor) {
         sharedExamples[example.name] = example
@@ -32,6 +33,10 @@ class ExampleConfig {
             }
     )
 
+    fun encoder(exampleEncoder: ExampleEncoder) {
+        this.exampleEncoder = exampleEncoder
+    }
+
     fun build(securityConfig: SecurityData) = ExampleConfigData(
         sharedExamples = sharedExamples,
         securityExamples = securityConfig.defaultUnauthorizedResponse?.body?.let {
@@ -39,7 +44,7 @@ class ExampleConfig {
                 is OpenApiSimpleBodyData -> it.examples
                 is OpenApiMultipartBodyData -> emptyList()
             }
-        } ?: emptyList()
+        } ?: emptyList(),
+        exampleEncoder = exampleEncoder
     )
-
 }
