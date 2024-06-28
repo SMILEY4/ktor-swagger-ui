@@ -998,7 +998,7 @@ class OperationBuilderTest : StringSpec({
 
         private fun exampleContext(routes: List<RouteMeta>, pluginConfig: PluginConfigDsl = defaultPluginConfig): ExampleContext {
             val pluginConfigData = pluginConfig.build(PluginConfigData.DEFAULT)
-            return ExampleContextImpl().also {
+            return ExampleContextImpl(pluginConfigData.exampleConfig.exampleEncoder).also {
                 it.addShared(pluginConfigData.exampleConfig)
                 it.add(routes)
             }

@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.examples.Example
 /**
  * Implementation of an [ExampleContext].
  */
-class ExampleContextImpl : ExampleContext {
+class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext {
 
     private val rootExamples = mutableMapOf<ExampleDescriptor, Example>()
     private val componentExamples = mutableMapOf<String, Example>()
@@ -18,11 +18,11 @@ class ExampleContextImpl : ExampleContext {
      */
     fun addShared(config: ExampleConfigData) {
         config.sharedExamples.forEach { (_, exampleDescriptor) ->
-            val example = generateExample(exampleDescriptor)
+            val example = generateExample(exampleDescriptor, null)
             componentExamples[exampleDescriptor.name] = example
         }
         config.securityExamples.forEach { exampleDescriptor ->
-            val example = generateExample(exampleDescriptor)
+            val example = generateExample(exampleDescriptor, null)
             rootExamples[exampleDescriptor] = example
         }
     }
@@ -32,8 +32,9 @@ class ExampleContextImpl : ExampleContext {
      * Collect and add all examples for the given routes
      */
     fun add(routes: Collection<RouteMeta>) {
-        collectExampleDescriptors(routes).forEach { exampleDescriptor ->
-            rootExamples[exampleDescriptor] = generateExample(exampleDescriptor)
+        collectExampleDescriptors(routes).forEach { (exampleDescriptor, typeDescriptor) ->
+            val example = generateExample(exampleDescriptor, typeDescriptor)
+            rootExamples[exampleDescriptor] = example
         }
     }
 
@@ -41,46 +42,49 @@ class ExampleContextImpl : ExampleContext {
     /**
      * Collect all [ExampleDescriptor]s from the given routes
      */
-    private fun collectExampleDescriptors(routes: Collection<RouteMeta>): List<ExampleDescriptor> {
-        val descriptors = mutableListOf<ExampleDescriptor>()
-        routes
-            .filter { !it.documentation.hidden }
-            .forEach { route ->
-                route.documentation.request.also { request ->
-                    request.parameters.forEach { parameter ->
-                        parameter.example?.also { descriptors.add(it) }
+    private fun collectExampleDescriptors(routes: Collection<RouteMeta>): List<Pair<ExampleDescriptor, TypeDescriptor>> =
+        buildList {
+            routes
+                .filter { !it.documentation.hidden }
+                .forEach { route ->
+                    route.documentation.request.also { request ->
+                        request.parameters.forEach { parameter ->
+                            parameter.example?.also { add(it to parameter.type) }
+                        }
+                        request.body?.also { body ->
+                            if (body is OpenApiSimpleBodyData) {
+                                addAll(body.examples.map { it to body.type })
+                            }
+                        }
                     }
-                    request.body?.also { body ->
-                        if (body is OpenApiSimpleBodyData) {
-                            descriptors.addAll(body.examples)
+                    route.documentation.responses.forEach { response ->
+                        response.body?.also { body ->
+                            if (body is OpenApiSimpleBodyData) {
+                                addAll(body.examples.map { it to body.type })
+                            }
                         }
                     }
                 }
-                route.documentation.responses.forEach { response ->
-                    response.body?.also { body ->
-                        if (body is OpenApiSimpleBodyData) {
-                            descriptors.addAll(body.examples)
-                        }
-                    }
-                }
-            }
-        return descriptors
-    }
+        }
 
 
     /**
      * Generate a swagger [Example] from the given [ExampleDescriptor]
      */
-    private fun generateExample(exampleDescriptor: ExampleDescriptor): Example {
+    private fun generateExample(exampleDescriptor: ExampleDescriptor, type: TypeDescriptor?): Example {
         return when (exampleDescriptor) {
             is ValueExampleDescriptor -> Example().also {
-                it.value = exampleDescriptor.value
+                it.value =
+                    if (encoder != null) encoder.invoke(type, exampleDescriptor.value)
+                    else exampleDescriptor.value
                 it.summary = exampleDescriptor.summary
                 it.description = exampleDescriptor.description
             }
+
             is RefExampleDescriptor -> Example().also {
                 it.`$ref` = "#/components/examples/${exampleDescriptor.refName}"
             }
+
             is SwaggerExampleDescriptor -> exampleDescriptor.example
         }
     }

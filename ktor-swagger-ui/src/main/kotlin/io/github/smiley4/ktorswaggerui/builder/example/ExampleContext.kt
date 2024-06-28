@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.examples.Example
 interface ExampleContext {
 
     /**
-     * Get an [Example] (or a ref to an example) by its [ExampleDescriptor]
+     * Get an [Example] (or a ref to an example) by its [ExampleDescriptor].
      */
     fun getExample(descriptor: ExampleDescriptor): Example
 
