@@ -15,6 +15,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
+import sun.jvm.hotspot.oops.CellTypeState.value
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)
@@ -78,7 +79,7 @@ private fun Application.myModule() {
                     }
                 }
                 response {
-                    HttpStatusCode.OK to {
+                    code(HttpStatusCode.OK) {
                         body<List<Pet>> {
                             description = "the list of available pets"
                             example("Pet List") {
@@ -130,7 +131,7 @@ private fun Application.myModule() {
                     }
                 }
                 response {
-                    HttpStatusCode.OK to {
+                    code(HttpStatusCode.OK) {
                         body<Pet> {
                             description = "the created pet"
                             example("Bird") {
@@ -175,7 +176,7 @@ private fun Application.myModule() {
                         }
                     }
                     response {
-                        HttpStatusCode.OK to {
+                        code(HttpStatusCode.OK) {
                             body<Pet>{
                                 description = "the pet with the given id"
                                 example("Bird") {
@@ -194,7 +195,7 @@ private fun Application.myModule() {
                                 }
                             }
                         }
-                        HttpStatusCode.NotFound to {
+                        code(HttpStatusCode.NotFound) {
                             description = "the pet with the given id was not found"
                         }
                         default {
@@ -221,10 +222,10 @@ private fun Application.myModule() {
                         }
                     }
                     response {
-                        HttpStatusCode.NoContent to {
+                        code(HttpStatusCode.NoContent) {
                             description = "the pet was successfully deleted"
                         }
-                        HttpStatusCode.NotFound to {
+                        code(HttpStatusCode.NotFound) {
                             description = "the pet with the given id was not found"
                         }
                         default {

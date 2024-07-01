@@ -179,7 +179,7 @@ private fun Application.myModule() {
                 body<Unit>()
             }
             response {
-                HttpStatusCode.OK to {
+                code(HttpStatusCode.OK) {
                     description = "successful request - always returns 'Hello World!'"
                     header<String>("x-random") {
                         description = "A header with some random number"

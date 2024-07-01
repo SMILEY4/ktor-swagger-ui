@@ -70,7 +70,7 @@ private fun Application.myModule() {
             // information about possible responses
             response {
                 // information about a "200 OK" response
-                HttpStatusCode.OK to {
+                code(HttpStatusCode.OK) {
                     // a description of the response
                     description = "successful request - always returns 'Hello World!'"
                 }

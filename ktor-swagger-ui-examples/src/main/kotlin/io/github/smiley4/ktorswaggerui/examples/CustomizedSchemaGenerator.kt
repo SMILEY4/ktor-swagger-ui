@@ -61,7 +61,7 @@ private fun Application.myModule() {
             // information about the request
             response {
                 // information about a "200 OK" response
-                HttpStatusCode.OK to {
+                code(HttpStatusCode.OK) {
                     // body of the response
                     body<MyResponseBody>()
                 }
