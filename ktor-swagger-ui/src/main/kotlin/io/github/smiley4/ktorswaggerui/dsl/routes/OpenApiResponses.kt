@@ -25,6 +25,18 @@ class OpenApiResponses {
      */
     infix fun HttpStatusCode.to(block: OpenApiResponse.() -> Unit) = this.value.toString() to block
 
+    /**
+     * Information of response for a given http status code
+     */
+    fun code(statusCode: String, block: OpenApiResponse.() -> Unit) {
+        responses[statusCode] = OpenApiResponse(statusCode).apply(block)
+    }
+
+    /**
+     * Information of response for a given http status code
+     */
+    fun code(statusCode: HttpStatusCode, block: OpenApiResponse.() -> Unit) = code(statusCode.toString(), block)
+
 
     /**
      * Information of the default response
