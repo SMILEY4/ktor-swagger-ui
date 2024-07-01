@@ -25,5 +25,19 @@ sealed class OpenApiBaseBody {
      */
     var mediaTypes: Collection<ContentType> = emptySet()
 
+    /**
+     * Set the allowed Media Types for this body. If none specified, a media type will be chosen automatically based on the provided schema
+     */
+    fun mediaTypes(mediaTypes: Collection<ContentType>) {
+        this.mediaTypes = mediaTypes
+    }
+
+    /**
+     * Set the allowed Media Types for this body. If none specified, a media type will be chosen automatically based on the provided schema
+     */
+    fun mediaTypes(vararg mediaTypes: ContentType) {
+        this.mediaTypes = mediaTypes.toList()
+    }
+
     abstract fun build(): OpenApiBaseBodyData
 }

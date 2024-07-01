@@ -29,6 +29,19 @@ class OpenApiSecurity {
      */
     var defaultSecuritySchemeNames: Collection<String>? = SecurityData.DEFAULT.defaultSecuritySchemeNames
 
+    /**
+     * Set the names of the security schemes available for use for the protected paths
+     */
+    fun defaultSecuritySchemeNames(names: Collection<String>) {
+        this.defaultSecuritySchemeNames = names
+    }
+
+    /**
+     * Set the names of the security schemes available for use for the protected paths
+     */
+    fun defaultSecuritySchemeNames(vararg names: String) {
+        this.defaultSecuritySchemeNames = names.toList()
+    }
 
     /**
      * Defines security schemes that can be used by operations
