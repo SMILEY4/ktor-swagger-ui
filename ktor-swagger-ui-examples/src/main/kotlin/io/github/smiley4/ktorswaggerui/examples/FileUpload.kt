@@ -48,7 +48,7 @@ private fun Application.myModule() {
         post("single", {
             request {
                 body<File> {
-                    mediaTypes = setOf(
+                    mediaTypes(
                         ContentType.Image.PNG,
                         ContentType.Image.JPEG,
                         ContentType.Image.SVG,
@@ -63,16 +63,16 @@ private fun Application.myModule() {
         post("multipart", {
             request {
                 multipartBody {
-                    mediaTypes = setOf(ContentType.MultiPart.FormData)
+                    mediaTypes(ContentType.MultiPart.FormData)
                     part<File>("first-image",) {
-                        mediaTypes = setOf(
+                        mediaTypes(
                             ContentType.Image.PNG,
                             ContentType.Image.JPEG,
                             ContentType.Image.SVG
                         )
                     }
                     part<File>("second-image") {
-                        mediaTypes = setOf(
+                        mediaTypes(
                             ContentType.Image.PNG,
                             ContentType.Image.JPEG,
                             ContentType.Image.SVG

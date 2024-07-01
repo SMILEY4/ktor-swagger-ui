@@ -24,6 +24,19 @@ class OpenApiRoute {
      */
     var tags: Collection<String> = emptyList()
 
+    /**
+     * Set the list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier
+     */
+    fun tags(tags: Collection<String>) {
+        this.tags = tags
+    }
+
+    /**
+     * Set the list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier
+     */
+    fun tags(vararg tags: String) {
+        this.tags = tags.toList()
+    }
 
     /**
      * A short summary of what the operation does.
@@ -70,6 +83,25 @@ class OpenApiRoute {
      * Only applied to [protected] operations.
      */
     var securitySchemeNames: Collection<String>? = null
+
+    /**
+     * Set the declarations of which security mechanisms can be used for this operation (i.e. any of the specified ones).
+     * If none is specified, defaultSecuritySchemeName (global plugin config) will be used.
+     * Only applied to [protected] operations.
+     */
+    fun securitySchemeNames(names: Collection<String>) {
+        this.securitySchemeNames = names
+    }
+
+    /**
+     * Set the declarations of which security mechanisms can be used for this operation (i.e. any of the specified ones).
+     * If none is specified, defaultSecuritySchemeName (global plugin config) will be used.
+     * Only applied to [protected] operations.
+     */
+    fun securitySchemeNames(vararg names: String) {
+        this.securitySchemeNames = names.toList()
+    }
+
 
     private val request = OpenApiRequest()
 
