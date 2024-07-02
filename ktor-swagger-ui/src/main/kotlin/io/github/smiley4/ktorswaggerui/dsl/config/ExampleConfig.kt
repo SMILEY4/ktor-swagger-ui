@@ -41,10 +41,10 @@ class ExampleConfig {
         sharedExamples = sharedExamples,
         securityExamples = securityConfig.defaultUnauthorizedResponse?.body?.let {
             when (it) {
-                is OpenApiSimpleBodyData -> it.examples
-                is OpenApiMultipartBodyData -> emptyList()
+                is OpenApiSimpleBodyData -> it
+                is OpenApiMultipartBodyData -> null
             }
-        } ?: emptyList(),
+        },
         exampleEncoder = exampleEncoder
     )
 }
