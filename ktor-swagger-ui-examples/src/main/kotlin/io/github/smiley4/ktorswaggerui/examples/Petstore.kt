@@ -78,7 +78,7 @@ private fun Application.myModule() {
                     }
                 }
                 response {
-                    HttpStatusCode.OK to {
+                    code(HttpStatusCode.OK) {
                         body<List<Pet>> {
                             description = "the list of available pets"
                             example("Pet List") {
@@ -130,7 +130,7 @@ private fun Application.myModule() {
                     }
                 }
                 response {
-                    HttpStatusCode.OK to {
+                    code(HttpStatusCode.OK) {
                         body<Pet> {
                             description = "the created pet"
                             example("Bird") {
@@ -175,7 +175,7 @@ private fun Application.myModule() {
                         }
                     }
                     response {
-                        HttpStatusCode.OK to {
+                        code(HttpStatusCode.OK) {
                             body<Pet>{
                                 description = "the pet with the given id"
                                 example("Bird") {
@@ -194,7 +194,7 @@ private fun Application.myModule() {
                                 }
                             }
                         }
-                        HttpStatusCode.NotFound to {
+                        code(HttpStatusCode.NotFound) {
                             description = "the pet with the given id was not found"
                         }
                         default {
@@ -221,10 +221,10 @@ private fun Application.myModule() {
                         }
                     }
                     response {
-                        HttpStatusCode.NoContent to {
+                        code(HttpStatusCode.NoContent) {
                             description = "the pet was successfully deleted"
                         }
-                        HttpStatusCode.NotFound to {
+                        code(HttpStatusCode.NotFound) {
                             description = "the pet with the given id was not found"
                         }
                         default {

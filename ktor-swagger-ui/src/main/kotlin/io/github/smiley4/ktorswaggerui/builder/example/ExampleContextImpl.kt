@@ -21,9 +21,11 @@ class ExampleContextImpl(private val encoder: ExampleEncoder?) : ExampleContext 
             val example = generateExample(exampleDescriptor, null)
             componentExamples[exampleDescriptor.name] = example
         }
-        config.securityExamples.forEach { exampleDescriptor ->
-            val example = generateExample(exampleDescriptor, null)
-            rootExamples[exampleDescriptor] = example
+        config.securityExamples?.let {
+            it.examples.forEach { exampleDescriptor ->
+                val example = generateExample(exampleDescriptor, it.type)
+                rootExamples[exampleDescriptor] = example
+            }
         }
     }
 

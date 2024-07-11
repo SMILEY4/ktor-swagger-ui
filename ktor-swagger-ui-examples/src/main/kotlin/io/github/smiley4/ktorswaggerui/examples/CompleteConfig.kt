@@ -91,7 +91,7 @@ private fun Application.myModule() {
             defaultUnauthorizedResponse {
                 description = "Username or password is invalid"
             }
-            defaultSecuritySchemeNames = setOf("MySecurityScheme")
+            defaultSecuritySchemeNames("MySecurityScheme")
             securityScheme("MySecurityScheme") {
                 type = AuthType.HTTP
                 scheme = AuthScheme.BASIC
@@ -157,12 +157,12 @@ private fun Application.myModule() {
             operationId = "hello"
             summary = "hello world route"
             description = "A Hello-World route as an example."
-            tags = setOf("hello", "example")
+            tags("hello", "example")
             specId = PluginConfigDsl.DEFAULT_SPEC_ID
             deprecated = false
             hidden = false
             protected = false
-            securitySchemeNames = emptyList()
+            securitySchemeNames(emptyList())
             externalDocs {
                 url = "example.com/hello"
                 description = "external documentation of 'hello'-route"
@@ -179,7 +179,7 @@ private fun Application.myModule() {
                 body<Unit>()
             }
             response {
-                HttpStatusCode.OK to {
+                code(HttpStatusCode.OK) {
                     description = "successful request - always returns 'Hello World!'"
                     header<String>("x-random") {
                         description = "A header with some random number"
@@ -189,7 +189,7 @@ private fun Application.myModule() {
                     }
                     body<Greeting> {
                         description = "the greeting object with the name of the person to greet."
-                        mediaTypes = setOf(ContentType.Application.Json)
+                        mediaTypes(ContentType.Application.Json)
                         required = true
                     }
                 }

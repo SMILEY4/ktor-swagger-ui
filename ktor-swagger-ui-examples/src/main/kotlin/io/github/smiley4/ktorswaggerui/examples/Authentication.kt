@@ -49,7 +49,7 @@ private fun Application.myModule() {
                 scheme = AuthScheme.BASIC
             }
             // if no other security scheme is specified for a route, the one with this name is used instead
-            defaultSecuritySchemeNames = setOf("MySecurityScheme")
+            defaultSecuritySchemeNames("MySecurityScheme")
             // if no other response is documented for "401 Unauthorized", this information is used instead
             defaultUnauthorizedResponse {
                 description = "Username or password is invalid"
@@ -88,7 +88,7 @@ private fun Application.myModule() {
         // route is not in an "authenticate"-block and "protected"-flag is not set
         // -> security schemes will be ignored and not default "401 Unauthorized" response is added
         get("unprotected", {
-            securitySchemeNames = listOf("MySecurityScheme")
+            securitySchemeNames("MySecurityScheme")
         }) {
             call.respondText("Hello World!")
         }

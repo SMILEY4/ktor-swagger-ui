@@ -25,10 +25,23 @@ class OpenApiMultipartPart(
 ) {
 
     /**
-     * Set a specific content types for this part
+     * Specific content types for this part
      */
     var mediaTypes: Collection<ContentType> = setOf()
 
+    /**
+     * Set specific content types for this part
+     */
+    fun mediaTypes(types: Collection<ContentType>) {
+        this.mediaTypes = types
+    }
+
+    /**
+     * Set specific content types for this part
+     */
+    fun mediaTypes(vararg types: ContentType) {
+        this.mediaTypes = types.toList()
+    }
 
     /**
      * List of headers of this part

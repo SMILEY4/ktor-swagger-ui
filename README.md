@@ -56,6 +56,18 @@ install(SwaggerUI) {
     }
 }
 ```
+```kotlin
+routing {
+    // Create a route for the openapi-spec file.
+    route("api.json") {
+      openApiSpec()
+    }
+    // Create a route for the swagger-ui using the openapi-spec at "/api.json".
+    route("swagger") {
+      swaggerUI("/api.json")
+    }
+}
+```
 
 ### Routes
 

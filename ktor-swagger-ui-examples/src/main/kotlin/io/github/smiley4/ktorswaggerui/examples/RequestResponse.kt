@@ -62,7 +62,7 @@ private fun Application.myModule() {
             // information the possible responses
             response {
                 // document the "200 OK"-response
-                HttpStatusCode.OK to {
+                code(HttpStatusCode.OK) {
                     description = "Calculation was performed successfully."
                     // specify the schema of the response-body and some additional information
                     body<CalculationResult> {
@@ -70,7 +70,7 @@ private fun Application.myModule() {
                     }
                 }
                 // document the "422 UnprocessableEntity"-response
-                HttpStatusCode.UnprocessableEntity to {
+                code(HttpStatusCode.UnprocessableEntity) {
                     description = "The requested calculation could not be performed, e.g. due to division by zero."
                 }
             }

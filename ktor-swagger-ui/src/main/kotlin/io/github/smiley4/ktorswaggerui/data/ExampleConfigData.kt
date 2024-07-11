@@ -8,14 +8,14 @@ typealias ExampleEncoder = (type: TypeDescriptor?, example: Any?) -> Any?
 
 class ExampleConfigData(
     val sharedExamples: Map<String, ExampleDescriptor>,
-    val securityExamples: List<ExampleDescriptor>,
+    val securityExamples: OpenApiSimpleBodyData?,
     val exampleEncoder: ExampleEncoder?
 ) {
 
     companion object {
         val DEFAULT = ExampleConfigData(
             sharedExamples = emptyMap(),
-            securityExamples = emptyList(),
+            securityExamples = null,
             exampleEncoder = null
         )
     }

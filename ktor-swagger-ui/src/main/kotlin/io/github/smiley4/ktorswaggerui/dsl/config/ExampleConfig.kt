@@ -14,12 +14,26 @@ class ExampleConfig {
     val sharedExamples = mutableMapOf<String, ExampleDescriptor>()
     var exampleEncoder: ExampleEncoder? = null
 
+
+    /**
+     * Add a shared example that can be referenced by all routes.
+     * The name of the example has to be unique among all shared examples and acts as its id.
+     * @param example the example data.
+     */
     fun example(example: ExampleDescriptor) {
         sharedExamples[example.name] = example
     }
 
+    /**
+     * Add a shared example that can be referenced by all routes by the given name.
+     * The provided name has to be unique among all shared examples and acts as its id.
+     */
     fun example(name: String, example: Example) = example(SwaggerExampleDescriptor(name, example))
 
+    /**
+     * Add a shared example that can be referenced by all routes by the given name.
+     * The provided name has to be unique among all shared examples and acts as its id.
+     */
     fun example(name: String, example: ValueExampleDescriptorDsl.() -> Unit) = example(
         ValueExampleDescriptorDsl()
             .apply(example)
@@ -33,6 +47,10 @@ class ExampleConfig {
             }
     )
 
+
+    /**
+     * Specify a custom encoder for example objects
+     */
     fun encoder(exampleEncoder: ExampleEncoder) {
         this.exampleEncoder = exampleEncoder
     }
@@ -41,10 +59,10 @@ class ExampleConfig {
         sharedExamples = sharedExamples,
         securityExamples = securityConfig.defaultUnauthorizedResponse?.body?.let {
             when (it) {
-                is OpenApiSimpleBodyData -> it.examples
-                is OpenApiMultipartBodyData -> emptyList()
+                is OpenApiSimpleBodyData -> it
+                is OpenApiMultipartBodyData -> null
             }
-        } ?: emptyList(),
+        },
         exampleEncoder = exampleEncoder
     )
 }
