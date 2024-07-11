@@ -15,7 +15,6 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.response.respond
 import io.ktor.server.routing.route
 import io.ktor.server.routing.routing
-import sun.jvm.hotspot.oops.CellTypeState.value
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "localhost", module = Application::myModule).start(wait = true)

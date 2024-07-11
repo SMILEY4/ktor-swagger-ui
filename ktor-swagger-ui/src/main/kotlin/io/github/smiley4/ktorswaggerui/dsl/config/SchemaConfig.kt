@@ -24,7 +24,8 @@ class SchemaConfig {
 
 
     /**
-     * Overwrite the given [type] with the given [replacement]. When the type is specified as the type of a schema, the replacement is used instead.
+     * Overwrite the given [type] with the given [replacement].
+     * When the type is specified as the type of a schema, the replacement is used instead.
      * This only works for "root"-types and not types of e.g. nested fields.
      */
     fun overwrite(type: KType, replacement: TypeDescriptor) {
@@ -32,25 +33,29 @@ class SchemaConfig {
     }
 
     /**
-     * Overwrite the given type [T] with the given [replacement]. When the type is specified as the type of a schema, the replacement is used instead.
+     * Overwrite the given type [T] with the given [replacement].
+     * When the type is specified as the type of a schema, the replacement is used instead.
      * This only works for "root"-types and not types of e.g. nested fields.
      */
     inline fun <reified T> overwrite(replacement: TypeDescriptor) = overwrite(typeOf<T>(), replacement)
 
     /**
-     * Overwrite the given type [T] with the given [replacement]. When the type is specified as the type of a schema, the replacement is used instead.
+     * Overwrite the given type [T] with the given [replacement].
+     * When the type is specified as the type of a schema, the replacement is used instead.
      * This only works for "root"-types and not types of e.g. nested fields.
      */
     inline fun <reified T> overwrite(replacement: Schema<*>) = overwrite(typeOf<T>(), SwaggerTypeDescriptor(replacement))
 
     /**
-     * Overwrite the given type [T] with the given [replacement]. When the type is specified as the type of a schema, the replacement is used instead.
+     * Overwrite the given type [T] with the given [replacement].
+     * When the type is specified as the type of a schema, the replacement is used instead.
      * This only works for "root"-types and not types of e.g. nested fields.
      */
     inline fun <reified T> overwrite(replacement: KType) = overwrite(typeOf<T>(), KTypeDescriptor(replacement))
 
     /**
-     * Overwrite the given type [T] with the given replacement [R]. When the type is specified as the type of a schema, the replacement is used instead.
+     * Overwrite the given type [T] with the given replacement [R].
+     * When the type is specified as the type of a schema, the replacement is used instead.
      * This only works for "root"-types and not types of e.g. nested fields.
      */
     inline fun <reified T, reified R> overwrite() = overwrite(typeOf<T>(), KTypeDescriptor(typeOf<R>()))

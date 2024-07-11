@@ -25,14 +25,16 @@ class OpenApiRoute {
     var tags: Collection<String> = emptyList()
 
     /**
-     * Set the list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier
+     * Set the list of tags for API documentation control.
+     * Tags can be used for logical grouping of operations by resources or any other qualifier
      */
     fun tags(tags: Collection<String>) {
         this.tags = tags
     }
 
     /**
-     * Set the list of tags for API documentation control. Tags can be used for logical grouping of operations by resources or any other qualifier
+     * Set the list of tags for API documentation control.
+     * Tags can be used for logical grouping of operations by resources or any other qualifier
      */
     fun tags(vararg tags: String) {
         this.tags = tags.toList()
