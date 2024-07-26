@@ -55,6 +55,10 @@ class ExampleConfig {
         this.exampleEncoder = exampleEncoder
     }
 
+    /**
+     * Build the data object for this config.
+     * @param securityConfig the data for security config that might contain additional examples
+     */
     fun build(securityConfig: SecurityData) = ExampleConfigData(
         sharedExamples = sharedExamples,
         securityExamples = securityConfig.defaultUnauthorizedResponse?.body?.let {

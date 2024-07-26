@@ -52,6 +52,10 @@ class OpenApiSecurity {
 
     private val securitySchemes = mutableListOf<OpenApiSecurityScheme>()
 
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     fun build(base: SecurityData) = SecurityData(
         defaultUnauthorizedResponse = merge(base.defaultUnauthorizedResponse, defaultUnauthorizedResponse?.build()),
         defaultSecuritySchemeNames = buildSet {

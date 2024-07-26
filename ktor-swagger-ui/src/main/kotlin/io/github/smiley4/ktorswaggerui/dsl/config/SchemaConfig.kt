@@ -83,14 +83,18 @@ class SchemaConfig {
      */
     inline fun <reified T> schema(schemaId: String) = schema(schemaId, KTypeDescriptor(typeOf<T>()))
 
+    /**
+     * Build the data object for this config.
+     * @param securityConfig configuration that might contain additional schemas
+     */
     fun build(securityConfig: SecurityData) = SchemaConfigData(
         generator = generator,
         schemas = schemas,
         overwrite = overwrite,
-        securitySchemas = securityConfig.defaultUnauthorizedResponse?.body?.let {
-            when (it) {
-                is OpenApiSimpleBodyData -> listOf(it.type)
-                is OpenApiMultipartBodyData -> it.parts.map { it.type }
+        securitySchemas = securityConfig.defaultUnauthorizedResponse?.body?.let { body ->
+            when (body) {
+                is OpenApiSimpleBodyData -> listOf(body.type)
+                is OpenApiMultipartBodyData -> body.parts.map { it.type }
             }
         } ?: emptyList()
     )

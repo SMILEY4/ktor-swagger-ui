@@ -62,7 +62,10 @@ class OpenApiInfo {
         license = OpenApiLicense().apply(block)
     }
 
-
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     fun build(base: InfoData): InfoData {
         return InfoData(
             title = mergeDefault(base.title, this.title, InfoData.DEFAULT.title),

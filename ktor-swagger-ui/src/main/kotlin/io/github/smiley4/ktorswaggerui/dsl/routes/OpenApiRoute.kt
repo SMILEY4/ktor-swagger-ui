@@ -149,7 +149,9 @@ class OpenApiRoute {
 
     private val servers = mutableListOf<OpenApiServer>()
 
-
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiRouteData(
         specId = specId,
         tags = tags.toSet(),

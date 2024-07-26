@@ -70,6 +70,9 @@ class OpenApiHeader {
      */
     var explode: Boolean? = null
 
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiHeaderData(
         description = description,
         type = type,
