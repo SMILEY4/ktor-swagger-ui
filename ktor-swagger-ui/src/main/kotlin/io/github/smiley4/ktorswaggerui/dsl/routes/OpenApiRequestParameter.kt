@@ -113,7 +113,7 @@ class OpenApiRequestParameter(
         location = location,
         description = description,
         example = example,
-        required = required ?: false,
+        required = required ?: (location == ParameterLocation.PATH),
         deprecated = deprecated ?: false,
         allowEmptyValue = allowEmptyValue ?: true,
         explode = explode ?: false,
