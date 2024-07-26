@@ -237,7 +237,7 @@ class OperationBuilderTest : StringSpec({
                     ?.also { param ->
                         param.`in` shouldBe "path"
                         param.description shouldBe null
-                        param.required shouldBe false
+                        param.required shouldBe true
                         param.deprecated shouldBe false
                         param.allowEmptyValue shouldBe true
                         param.`$ref` shouldBe null
