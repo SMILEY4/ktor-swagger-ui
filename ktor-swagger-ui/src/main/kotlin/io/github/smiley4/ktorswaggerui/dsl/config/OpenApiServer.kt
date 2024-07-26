@@ -32,6 +32,10 @@ class OpenApiServer {
         variables[name] = OpenApiServerVariable(name).apply(block)
     }
 
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     fun build(base: ServerData) = ServerData(
         url = mergeDefault(base.url, url, ServerData.DEFAULT.url),
         description = merge(base.description, description),

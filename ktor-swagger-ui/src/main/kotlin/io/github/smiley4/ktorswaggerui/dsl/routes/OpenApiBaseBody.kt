@@ -39,5 +39,8 @@ sealed class OpenApiBaseBody {
         this.mediaTypes = mediaTypes.toList()
     }
 
+    /**
+     * Build the data object for this config.
+     */
     abstract fun build(): OpenApiBaseBodyData
 }

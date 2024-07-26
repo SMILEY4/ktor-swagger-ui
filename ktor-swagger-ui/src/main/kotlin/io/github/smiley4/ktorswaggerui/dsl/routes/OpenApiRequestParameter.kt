@@ -107,6 +107,9 @@ class OpenApiRequestParameter(
      */
     var style: Parameter.StyleEnum? = null
 
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiRequestParameterData(
         name = name,
         type = type,

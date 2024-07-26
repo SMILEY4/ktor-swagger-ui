@@ -163,6 +163,9 @@ class OpenApiRequest {
         this.body = body
     }
 
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiRequestData(
         parameters = parameters.map { it.build() },
         body = body?.build()

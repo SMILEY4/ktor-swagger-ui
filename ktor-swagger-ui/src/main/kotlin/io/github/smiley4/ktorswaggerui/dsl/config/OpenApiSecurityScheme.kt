@@ -75,7 +75,10 @@ class OpenApiSecurityScheme(
      */
     var description: String? = null
 
-
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     fun build(base: SecuritySchemeData) = SecuritySchemeData(
         schemeName = schemeName,
         type = merge(base.type, type),

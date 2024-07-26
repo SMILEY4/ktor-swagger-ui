@@ -21,7 +21,10 @@ class OpenApiExternalDocs {
      */
     var url: String = "/"
 
-
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     fun build(base: ExternalDocsData) = ExternalDocsData(
         url = DataUtils.mergeDefault(base.url, url, ExternalDocsData.DEFAULT.url),
         description = DataUtils.merge(base.description, description)
