@@ -30,7 +30,6 @@ import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextImpl
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.data.TypeDescriptor
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.routing.ApiSpec
 import io.ktor.server.application.Application
@@ -83,12 +82,12 @@ private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>)
     return buildMap {
         routesBySpec.forEach { (specName, routes) ->
             val specConfig = config.specConfigs[specName] ?: config
-            this[specName] = buildOpenApiSpec(specConfig, routes)
+            this[specName] = buildOpenApiSpec(specName, specConfig, routes)
         }
     }
 }
 
-private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
+private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
     return try {
         val schemaContext = SchemaContextImpl(pluginConfig.schemaConfig).also {
             it.addGlobal(pluginConfig.schemaConfig)
@@ -99,7 +98,7 @@ private fun buildOpenApiSpec(pluginConfig: PluginConfigData, routes: List<RouteM
             it.add(routes)
         }
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
-        pluginConfig.postBuild?.invoke(openApi)
+        pluginConfig.postBuild?.let { it(openApi, specName) }
         Json.pretty(openApi)
     } catch (e: Exception) {
         logger.error("Error during openapi-generation", e)

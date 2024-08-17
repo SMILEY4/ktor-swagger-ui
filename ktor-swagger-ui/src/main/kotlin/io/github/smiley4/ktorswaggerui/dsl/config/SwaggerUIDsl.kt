@@ -61,6 +61,10 @@ class SwaggerUIDsl {
      */
     var withCredentials: Boolean = false
 
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     internal fun build(base: SwaggerUIData): SwaggerUIData {
         return SwaggerUIData(
             validatorUrl = merge(base.validatorUrl, this.validatorUrl),

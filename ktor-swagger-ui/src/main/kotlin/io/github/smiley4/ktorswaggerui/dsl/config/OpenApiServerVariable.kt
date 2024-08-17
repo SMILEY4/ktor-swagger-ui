@@ -31,6 +31,9 @@ class OpenApiServerVariable(
      */
     var description: String? = null
 
+    /**
+     * Build the data object for this config.
+     */
     fun build() = ServerVariableData(
         name = name,
         enum = enum.toSet(),

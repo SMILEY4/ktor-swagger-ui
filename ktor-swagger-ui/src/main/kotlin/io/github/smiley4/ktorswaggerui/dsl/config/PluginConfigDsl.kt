@@ -134,6 +134,10 @@ class PluginConfigDsl {
     var postBuild: PostBuild? = null
 
 
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     internal fun build(base: PluginConfigData): PluginConfigData {
         val securityConfig = security.build(base.securityConfig)
         return PluginConfigData(
@@ -155,7 +159,7 @@ class PluginConfigDsl {
                 addAll(ignoredRouteSelectors)
             },
             specConfigs = mutableMapOf(),
-            postBuild = postBuild,
+            postBuild = merge(base.postBuild, postBuild),
         ).also {
             specConfigs.forEach { (specId, config) ->
                 it.specConfigs[specId] = config.build(it)

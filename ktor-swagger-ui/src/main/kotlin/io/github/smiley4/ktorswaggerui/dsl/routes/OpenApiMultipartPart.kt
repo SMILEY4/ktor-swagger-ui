@@ -77,7 +77,9 @@ class OpenApiMultipartPart(
     inline fun <reified T> header(name: String, noinline block: OpenApiHeader.() -> Unit = {}) =
         header(name, KTypeDescriptor(typeOf<T>()), block)
 
-
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiMultipartPartData(
         name = name,
         type = type,

@@ -107,13 +107,16 @@ class OpenApiRequestParameter(
      */
     var style: Parameter.StyleEnum? = null
 
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiRequestParameterData(
         name = name,
         type = type,
         location = location,
         description = description,
         example = example,
-        required = required ?: false,
+        required = required ?: (location == ParameterLocation.PATH),
         deprecated = deprecated ?: false,
         allowEmptyValue = allowEmptyValue ?: true,
         explode = explode ?: false,

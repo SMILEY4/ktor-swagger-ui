@@ -30,7 +30,10 @@ class OpenApiTags {
      */
     var tagGenerator: TagGenerator = TagsData.DEFAULT.generator
 
-
+    /**
+     * Build the data object for this config.
+     * @param base the base config to "inherit" from. Values from the base should be copied, replaced or merged together.
+     */
     fun build(base: TagsData) = TagsData(
         tags = buildList {
             addAll(base.tags)

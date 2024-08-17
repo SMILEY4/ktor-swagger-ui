@@ -68,7 +68,6 @@ class OpenApiSimpleBody(
      */
     fun exampleRef(name: String) = example(RefExampleDescriptor(name, name))
 
-
     override fun build() = OpenApiSimpleBodyData(
         description = description,
         required = required ?: false,

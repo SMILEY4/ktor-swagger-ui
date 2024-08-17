@@ -88,7 +88,9 @@ class OpenApiResponse(val statusCode: String) {
         body = OpenApiMultipartBody().apply(block)
     }
 
-
+    /**
+     * Build the data object for this config.
+     */
     fun build() = OpenApiResponseData(
         statusCode = statusCode,
         description = description,
