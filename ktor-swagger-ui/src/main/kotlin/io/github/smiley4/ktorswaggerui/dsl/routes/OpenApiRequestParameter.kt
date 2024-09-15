@@ -118,9 +118,9 @@ class OpenApiRequestParameter(
         example = example,
         required = required ?: (location == ParameterLocation.PATH),
         deprecated = deprecated ?: false,
-        allowEmptyValue = allowEmptyValue ?: true,
+        allowEmptyValue = allowEmptyValue,
         explode = explode ?: false,
-        allowReserved = allowReserved ?: true,
+        allowReserved = allowReserved,
         style = style
     )
 
