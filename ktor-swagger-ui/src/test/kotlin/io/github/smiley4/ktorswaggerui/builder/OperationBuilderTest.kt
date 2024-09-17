@@ -219,11 +219,11 @@ class OperationBuilderTest : StringSpec({
                         param.description shouldBe null
                         param.required shouldBe false
                         param.deprecated shouldBe false
-                        param.allowEmptyValue shouldBe true
+                        param.allowEmptyValue shouldBe null
                         param.`$ref` shouldBe null
                         param.style shouldBe null
                         param.explode shouldBe false
-                        param.allowReserved shouldBe true
+                        param.allowReserved shouldBe null
                         param.schema
                             .also { it.shouldNotBeNull() }
                             ?.also { it.type = "string" }
@@ -239,11 +239,11 @@ class OperationBuilderTest : StringSpec({
                         param.description shouldBe null
                         param.required shouldBe true
                         param.deprecated shouldBe false
-                        param.allowEmptyValue shouldBe true
+                        param.allowEmptyValue shouldBe null
                         param.`$ref` shouldBe null
                         param.style shouldBe null
                         param.explode shouldBe false
-                        param.allowReserved shouldBe true
+                        param.allowReserved shouldBe null
                         param.schema
                             .also { it.shouldNotBeNull() }
                             ?.also { it.type = "integer" }
@@ -259,11 +259,11 @@ class OperationBuilderTest : StringSpec({
                         param.description shouldBe null
                         param.required shouldBe false
                         param.deprecated shouldBe false
-                        param.allowEmptyValue shouldBe true
+                        param.allowEmptyValue shouldBe null
                         param.`$ref` shouldBe null
                         param.style shouldBe null
                         param.explode shouldBe false
-                        param.allowReserved shouldBe true
+                        param.allowReserved shouldBe null
                         param.schema
                             .also { it.shouldNotBeNull() }
                             ?.also { it.type = "boolean" }

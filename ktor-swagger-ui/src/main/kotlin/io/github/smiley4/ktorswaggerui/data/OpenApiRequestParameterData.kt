@@ -13,8 +13,8 @@ data class OpenApiRequestParameterData(
     val example: ExampleDescriptor?,
     val required: Boolean,
     val deprecated: Boolean,
-    val allowEmptyValue: Boolean,
+    val allowEmptyValue: Boolean?,
     val explode: Boolean,
-    val allowReserved: Boolean,
+    val allowReserved: Boolean?,
     val style: Parameter.StyleEnum?,
 )
