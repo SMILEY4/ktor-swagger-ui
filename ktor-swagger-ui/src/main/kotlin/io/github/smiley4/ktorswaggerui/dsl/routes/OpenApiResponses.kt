@@ -35,7 +35,7 @@ class OpenApiResponses {
     /**
      * Information of response for a given http status code
      */
-    fun code(statusCode: HttpStatusCode, block: OpenApiResponse.() -> Unit) = code(statusCode.toString(), block)
+    fun code(statusCode: HttpStatusCode, block: OpenApiResponse.() -> Unit) = code(statusCode.value.toString(), block)
 
 
     /**
