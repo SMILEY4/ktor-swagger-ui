@@ -10,6 +10,7 @@ import io.github.smiley4.schemakenerator.swagger.data.TitleType
 import io.github.smiley4.schemakenerator.swagger.generateSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.handleCoreAnnotations
 import io.github.smiley4.schemakenerator.swagger.withAutoTitle
+import io.github.smiley4.schemakenerator.swagger.withTitle
 import kotlin.reflect.KType
 
 /**
@@ -32,7 +33,7 @@ data class SchemaConfigData(
                     .handleNameAnnotation()
                     .generateSwaggerSchema()
                     .handleCoreAnnotations()
-                    .withAutoTitle(TitleType.SIMPLE)
+                    .withTitle(TitleType.SIMPLE)
                     .compileReferencingRoot()
             },
             overwrite = emptyMap(),
