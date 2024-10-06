@@ -39,6 +39,7 @@ import io.ktor.server.application.hooks.MonitoringEvent
 import io.ktor.server.application.install
 import io.ktor.server.application.plugin
 import io.ktor.server.application.pluginOrNull
+import io.ktor.server.config.*
 import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json
@@ -75,7 +76,8 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
 private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>): Map<String, String> {
     val routesBySpec = buildMap<String, MutableList<RouteMeta>> {
         routes.forEach { route ->
-            val specName = route.documentation.specId ?: config.specAssigner(route.path, route.documentation.tags.toList())
+            val specName =
+                route.documentation.specId ?: config.specAssigner(route.path, route.documentation.tags.toList())
             computeIfAbsent(specName) { mutableListOf() }.add(route)
         }
     }
@@ -109,8 +111,18 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
 private fun routes(application: Application, config: PluginConfigData): List<RouteMeta> {
     return RouteCollector(RouteDocumentationMerger())
         .collectRoutes({ application.plugin(Routing) }, config)
+        .map { it.copy(path = "${application.rootPath()}${it.path}") }
         .toList()
 }
+
+/**
+ * fix [#97](https://github.com/SMILEY4/ktor-swagger-ui/pull/97)
+ *
+ * @receiver Application
+ * @return String
+ */
+private fun Application.rootPath(): String =
+    environment.config.propertyOrNull("ktor.deployment.rootPath")?.getString() ?: ""
 
 private fun builder(
     config: PluginConfigData,
