@@ -287,8 +287,8 @@ class OperationBuilderTest : StringSpec({
                                     mediaType.schema
                                         .also { it.shouldNotBeNull() }
                                         ?.also { schema ->
-                                            schema.type shouldBe "array"
-                                            schema.items.also { item -> item.type shouldBe "string" }
+                                            schema.types shouldContainExactlyInAnyOrder setOf("array")
+                                            schema.items.also { item -> item.types shouldContainExactlyInAnyOrder setOf("string") }
                                         }
                                     mediaType.example shouldBe null
                                     mediaType.examples shouldBe null
@@ -348,7 +348,7 @@ class OperationBuilderTest : StringSpec({
                         ?.also { header ->
                             header.schema
                                 .also { it.shouldNotBeNull() }
-                                ?.also { it.type shouldBe "string" }
+                                ?.also { it.types shouldContainExactlyInAnyOrder setOf("string") }
                         }
 
                     response.content
@@ -359,8 +359,8 @@ class OperationBuilderTest : StringSpec({
                             mediaType.schema
                                 .also { it.shouldNotBeNull() }
                                 ?.also { schema ->
-                                    schema.type shouldBe "array"
-                                    schema.items.also { item -> item.type shouldBe "string" }
+                                    schema.types shouldContainExactlyInAnyOrder setOf("array")
+                                    schema.items.also { item -> item.types shouldContainExactlyInAnyOrder setOf("string") }
                                 }
                             mediaType.example shouldBe null
                             mediaType.examples shouldBe null
@@ -467,7 +467,7 @@ class OperationBuilderTest : StringSpec({
                                 ?.also { mediaType ->
                                     mediaType.schema
                                         .also { it.shouldNotBeNull() }
-                                        ?.also { it.type shouldBe "string" }
+                                        ?.also { it.types shouldContainExactlyInAnyOrder setOf("string") }
                                     mediaType.example shouldBe null
                                     mediaType.examples
                                         .also { it shouldHaveSize 1 }
@@ -491,7 +491,7 @@ class OperationBuilderTest : StringSpec({
                                 ?.also { mediaType ->
                                     mediaType.schema
                                         .also { it.shouldNotBeNull() }
-                                        ?.also { it.type shouldBe "string" }
+                                        ?.also { it.types shouldContainExactlyInAnyOrder setOf("string") }
                                     mediaType.example shouldBe null
                                     mediaType.examples
                                         .also { it shouldHaveSize 1 }
@@ -827,7 +827,7 @@ class OperationBuilderTest : StringSpec({
                                     mediaType.schema
                                         .also { it.shouldNotBeNull() }
                                         ?.also { schema ->
-                                            schema.type shouldBe "array"
+                                            schema.types shouldContainExactlyInAnyOrder setOf("array")
                                             schema.items.also { item ->
                                                 item.type shouldBe null
                                                 item.`$ref` shouldBe "#/components/schemas/io.github.smiley4." +
@@ -852,7 +852,7 @@ class OperationBuilderTest : StringSpec({
                 "io.github.smiley4.ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject"
             )
             section["io.github.smiley4.ktorswaggerui.builder.OperationBuilderTest.Companion.SimpleObject"]?.also { schema ->
-                schema.type shouldBe "object"
+                schema.types shouldContainExactlyInAnyOrder setOf("object")
                 schema.properties.keys shouldContainExactlyInAnyOrder listOf("number", "text")
             }
         }
