@@ -39,7 +39,6 @@ import io.ktor.server.application.hooks.MonitoringEvent
 import io.ktor.server.application.install
 import io.ktor.server.application.plugin
 import io.ktor.server.application.pluginOrNull
-import io.ktor.server.config.*
 import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json31
