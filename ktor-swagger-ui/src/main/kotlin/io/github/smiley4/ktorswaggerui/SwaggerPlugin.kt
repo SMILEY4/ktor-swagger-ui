@@ -39,9 +39,9 @@ import io.ktor.server.application.hooks.MonitoringEvent
 import io.ktor.server.application.install
 import io.ktor.server.application.plugin
 import io.ktor.server.application.pluginOrNull
-import io.ktor.server.routing.RoutingRoot
+import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
-import io.swagger.v3.core.util.Json
+import io.swagger.v3.core.util.Json31
 import mu.KotlinLogging
 
 /**
@@ -100,7 +100,7 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
         }
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
         pluginConfig.postBuild?.let { it(openApi, specName) }
-        Json.pretty(openApi)
+        Json31.pretty(openApi)
     } catch (e: Exception) {
         logger.error("Error during openapi-generation", e)
         "{}"
@@ -109,7 +109,7 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
 
 private fun routes(application: Application, config: PluginConfigData): List<RouteMeta> {
     return RouteCollector(RouteDocumentationMerger())
-        .collectRoutes({ application.plugin(RoutingRoot) }, config)
+        .collectRoutes({ application.plugin(Routing) }, config)
         .map { it.copy(path = "${application.rootPath()}${it.path}") }
         .toList()
 }
