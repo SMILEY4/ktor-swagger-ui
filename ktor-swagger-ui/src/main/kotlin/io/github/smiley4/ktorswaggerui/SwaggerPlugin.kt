@@ -42,7 +42,7 @@ import io.ktor.server.application.pluginOrNull
 import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json31
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 /**
  * This version must match the version of the gradle dependency
@@ -66,7 +66,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
             ApiSpec.setAll(buildOpenApiSpecs(config, routes))
             ApiSpec.swaggerUiConfig = config.swagger
         } catch (e: Exception) {
-            logger.error("Error during application startup in swagger-ui-plugin", e)
+            logger.error(e) { "Error during application startup in swagger-ui-plugin" }
         }
 
     }

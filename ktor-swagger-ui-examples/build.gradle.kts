@@ -35,7 +35,7 @@ dependencies {
     implementation("io.github.smiley4:schema-kenerator-jackson:$versionSchemaKenerator")
 
     implementation("io.swagger.parser.v3:swagger-parser:$versionSwaggerParser")
-    implementation("io.github.microutils:kotlin-logging-jvm:$versionKotlinLogging")
+    implementation("io.github.oshai:kotlin-logging-jvm:$versionKotlinLogging")
     implementation("ch.qos.logback:logback-classic:$versionLogback")
 }
 
