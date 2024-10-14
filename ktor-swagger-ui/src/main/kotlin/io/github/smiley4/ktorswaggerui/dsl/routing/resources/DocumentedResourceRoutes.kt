@@ -4,11 +4,8 @@ import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
 import io.github.smiley4.ktorswaggerui.dsl.routing.documentation
 import io.github.smiley4.ktorswaggerui.dsl.routing.method
 import io.ktor.http.HttpMethod
-import io.ktor.server.application.ApplicationCall
-import io.ktor.server.resources.handle
 import io.ktor.server.resources.resource
 import io.ktor.server.routing.Route
-import io.ktor.util.pipeline.PipelineContext
 
 //============================//
 //             GET            //
@@ -16,7 +13,7 @@ import io.ktor.util.pipeline.PipelineContext
 
 inline fun <reified T : Any> Route.get(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -33,7 +30,7 @@ inline fun <reified T : Any> Route.get(
 
 inline fun <reified T : Any> Route.post(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -50,7 +47,7 @@ inline fun <reified T : Any> Route.post(
 
 inline fun <reified T : Any> Route.put(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -67,7 +64,7 @@ inline fun <reified T : Any> Route.put(
 
 inline fun <reified T : Any> Route.delete(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -84,7 +81,7 @@ inline fun <reified T : Any> Route.delete(
 
 inline fun <reified T : Any> Route.patch(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -101,7 +98,7 @@ inline fun <reified T : Any> Route.patch(
 
 inline fun <reified T : Any> Route.options(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {
@@ -118,7 +115,7 @@ inline fun <reified T : Any> Route.options(
 
 inline fun <reified T : Any> Route.head(
     noinline builder: OpenApiRoute.() -> Unit = { },
-    noinline body: suspend PipelineContext<Unit, ApplicationCall>.(T) -> Unit
+    noinline body: suspend io.ktor.server.routing.RoutingContext.() -> Unit
 ): Route {
     return documentation(builder) {
         resource<T> {

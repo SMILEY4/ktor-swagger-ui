@@ -39,8 +39,7 @@ import io.ktor.server.application.hooks.MonitoringEvent
 import io.ktor.server.application.install
 import io.ktor.server.application.plugin
 import io.ktor.server.application.pluginOrNull
-import io.ktor.server.config.*
-import io.ktor.server.routing.Routing
+import io.ktor.server.routing.RoutingRoot
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json
 import mu.KotlinLogging
@@ -110,7 +109,7 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
 
 private fun routes(application: Application, config: PluginConfigData): List<RouteMeta> {
     return RouteCollector(RouteDocumentationMerger())
-        .collectRoutes({ application.plugin(Routing) }, config)
+        .collectRoutes({ application.plugin(RoutingRoot) }, config)
         .map { it.copy(path = "${application.rootPath()}${it.path}") }
         .toList()
 }
