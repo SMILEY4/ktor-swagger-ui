@@ -5,7 +5,7 @@ version = projectVersion
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization") version "1.9.21"
+    kotlin("plugin.serialization") version "1.9.25"
 }
 
 repositories {

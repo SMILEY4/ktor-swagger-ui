@@ -102,7 +102,7 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
         pluginConfig.postBuild?.let { it(openApi, specName) }
         Json31.pretty(openApi)
     } catch (e: Exception) {
-        logger.error("Error during openapi-generation", e)
+        logger.error(e) { "Error during openapi-generation" }
         "{}"
     }
 }
