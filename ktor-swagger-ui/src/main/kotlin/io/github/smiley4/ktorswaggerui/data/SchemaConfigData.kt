@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui.data
 
+import io.github.smiley4.schemakenerator.core.addDiscriminatorProperty
 import io.github.smiley4.schemakenerator.core.connectSubTypes
 import io.github.smiley4.schemakenerator.core.handleNameAnnotation
 import io.github.smiley4.schemakenerator.reflection.collectSubTypes
@@ -9,7 +10,6 @@ import io.github.smiley4.schemakenerator.swagger.data.CompiledSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.data.TitleType
 import io.github.smiley4.schemakenerator.swagger.generateSwaggerSchema
 import io.github.smiley4.schemakenerator.swagger.handleCoreAnnotations
-import io.github.smiley4.schemakenerator.swagger.withAutoTitle
 import io.github.smiley4.schemakenerator.swagger.withTitle
 import kotlin.reflect.KType
 
