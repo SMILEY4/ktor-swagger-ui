@@ -21,6 +21,7 @@ class ParameterBuilder(
                 ParameterLocation.QUERY -> "query"
                 ParameterLocation.HEADER -> "header"
                 ParameterLocation.PATH -> "path"
+                ParameterLocation.COOKIE -> "cookie"
             }
             it.name = parameter.name
             it.description = parameter.description
@@ -28,7 +29,7 @@ class ParameterBuilder(
             it.deprecated = parameter.deprecated
             it.allowEmptyValue = parameter.allowEmptyValue
             it.explode = parameter.explode
-            it.example = parameter.example?.let { e -> exampleContext.getExample(e).value } // todo: example"S" ?
+            it.example = parameter.example?.let { e -> exampleContext.getExample(e).value }
             it.allowReserved = parameter.allowReserved
             it.schema = schemaContext.getSchema(parameter.type)
             it.style = parameter.style
