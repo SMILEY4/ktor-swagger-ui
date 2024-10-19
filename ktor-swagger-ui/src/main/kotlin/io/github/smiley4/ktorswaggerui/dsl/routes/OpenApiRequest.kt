@@ -114,6 +114,34 @@ class OpenApiRequest {
         parameter(ParameterLocation.HEADER, name, KTypeDescriptor(typeOf<T>()), block)
 
 
+    /**
+     * A cookie parameters that is applicable for this operation
+     */
+    fun cookieParameter(name: String, type: TypeDescriptor, block: OpenApiRequestParameter.() -> Unit = {}) =
+        parameter(ParameterLocation.COOKIE, name, type, block)
+
+
+    /**
+     * A cookie parameters that is applicable for this operation
+     */
+    fun cookieParameter(name: String, type: Schema<*>, block: OpenApiRequestParameter.() -> Unit = {}) =
+        parameter(ParameterLocation.COOKIE, name, SwaggerTypeDescriptor(type), block)
+
+
+    /**
+     * A cookie parameters that is applicable for this operation
+     */
+    fun cookieParameter(name: String, type: KType, block: OpenApiRequestParameter.() -> Unit = {}) =
+        parameter(ParameterLocation.COOKIE, name, KTypeDescriptor(type), block)
+
+
+    /**
+     * A cookie parameters that is applicable for this operation
+     */
+    inline fun <reified T> cookieParameter(name: String, noinline block: OpenApiRequestParameter.() -> Unit = {}) =
+        parameter(ParameterLocation.COOKIE, name, KTypeDescriptor(typeOf<T>()), block)
+
+
     private var body: OpenApiBaseBody? = null
 
     fun getBody() = body
@@ -162,6 +190,7 @@ class OpenApiRequest {
     fun setBody(body: OpenApiBaseBody?) {
         this.body = body
     }
+
 
     /**
      * Build the data object for this config.
