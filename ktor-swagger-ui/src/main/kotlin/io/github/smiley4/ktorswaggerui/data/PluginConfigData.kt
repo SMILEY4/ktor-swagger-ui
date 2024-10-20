@@ -19,7 +19,8 @@ data class PluginConfigData(
     val schemaConfig: SchemaConfigData,
     val exampleConfig: ExampleConfigData,
     val securityConfig: SecurityData,
-    val tagsConfig: TagsData
+    val tagsConfig: TagsData,
+    val outputFormat: OutputFormat
 ) {
 
     companion object {
@@ -36,7 +37,8 @@ data class PluginConfigData(
             schemaConfig = SchemaConfigData.DEFAULT,
             exampleConfig = ExampleConfigData.DEFAULT,
             securityConfig = SecurityData.DEFAULT,
-            tagsConfig = TagsData.DEFAULT
+            tagsConfig = TagsData.DEFAULT,
+            outputFormat = OutputFormat.JSON
         )
     }
 

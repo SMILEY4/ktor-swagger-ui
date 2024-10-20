@@ -43,6 +43,8 @@ import io.ktor.server.routing.Routing
 import io.ktor.server.webjars.Webjars
 import io.swagger.v3.core.util.Json31
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.github.smiley4.ktorswaggerui.data.OutputFormat
+import io.swagger.v3.core.util.Yaml31
 
 /**
  * This version must match the version of the gradle dependency
@@ -72,7 +74,7 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
     }
 }
 
-private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>): Map<String, String> {
+private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>): Map<String, Pair<String, OutputFormat>> {
     val routesBySpec = buildMap<String, MutableList<RouteMeta>> {
         routes.forEach { route ->
             val specName =
@@ -88,7 +90,7 @@ private fun buildOpenApiSpecs(config: PluginConfigData, routes: List<RouteMeta>)
     }
 }
 
-private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, routes: List<RouteMeta>): String {
+private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, routes: List<RouteMeta>): Pair<String, OutputFormat> {
     return try {
         val schemaContext = SchemaContextImpl(pluginConfig.schemaConfig).also {
             it.addGlobal(pluginConfig.schemaConfig)
@@ -100,10 +102,13 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
         }
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
         pluginConfig.postBuild?.let { it(openApi, specName) }
-        Json31.pretty(openApi)
+        when(pluginConfig.outputFormat) {
+            OutputFormat.JSON -> Json31.pretty(openApi) to pluginConfig.outputFormat
+            OutputFormat.YAML -> Yaml31.pretty(openApi) to pluginConfig.outputFormat
+        }
     } catch (e: Exception) {
         logger.error(e) { "Error during openapi-generation" }
-        "{}"
+        return pluginConfig.outputFormat.empty to pluginConfig.outputFormat
     }
 }
 
