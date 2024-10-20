@@ -4,7 +4,6 @@ import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.github.smiley4.ktorswaggerui.dsl.routing.get
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
-import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
@@ -57,29 +56,13 @@ private fun Application.myModule() {
         }
 
         // a documented route
-        get("hello", {
-            // description of the route
-            description = "A Hello-World route"
-            // information about the request
-            request {
-                // information about the query-parameter "name" of type "string"
-                queryParameter<String>("name") {
-                    description = "the name to greet"
-                }
-                cookieParameter<String>("token") {
-                    description = "some auth token"
-                }
+        route("/nested/") {
+            get("/hello", {
+                // description of the route
+                description = "A Hello-World route"
+            }) {
+                call.respondText("Hello ${call.request.queryParameters["name"]}")
             }
-            // information about possible responses
-            response {
-                // information about a "200 OK" response
-                code(HttpStatusCode.OK) {
-                    // a description of the response
-                    description = "successful request - always returns 'Hello World!'"
-                }
-            }
-        }) {
-            call.respondText("Hello ${call.request.queryParameters["name"]}")
         }
 
     }
