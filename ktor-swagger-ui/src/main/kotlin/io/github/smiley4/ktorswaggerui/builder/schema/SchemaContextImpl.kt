@@ -84,7 +84,9 @@ class SchemaContextImpl(private val schemaConfig: SchemaConfigData) : SchemaCont
                 CompiledSwaggerSchema(
                     typeData = WildcardTypeData(),
                     swagger = SwaggerSchemaUtils().subtypesSchema(
-                        optionSchemas.map { it.swagger }
+                        optionSchemas.map { it.swagger },
+                        null,
+                        emptyMap()
                     ),
                     componentSchemas = buildMap {
                         optionSchemas.forEach { optionSchema ->

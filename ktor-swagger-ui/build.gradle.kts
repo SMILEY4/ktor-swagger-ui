@@ -43,7 +43,7 @@ dependencies {
     implementation("io.github.smiley4:schema-kenerator-reflection:$versionSchemaKenerator")
     implementation("io.github.smiley4:schema-kenerator-swagger:$versionSchemaKenerator")
 
-    implementation("io.github.microutils:kotlin-logging-jvm:$versionKotlinLogging")
+    implementation("io.github.oshai:kotlin-logging-jvm:$versionKotlinLogging")
 
     testImplementation("io.ktor:ktor-server-netty-jvm:$versionKtor")
     testImplementation("io.ktor:ktor-server-content-negotiation:$versionKtor")

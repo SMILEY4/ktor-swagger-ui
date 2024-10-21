@@ -1,11 +1,13 @@
 package io.github.smiley4.ktorswaggerui.misc
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.data.OutputFormat
 import io.github.smiley4.ktorswaggerui.routing.openApiSpec
 import io.github.smiley4.ktorswaggerui.routing.swaggerUI
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
+import io.kotest.matchers.string.shouldStartWith
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
@@ -49,21 +51,61 @@ class RoutingTests {
             it.status shouldBe HttpStatusCode.OK
             it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
+            it.body shouldStartWith "{\n  \"openapi\" : \"3.1.0\","
         }
     }
 
-    private fun swaggerUITestApplication(block: suspend TestContext.() -> Unit) {
+
+    @Test
+    fun basicRoutingYml() = swaggerUITestApplication(OutputFormat.YAML) {
+        get("hello").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.body shouldBe "Hello Test"
+        }
+        get("/").also {
+            it.status shouldBe HttpStatusCode.NotFound
+        }
+        get("/swagger").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.contentType shouldBe ContentType.Text.Html
+            it.body.shouldNotBeEmpty()
+        }
+        get("/swagger/index.html").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.contentType shouldBe ContentType.Text.Html
+            it.body.shouldNotBeEmpty()
+        }
+        get("/swagger/swagger-initializer.js").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.contentType shouldBe ContentType.Application.JavaScript
+            it.body shouldContain "url: \"/api.yml\""
+        }
+        get("/api.yml").also {
+            it.status shouldBe HttpStatusCode.OK
+            it.contentType shouldBe ContentType.Text.Plain.withParameter("charset", "utf-8")
+            it.body.shouldNotBeEmpty()
+            it.body shouldStartWith "openapi: 3.1.0\n"
+        }
+    }
+
+    private fun swaggerUITestApplication(format: OutputFormat = OutputFormat.JSON, block: suspend TestContext.() -> Unit) {
         testApplication {
             val client = createClient {
                 this.followRedirects = followRedirects
             }
-            install(SwaggerUI)
+            install(SwaggerUI) {
+                outputFormat = format
+            }
             routing {
-                route("api.json") {
+                val routeSuffix = when(format) {
+                    OutputFormat.JSON -> "json"
+                    OutputFormat.YAML -> "yml"
+                }
+                route("api.$routeSuffix") {
                     openApiSpec()
                 }
                 route("swagger") {
-                    swaggerUI("/api.json")
+                    swaggerUI("/api.$routeSuffix")
                 }
                 get("hello") {
                     call.respondText("Hello Test")

@@ -1,9 +1,14 @@
 package io.github.smiley4.ktorswaggerui.dsl.config
 
-import io.github.smiley4.ktorswaggerui.data.*
 import io.github.smiley4.ktorswaggerui.data.DataUtils.merge
+import io.github.smiley4.ktorswaggerui.data.OutputFormat
+import io.github.smiley4.ktorswaggerui.data.PathFilter
+import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.data.PostBuild
+import io.github.smiley4.ktorswaggerui.data.ServerData
+import io.github.smiley4.ktorswaggerui.data.SpecAssigner
 import io.github.smiley4.ktorswaggerui.dsl.OpenApiDslMarker
-import io.ktor.server.routing.*
+import io.ktor.server.routing.RouteSelector
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -109,6 +114,7 @@ class PluginConfigDsl {
 
     private val specConfigs = mutableMapOf<String, PluginConfigDsl>()
 
+
     /**
      * Assigns routes without an [io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute.specId]] to a specified openapi-spec.
      */
@@ -126,6 +132,12 @@ class PluginConfigDsl {
      * List of all [RouteSelector] types in that should be ignored in the resulting url of any route.
      */
     var ignoredRouteSelectors: Set<KClass<*>> = PluginConfigData.DEFAULT.ignoredRouteSelectors
+
+
+    /**
+     * The format of the generated api-spec
+     */
+    var outputFormat: OutputFormat = PluginConfigData.DEFAULT.outputFormat
 
 
     /**
@@ -160,6 +172,7 @@ class PluginConfigDsl {
             },
             specConfigs = mutableMapOf(),
             postBuild = merge(base.postBuild, postBuild),
+            outputFormat = outputFormat
         ).also {
             specConfigs.forEach { (specId, config) ->
                 it.specConfigs[specId] = config.build(it)

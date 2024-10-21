@@ -67,8 +67,8 @@ class RouteCollector(
             route.parent?.let { getPath(it, config) } ?: ""
         } else {
             when (route.selector) {
-                is TrailingSlashRouteSelector -> "/"
                 is RootRouteSelector -> ""
+                is TrailingSlashRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is DocumentedRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is HttpMethodRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is AuthenticationRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""

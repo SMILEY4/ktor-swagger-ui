@@ -2,6 +2,7 @@ package io.github.smiley4.ktorswaggerui.routing
 
 import io.github.smiley4.ktorswaggerui.SWAGGER_UI_WEBJARS_VERSION
 import io.github.smiley4.ktorswaggerui.SwaggerUI
+import io.github.smiley4.ktorswaggerui.data.OutputFormat
 import io.github.smiley4.ktorswaggerui.data.SwaggerUIData
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSort
 import io.github.smiley4.ktorswaggerui.data.SwaggerUiSyntaxHighlight
@@ -19,7 +20,11 @@ import io.ktor.server.routing.*
 fun Route.openApiSpec(specId: String = PluginConfigDsl.DEFAULT_SPEC_ID) {
     route({ hidden = true }) {
         get {
-            call.respondText(ContentType.Application.Json, HttpStatusCode.OK) { ApiSpec.get(specId) }
+            val contentType = when(ApiSpec.getFormat(specId)) {
+                OutputFormat.JSON -> ContentType.Application.Json
+                OutputFormat.YAML -> ContentType.Text.Plain
+            }
+            call.respondText(contentType, HttpStatusCode.OK) { ApiSpec.get(specId) }
         }
     }
 }
