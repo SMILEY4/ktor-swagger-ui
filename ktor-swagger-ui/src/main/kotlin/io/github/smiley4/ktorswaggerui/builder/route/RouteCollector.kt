@@ -10,8 +10,8 @@ import io.ktor.server.routing.HttpMethodRouteSelector
 import io.ktor.server.routing.OptionalParameterRouteSelector
 import io.ktor.server.routing.ParameterRouteSelector
 import io.ktor.server.routing.RootRouteSelector
-import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector
+import io.ktor.server.routing.RoutingNode
 import io.ktor.server.routing.TrailingSlashRouteSelector
 import kotlin.reflect.full.isSubclassOf
 
@@ -25,7 +25,7 @@ class RouteCollector(
     /**
      * Collect all routes from the given application
      */
-    fun collectRoutes(routeProvider: () -> Route, config: PluginConfigData): Sequence<RouteMeta> {
+    fun collectRoutes(routeProvider: () -> RoutingNode, config: PluginConfigData): Sequence<RouteMeta> {
         return allRoutes(routeProvider())
             .asSequence()
             .map { route ->
@@ -42,7 +42,7 @@ class RouteCollector(
     }
 
 
-    private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
+    private fun getDocumentation(route: RoutingNode, base: OpenApiRoute): OpenApiRoute {
         var documentation = base
         if (route.selector is DocumentedRouteSelector) {
             documentation = routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
@@ -55,20 +55,20 @@ class RouteCollector(
     }
 
 
-    private fun getMethod(route: Route): HttpMethod {
+    private fun getMethod(route: RoutingNode): HttpMethod {
         return (route.selector as HttpMethodRouteSelector).method
     }
 
 
     @Suppress("CyclomaticComplexMethod")
-    internal fun getPath(route: Route, config: PluginConfigData): String {
+    internal fun getPath(route: RoutingNode, config: PluginConfigData): String {
         val selector = route.selector
         return if (isIgnoredSelector(selector, config)) {
             route.parent?.let { getPath(it, config) } ?: ""
         } else {
             when (route.selector) {
-                is TrailingSlashRouteSelector -> "/"
                 is RootRouteSelector -> ""
+                is TrailingSlashRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is DocumentedRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is HttpMethodRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is AuthenticationRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
@@ -96,7 +96,7 @@ class RouteCollector(
     }
 
 
-    private fun isProtected(route: Route): Boolean {
+    private fun isProtected(route: RoutingNode): Boolean {
         return when (route.selector) {
             is AuthenticationRouteSelector -> true
             is TrailingSlashRouteSelector -> false
@@ -108,9 +108,8 @@ class RouteCollector(
         }
     }
 
-    private fun allRoutes(root: Route): List<Route> {
+    private fun allRoutes(root: RoutingNode): List<RoutingNode> {
         return (listOf(root) + root.children.flatMap { allRoutes(it) })
             .filter { it.selector is HttpMethodRouteSelector }
     }
-
 }
