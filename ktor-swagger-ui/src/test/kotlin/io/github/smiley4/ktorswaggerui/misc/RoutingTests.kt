@@ -8,12 +8,20 @@ import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotBeEmpty
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
+import io.ktor.http.path
 import io.ktor.server.application.call
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.UserIdPrincipal
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.basic
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.Route
+import io.ktor.server.routing.Routing
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
 import io.ktor.server.testing.testApplication
@@ -50,6 +58,10 @@ class RoutingTests {
             it.contentType shouldBe ContentType.Application.Json
             it.body.shouldNotBeEmpty()
         }
+        get("/level1/level2/hello", auth = true).also {
+            it.status shouldBe HttpStatusCode.OK
+            it.body shouldBe "Hello Nested"
+        }
     }
 
     private fun swaggerUITestApplication(block: suspend TestContext.() -> Unit) {
@@ -58,6 +70,17 @@ class RoutingTests {
                 this.followRedirects = followRedirects
             }
             install(SwaggerUI)
+            install(Authentication) {
+                basic("test") {
+                    validate { credentials ->
+                        if (credentials.name == "test" && credentials.password == "test") {
+                            UserIdPrincipal(credentials.name)
+                        } else {
+                            null
+                        }
+                    }
+                }
+            }
             routing {
                 route("api.json") {
                     openApiSpec()
@@ -68,15 +91,40 @@ class RoutingTests {
                 get("hello") {
                     call.respondText("Hello Test")
                 }
+                nestedPath()
             }
             TestContext(client).apply { block() }
         }
     }
 
+    private fun Routing.nestedPath() {
+        route("/level1/"){
+            nestedPath()
+        }
+    }
+    private fun Route.nestedPath() {
+        route("/level2/"){
+            nestedHelloController()
+        }
+    }
+
+    private fun Route.nestedHelloController() {
+        authenticate("test") {
+            get("/hello") {
+                call.respondText("Hello Nested")
+            }
+        }
+    }
+
     class TestContext(private val client: HttpClient) {
 
-        suspend fun get(path: String): GetResult {
-            return client.get(path)
+        suspend fun get(path: String, auth: Boolean = false): GetResult {
+            return (if (auth) {
+                client.get {
+                    url.path(path)
+                    header("Authorization", "Basic dGVzdDp0ZXN0")
+                }
+            } else client.get(path))
                 .let {
                     GetResult(
                         path = path,

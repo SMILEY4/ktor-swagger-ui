@@ -15,9 +15,10 @@ import org.junit.jupiter.api.Test
 class RouteCollectorTest {
 
     private val tests: List<Pair<List<String>, String>> = listOf(
-        listOf("/") to "/",
+        listOf("/") to "",
         listOf("/api") to "/api",
-        listOf("/nested/", "/asdg") to "/nested/asdg",
+        listOf("/nested", "/routing") to "/nested/routing",
+        listOf("/trailing/", "/slashes") to "/trailing/slashes",
     )
 
     @Test

@@ -1,8 +1,8 @@
 package io.github.smiley4.ktorswaggerui.builder.route
 
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
-import io.github.smiley4.ktorswaggerui.dsl.routing.DocumentedRouteSelector
 import io.github.smiley4.ktorswaggerui.dsl.routes.OpenApiRoute
+import io.github.smiley4.ktorswaggerui.dsl.routing.DocumentedRouteSelector
 import io.ktor.http.HttpMethod
 import io.ktor.server.auth.AuthenticationRouteSelector
 import io.ktor.server.routing.ConstantParameterRouteSelector
@@ -45,7 +45,8 @@ class RouteCollector(
     private fun getDocumentation(route: Route, base: OpenApiRoute): OpenApiRoute {
         var documentation = base
         if (route.selector is DocumentedRouteSelector) {
-            documentation = routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
+            documentation =
+                routeDocumentationMerger.merge(documentation, (route.selector as DocumentedRouteSelector).documentation)
         }
         return if (route.parent != null) {
             getDocumentation(route.parent!!, documentation)
@@ -67,7 +68,7 @@ class RouteCollector(
             route.parent?.let { getPath(it, config) } ?: ""
         } else {
             when (route.selector) {
-                is TrailingSlashRouteSelector -> "/"
+                is TrailingSlashRouteSelector -> route.parent?.let { getPath(it, config) } ?: "/"
                 is RootRouteSelector -> ""
                 is DocumentedRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is HttpMethodRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
@@ -77,9 +78,14 @@ class RouteCollector(
                 is OptionalParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 else -> (route.parent?.let { getPath(it, config) } ?: "") + "/" + route.selector.toString()
             }
-        }
+        }.dropTrailingSlash()
     }
 
+    private fun String.dropTrailingSlash(): String = if (length > 1 && endsWith("/")) {
+        dropLast(1).dropTrailingSlash()
+    } else {
+        this
+    }
 
     private fun isIgnoredSelector(selector: RouteSelector, config: PluginConfigData): Boolean {
         return when (selector) {
