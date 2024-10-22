@@ -61,7 +61,7 @@ class RouteCollector(
 
 
     @Suppress("CyclomaticComplexMethod")
-    private fun getPath(route: Route, config: PluginConfigData): String {
+    internal fun getPath(route: Route, config: PluginConfigData): String {
         val selector = route.selector
         return if (isIgnoredSelector(selector, config)) {
             route.parent?.let { getPath(it, config) } ?: ""
