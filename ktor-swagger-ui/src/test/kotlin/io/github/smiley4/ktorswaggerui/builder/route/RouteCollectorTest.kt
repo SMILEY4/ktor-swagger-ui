@@ -1,21 +1,18 @@
 package io.github.smiley4.ktorswaggerui.builder.route
 
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
+import io.github.smiley4.ktorswaggerui.dsl.routing.route
 import io.kotest.matchers.shouldBe
 import io.ktor.server.application.Application
-import io.ktor.server.application.ApplicationCallPipeline
-import io.ktor.server.application.createRouteScopedPlugin
 import io.ktor.server.application.plugin
 import io.ktor.server.response.respond
 import io.ktor.server.routing.HttpMethodRouteSelector
-import io.ktor.server.routing.Route
 import io.ktor.server.routing.RouteSelector
 import io.ktor.server.routing.RouteSelectorEvaluation
 import io.ktor.server.routing.RoutingNode
 import io.ktor.server.routing.RoutingResolveContext
 import io.ktor.server.routing.RoutingRoot
 import io.ktor.server.routing.get
-import io.ktor.server.routing.intercept
 import io.ktor.server.routing.routing
 import io.ktor.server.testing.testApplication
 import org.junit.jupiter.api.Test
@@ -35,15 +32,6 @@ class RouteCollectorTest {
         return routeCollector to allRoutes
     }
 
-    private fun Route.auth(build: Route.() -> Unit): Route {
-        val guardedRoute = createChild(TransparentRouteSelector())
-        guardedRoute.intercept(ApplicationCallPipeline.Plugins) {
-            proceed()
-        }
-        guardedRoute.build()
-        return guardedRoute
-    }
-
     private class TransparentRouteSelector : RouteSelector() {
         override suspend fun evaluate(
             context: RoutingResolveContext,
@@ -58,9 +46,10 @@ class RouteCollectorTest {
         testApplication {
             application {
                 routing {
-                    auth {
+                    createChild(TransparentRouteSelector()).route {
                         get("/v1/get_this") { call.respond("Api") }
                     }
+
                 }
                 val (routeCollector, allRoutes) = allRoutesPlease()
 
