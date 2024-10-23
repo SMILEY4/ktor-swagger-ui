@@ -75,7 +75,7 @@ class RouteCollector(
                 is ParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is ConstantParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is OptionalParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
-                else -> (route.parent?.let { getPath(it, config) } ?: "") + "/" + route.selector.toString()
+                else -> (route.parent?.let { getPath(it, config) } ?: "").dropLastWhile { it == '/' } + "/" + route.selector.toString()
             }
         }
     }
@@ -91,7 +91,8 @@ class RouteCollector(
             is ParameterRouteSelector -> true
             is ConstantParameterRouteSelector -> true
             is OptionalParameterRouteSelector -> true
-            else -> config.ignoredRouteSelectors.any { selector::class.isSubclassOf(it) }
+            else -> config.ignoredRouteSelectors.any { selector::class.isSubclassOf(it) } or
+                    config.ignoredRouteSelectorClassNames.any { selector::class.java.name == it }
         }
     }
 
@@ -112,5 +113,4 @@ class RouteCollector(
         return (listOf(root) + root.children.flatMap { allRoutes(it) })
             .filter { it.selector is HttpMethodRouteSelector }
     }
-
 }
