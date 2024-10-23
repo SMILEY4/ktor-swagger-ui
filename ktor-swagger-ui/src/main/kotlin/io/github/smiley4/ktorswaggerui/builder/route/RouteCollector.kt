@@ -75,7 +75,7 @@ class RouteCollector(
                 is ParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is ConstantParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
                 is OptionalParameterRouteSelector -> route.parent?.let { getPath(it, config) } ?: ""
-                else -> (route.parent?.let { getPath(it, config) } ?: "") + "/" + route.selector.toString()
+                else -> (route.parent?.let { getPath(it, config) } ?: "").dropLastWhile { it == '/' } + "/" + route.selector.toString()
             }
         }
     }
