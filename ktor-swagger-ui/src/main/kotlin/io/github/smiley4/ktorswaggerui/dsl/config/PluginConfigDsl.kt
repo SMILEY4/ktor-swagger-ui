@@ -133,6 +133,10 @@ class PluginConfigDsl {
      */
     var ignoredRouteSelectors: Set<KClass<*>> = PluginConfigData.DEFAULT.ignoredRouteSelectors
 
+    /**
+     * List of all [RouteSelector] class names that should be ignored in the resulting url of any route.
+     */
+    var ignoredRouteSelectorClassNames: Set<String> = emptySet()
 
     /**
      * The format of the generated api-spec
@@ -169,6 +173,10 @@ class PluginConfigDsl {
             ignoredRouteSelectors = buildSet {
                 addAll(base.ignoredRouteSelectors)
                 addAll(ignoredRouteSelectors)
+            },
+            ignoredRouteSelectorClassNames = buildSet {
+                addAll(base.ignoredRouteSelectorClassNames)
+                addAll(ignoredRouteSelectorClassNames)
             },
             specConfigs = mutableMapOf(),
             postBuild = merge(base.postBuild, postBuild),

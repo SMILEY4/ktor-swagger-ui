@@ -61,7 +61,7 @@ class RouteCollector(
 
 
     @Suppress("CyclomaticComplexMethod")
-    internal fun getPath(route: RoutingNode, config: PluginConfigData): String {
+    private fun getPath(route: RoutingNode, config: PluginConfigData): String {
         val selector = route.selector
         return if (isIgnoredSelector(selector, config)) {
             route.parent?.let { getPath(it, config) } ?: ""
@@ -91,7 +91,8 @@ class RouteCollector(
             is ParameterRouteSelector -> true
             is ConstantParameterRouteSelector -> true
             is OptionalParameterRouteSelector -> true
-            else -> config.ignoredRouteSelectors.any { selector::class.isSubclassOf(it) }
+            else -> config.ignoredRouteSelectors.any { selector::class.isSubclassOf(it) } or
+                    config.ignoredRouteSelectorClassNames.any { selector::class.java.name == it }
         }
     }
 

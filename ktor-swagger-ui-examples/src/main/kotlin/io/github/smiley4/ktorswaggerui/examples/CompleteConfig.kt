@@ -138,6 +138,7 @@ private fun Application.myModule() {
         specAssigner = { _, _ -> PluginConfigDsl.DEFAULT_SPEC_ID }
         pathFilter = { _, url -> url.firstOrNull() != "hidden" }
         ignoredRouteSelectors = emptySet()
+        ignoredRouteSelectorClassNames = emptySet()
         postBuild = { api, name -> println("Completed api '$name': $api") }
     }
 
