@@ -1,5 +1,6 @@
 package io.github.smiley4.ktorswaggerui
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContext
 import io.github.smiley4.ktorswaggerui.builder.example.ExampleContextImpl
 import io.github.smiley4.ktorswaggerui.builder.openapi.ComponentsBuilder
@@ -29,6 +30,7 @@ import io.github.smiley4.ktorswaggerui.builder.route.RouteDocumentationMerger
 import io.github.smiley4.ktorswaggerui.builder.route.RouteMeta
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContext
 import io.github.smiley4.ktorswaggerui.builder.schema.SchemaContextImpl
+import io.github.smiley4.ktorswaggerui.data.OutputFormat
 import io.github.smiley4.ktorswaggerui.data.PluginConfigData
 import io.github.smiley4.ktorswaggerui.dsl.config.PluginConfigDsl
 import io.github.smiley4.ktorswaggerui.routing.ApiSpec
@@ -36,14 +38,9 @@ import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStarted
 import io.ktor.server.application.createApplicationPlugin
 import io.ktor.server.application.hooks.MonitoringEvent
-import io.ktor.server.application.install
 import io.ktor.server.application.plugin
-import io.ktor.server.application.pluginOrNull
-import io.ktor.server.routing.Routing
-import io.ktor.server.webjars.Webjars
+import io.ktor.server.routing.RoutingRoot
 import io.swagger.v3.core.util.Json31
-import io.github.oshai.kotlinlogging.KotlinLogging
-import io.github.smiley4.ktorswaggerui.data.OutputFormat
 import io.swagger.v3.core.util.Yaml31
 
 /**
@@ -58,10 +55,6 @@ val SwaggerUI = createApplicationPlugin(name = "SwaggerUI", createConfiguration 
     val config = pluginConfig.build(PluginConfigData.DEFAULT)
 
     on(MonitoringEvent(ApplicationStarted)) { application ->
-
-        if (application.pluginOrNull(Webjars) == null) {
-            application.install(Webjars)
-        }
 
         try {
             val routes = routes(application, config)
@@ -102,7 +95,7 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
         }
         val openApi = builder(pluginConfig, schemaContext, exampleContext).build(routes)
         pluginConfig.postBuild?.let { it(openApi, specName) }
-        when(pluginConfig.outputFormat) {
+        when (pluginConfig.outputFormat) {
             OutputFormat.JSON -> Json31.pretty(openApi) to pluginConfig.outputFormat
             OutputFormat.YAML -> Yaml31.pretty(openApi) to pluginConfig.outputFormat
         }
@@ -114,10 +107,11 @@ private fun buildOpenApiSpec(specName: String, pluginConfig: PluginConfigData, r
 
 private fun routes(application: Application, config: PluginConfigData): List<RouteMeta> {
     return RouteCollector(RouteDocumentationMerger())
-        .collectRoutes({ application.plugin(Routing) }, config)
+        .collectRoutes({ application.plugin(RoutingRoot) }, config)
         .map { it.copy(path = "${application.rootPath()}${it.path}") }
         .toList()
 }
+
 
 /**
  * fix [#97](https://github.com/SMILEY4/ktor-swagger-ui/pull/97)
