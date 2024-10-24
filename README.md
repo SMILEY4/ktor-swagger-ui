@@ -32,6 +32,12 @@ dependencies {
 ```
 
 
+## Ktor compatibility
+
+- Ktor 2.x: ktor-swagger-ui up to 3.x
+- Ktor 3.x: ktor-swagger-ui starting with 4.0
+
+
 ## Examples
 
 Runnable examples can be found in [ktor-swagger-ui-examples/src/main/kotlin/io/github/smiley4/ktorswaggerui/examples](https://github.com/SMILEY4/ktor-swagger-ui/tree/release/ktor-swagger-ui-examples/src/main/kotlin/io/github/smiley4/ktorswaggerui/examples).
