@@ -31,7 +31,6 @@ dependencies {
     val versionMockk: String by project
 
     implementation("io.ktor:ktor-server-core-jvm:$versionKtor")
-    implementation("io.ktor:ktor-server-webjars:$versionKtor")
     implementation("io.ktor:ktor-server-auth:$versionKtor")
     implementation("io.ktor:ktor-server-resources:$versionKtor")
 
